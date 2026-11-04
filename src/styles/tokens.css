@@ -1,0 +1,128 @@
+/* Creative OS Design Tokens — RightsQuest India */
+:root {
+  /* Color System — HSL / Hex grounded in warm Indian soil, textiles & sky */
+  --color-canvas-primary: #FBF8F3;
+  --color-canvas-secondary: #F4EFE6;
+  --color-canvas-elevated: #FFFFFF;
+  --color-canvas-card: #FAF6EF;
+  --color-canvas-sunken: #ECE5D8;
+  
+  --color-canvas-dark: #121927;
+  --color-canvas-dark-surface: #1B2438;
+  --color-canvas-dark-elevated: #242F49;
+  --color-canvas-dark-border: rgba(251, 248, 243, 0.12);
+
+  --color-ink-primary: #151A26;
+  --color-ink-secondary: #48536B;
+  --color-ink-muted: #7A869E;
+  --color-ink-faint: #ACB5C8;
+  --color-ink-inverse: #FBF8F3;
+  --color-ink-inverse-muted: #9AA6C0;
+
+  /* Sovereign Accents */
+  --color-saffron-500: #DE7215;
+  --color-saffron-600: #BF5E0C;
+  --color-saffron-100: #FDF1E3;
+  --color-saffron-border: #F7C693;
+
+  --color-terracotta-500: #D04F36;
+  --color-terracotta-600: #B23D26;
+  --color-terracotta-100: #FDEEEA;
+  --color-terracotta-border: #F8B5A7;
+
+  --color-peacock-500: #1B6D80;
+  --color-peacock-600: #145564;
+  --color-peacock-100: #E4F3F6;
+  --color-peacock-border: #9CD5E0;
+
+  --color-forest-500: #297652;
+  --color-forest-600: #1E5C3F;
+  --color-forest-100: #E4F6ED;
+  --color-forest-border: #A1DCBE;
+
+  --color-indigo-500: #2C3E6B;
+  --color-indigo-600: #202E52;
+  --color-indigo-100: #E9EDF8;
+
+  --color-gold-500: #C98A16;
+  --color-gold-100: #FBF4E4;
+  --color-gold-border: #E8C980;
+
+  /* Borders & Dividers */
+  --color-border-subtle: rgba(21, 26, 38, 0.08);
+  --color-border-medium: rgba(21, 26, 38, 0.16);
+  --color-border-strong: rgba(21, 26, 38, 0.28);
+  --color-border-focus: #DE7215;
+
+  /* Typography Scales — Fluid clamp formula */
+  --font-family-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-family-agency: 'Syne', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-family-cinzel: 'Cinzel', Georgia, serif;
+  --font-family-body: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-family-mono: 'Space Mono', Menlo, Consolas, Monaco, monospace;
+
+  --font-size-display-hero: clamp(2.5rem, 5.5vw + 1rem, 4.75rem);
+  --font-size-display-h1: clamp(2rem, 3.8vw + 0.5rem, 3.25rem);
+  --font-size-display-h2: clamp(1.5rem, 2.5vw + 0.3rem, 2.25rem);
+  --font-size-display-h3: clamp(1.2rem, 1.6vw + 0.2rem, 1.65rem);
+  --font-size-body-lead: clamp(1.05rem, 0.6vw + 0.85rem, 1.25rem);
+  --font-size-body: clamp(0.95rem, 0.3vw + 0.85rem, 1.05rem);
+  --font-size-body-sm: 0.875rem;
+  --font-size-utility: 0.75rem;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-black: 800;
+
+  --line-height-tight: 1.15;
+  --line-height-snug: 1.3;
+  --line-height-normal: 1.55;
+  --line-height-relaxed: 1.7;
+
+  /* Spacing Grid */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* Container & Layout */
+  --container-max-width: 1240px;
+  --container-editorial-width: 980px;
+  --container-reading-width: 680px;
+  --gutter: clamp(1rem, 3vw, 2.5rem);
+
+  /* Radius — Tactile, deliberate (no balloon cards) */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-pill: 9999px;
+
+  /* Tactile Physical Elevation (Print, Paper & Book Arts) */
+  --shadow-press: 0 1px 2px rgba(21, 26, 38, 0.05);
+  --shadow-flat: 0 2px 4px rgba(21, 26, 38, 0.04), 0 1px 2px rgba(21, 26, 38, 0.06);
+  --shadow-tactile: 0 4px 12px rgba(21, 26, 38, 0.06), 0 1px 3px rgba(21, 26, 38, 0.04);
+  --shadow-floating: 0 12px 32px rgba(21, 26, 38, 0.09), 0 2px 6px rgba(21, 26, 38, 0.04);
+  --shadow-story-card: 0 6px 0 rgba(21, 26, 38, 0.08), 0 12px 24px rgba(21, 26, 38, 0.06);
+
+  /* Sovereign Easing Constants */
+  --ease-sovereign: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring-snappy: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --duration-fast: 180ms;
+  --duration-medium: 300ms;
+  --duration-slow: 500ms;
+}
+

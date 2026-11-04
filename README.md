@@ -26,11 +26,28 @@ Children in India between 8 and 16 years old, with content and interaction patte
 
 ## Project status
 
-This repository currently contains the project overview only. The functional prototype, technology stack, setup instructions, user-testing results, and report/presentation have not yet been added.
+**Part 01 Complete:** The application foundation, design system tokens, responsive application shell, landing experience, age selection prototype, learner home shell, and static catalog routes have been implemented. Full branching quest interactions and scoring will follow in Part 02.
 
 ## Getting started
 
-There is no runnable application in this repository yet. Once the prototype is added, document the required software and provide its installation and run commands here.
+### Requirements
+- Node.js (v18+ recommended)
+- npm
+
+### Installation & Run Commands
+```bash
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+
+# Run QA & Foundation Verification
+node scripts/verify_foundation.mjs
+
+# Build for production
+npm run build
+```
 
 ## Safety, privacy, and accessibility
 

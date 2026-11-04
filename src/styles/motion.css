@@ -1,0 +1,277 @@
+/* Motion & Animation System — Sovereign Pacing & GOATED Laser Beam Effects */
+
+.transition-sovereign {
+  transition: all var(--duration-medium) var(--ease-sovereign);
+}
+
+.transition-fast {
+  transition: all var(--duration-fast) var(--ease-sovereign);
+}
+
+/* =========================================================================
+   LASER BEAM PERIMETER EFFECT (Cards & Dossiers)
+   ========================================================================= */
+.laser-beam-card {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: transform 0.4s var(--ease-sovereign), box-shadow 0.4s var(--ease-sovereign);
+  will-change: transform, box-shadow;
+}
+
+/* Laser Beam Traveling Ring */
+.laser-beam-card::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 280deg,
+    rgba(222, 114, 21, 0.6) 320deg,
+    #DE7215 345deg,
+    #FFFFFF 355deg,
+    transparent 360deg
+  );
+  animation: laserRotate 4s linear infinite;
+  opacity: 0.65; /* Visibly circulating laser ring */
+  transition: opacity 0.35s ease, filter 0.35s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.laser-beam-card:hover::before {
+  opacity: 1;
+  animation-duration: 2.2s;
+  filter: drop-shadow(0 0 8px rgba(222, 114, 21, 0.8));
+}
+
+.laser-beam-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 20px 45px rgba(21, 26, 38, 0.12), 0 0 35px rgba(222, 114, 21, 0.25);
+}
+
+/* Laser Card Inner Vessel (sits above laser layer) */
+.laser-beam-content {
+  position: relative;
+  z-index: 2;
+  background-color: var(--color-canvas-card);
+  border-radius: calc(var(--radius-lg) - 1.5px);
+  height: 100%;
+  margin: 1.5px;
+}
+
+@keyframes laserRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* =========================================================================
+   LASER SHEEN SWEEP (Buttons & Interactive Elements)
+   ========================================================================= */
+.laser-sweep-btn {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.laser-sweep-btn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 70%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.15) 30%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(222, 114, 21, 0.6) 70%,
+    transparent 100%
+  );
+  transform: skewX(-24deg);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.laser-sweep-btn:hover::after {
+  animation: laserPass 0.75s var(--ease-sovereign) forwards;
+}
+
+@keyframes laserPass {
+  0% { left: -100%; }
+  100% { left: 180%; }
+}
+
+/* =========================================================================
+   TACTILE CARD ELEVATION & GLOW WITH ANIMATED LASER BEAMS
+   ========================================================================= */
+.interactive-card, .card-story {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.38s var(--ease-sovereign),
+              box-shadow 0.38s var(--ease-sovereign),
+              border-color 0.3s ease;
+  will-change: transform, box-shadow;
+}
+
+/* Animated Laser Beam on Card Top Border */
+.interactive-card::before, .card-story::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2.5px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(222, 114, 21, 0.4) 20%,
+    #DE7215 45%,
+    #FFFFFF 50%,
+    #1B6D80 55%,
+    rgba(27, 109, 128, 0.4) 80%,
+    transparent 100%
+  );
+  box-shadow: 0 0 12px #DE7215, 0 0 20px #FFFFFF;
+  transform: translateX(-100%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.interactive-card:hover::before, .card-story:hover::before {
+  opacity: 1;
+  animation: laserBorderSweep 1.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+@keyframes laserBorderSweep {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Card Laser Beam Diagonal Sweep on Hover */
+.interactive-card::after, .card-story::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(222, 114, 21, 0.08) 25%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(222, 114, 21, 0.18) 75%,
+    transparent 100%
+  );
+  transform: skewX(-22deg);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 3;
+}
+
+.interactive-card:hover::after, .card-story:hover::after {
+  opacity: 1;
+  animation: cardLaserSweep 0.85s var(--ease-sovereign) forwards;
+}
+
+@keyframes cardLaserSweep {
+  0% { left: -80%; }
+  100% { left: 160%; }
+}
+
+.interactive-card:hover, .card-story:hover {
+  transform: translateY(-5px) scale(1.008);
+  box-shadow: 0 16px 36px rgba(21, 26, 38, 0.09), 0 0 24px rgba(222, 114, 21, 0.14);
+  border-color: rgba(222, 114, 21, 0.45) !important;
+}
+
+.interactive-card:active, .card-story:active {
+  transform: translateY(1px) scale(0.995);
+  box-shadow: var(--shadow-press);
+}
+
+/* Button Physics */
+.btn-tactile {
+  transition: transform 0.22s var(--ease-sovereign),
+              box-shadow 0.22s var(--ease-sovereign),
+              background-color 0.2s ease,
+              border-color 0.2s ease;
+  will-change: transform;
+}
+
+.btn-tactile:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+
+.btn-tactile:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+/* Badge Hover Shimmer */
+.badge {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.badge:hover {
+  transform: translateY(-1px) scale(1.03);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Compass gentle rotation */
+@keyframes gentleRotate {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(6deg); }
+  75% { transform: rotate(-6deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.motif-gentle-sway {
+  animation: gentleRotate 8s ease-in-out infinite;
+}
+
+/* Lenis Smooth Scroll Global Declarations */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Reduced Motion Override (Mandatory Accessibility) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .interactive-card:hover,
+  .btn-tactile:hover,
+  .laser-beam-card:hover {
+    transform: none !important;
+  }
+}

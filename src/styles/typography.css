@@ -1,0 +1,101 @@
+/* Typography System — Editorial Storybook & Educational Clarity */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-display);
+  color: var(--color-ink-primary);
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+  line-height: var(--line-height-normal);
+  color: var(--color-ink-secondary);
+}
+
+.font-display {
+  font-family: var(--font-family-display);
+}
+
+.font-body {
+  font-family: var(--font-family-body);
+}
+
+.font-mono {
+  font-family: var(--font-family-mono);
+}
+
+.hero-headline {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-display-hero);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  color: var(--color-ink-primary);
+}
+
+.hero-headline em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--color-saffron-500);
+}
+
+.section-title {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-display-h2);
+  line-height: var(--line-height-tight);
+  color: var(--color-ink-primary);
+}
+
+.card-title {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-display-h3);
+  line-height: var(--line-height-snug);
+  color: var(--color-ink-primary);
+}
+
+.editorial-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-family-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-saffron-600);
+  font-weight: var(--font-weight-bold);
+}
+
+.editorial-eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 2px;
+  background-color: currentColor;
+}
+
+.legal-citation {
+  font-family: var(--font-family-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.5rem;
+  background-color: var(--color-canvas-secondary);
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-xs);
+  color: var(--color-ink-secondary);
+  display: inline-block;
+}
+
+.text-lead {
+  font-size: var(--font-size-body-lead);
+  line-height: var(--line-height-snug);
+  color: var(--color-ink-secondary);
+}
+
+.text-muted {
+  color: var(--color-ink-muted);
+}
+
