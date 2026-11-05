@@ -20,6 +20,10 @@ flowchart TD
     Realms --> Landmarks["Interactive Landmarks<br/>(Banyan, First Bell, 1098 Beacon, Bal Sansad)"]
     Realms --> Modal["Realm Deep-Dive Modal<br/>(Lore, Principles, Mission Previews)"]
     Modal --> Adventures["Story Quests & Dilemmas (/adventures)"]
+    Adventures --> Gameplay["Part 03: Branching Scenario Engine (/play/:scenarioId)"]
+    Gameplay --> Choices["Ethical Decision Trees & In-Flow Controls"]
+    Choices --> Consequence["Non-Punitive Consequence Feedback (Empathetic vs Learning)"]
+    Consequence --> ArticleStamp["Constitutional Article Reveal Stamp (Art. 21A, POCSO, RTE)"]
     
     subgraph Safeguards ["DPDP 2023 Child Privacy & Safety Layer"]
         Helpline["Childline 1098 Quickbar"]
@@ -35,13 +39,14 @@ flowchart TD
 ### 1. [Master Parts Roadmap (Parts 01–08)](./ROADMAP_PARTS_01_TO_08.md)
 * **Part 01 (Complete):** Foundation, design tokens, kinetic preloader, application shell, and Lenis smooth scroll.
 * **Part 02 (Complete):** The Living Story World (*The World of Every Child*), Mitra the Sun-Fox Mascot (9 expressive states & child safeguard behavior), vector interactive adventure map, and 6-scene cinematic landing storytelling.
-* **Parts 03–08 (Planned):** Branching scenario gameplay, dignity XP & progression, live classroom quiz rooms, teacher/parent dashboards, multilingual localization, and offline PWA.
+* **Part 03 (Complete):** Branching scenario gameplay engine (`ScenarioRunner`), ethical decision trees (`ChoicePanel`), non-punitive consequence evaluation (`ConsequencePreview`), constitutional article reveal stamp (`ArticleRevealStamp`), evidence inspector (`EvidenceInspector`), and 38-point QA suite.
+* **Parts 04–08 (Planned):** Dignity XP & progression, live classroom quiz rooms, teacher/parent dashboards, multilingual localization, and offline PWA.
 
 ### 2. [Architecture & Codebase Deep Dive](./ARCHITECTURE_AND_CODE.md)
 * Comprehensive technical walkthrough of every directory, component, data model, state hook, and safeguard.
-* Complete breakdown of `src/features/world/`, `src/features/mascot/`, and `src/features/storytelling/`.
-* Explains how the interactive SVG vector terrain is engineered for 60fps performance without heavy 3D dependencies.
-* Documents the 120-point automated QA test suite (`scripts/verify_foundation.mjs`).
+* Complete breakdown of `src/features/world/`, `src/features/mascot/`, `src/features/storytelling/`, and `src/features/gameplay/`.
+* Explains how the interactive SVG vector terrain and branching dialogue AST engine are engineered for 60fps performance without heavy 3D dependencies.
+* Documents the 158-point automated QA test suite (`scripts/verify_foundation.mjs` & `scripts/verify_part03.mjs`).
 
 ### 3. [Visual Design System & Creative Motion Architecture](./VISUAL_DESIGN_SYSTEM.md)
 * Comprehensive agency-grade visual design specification following Creative OS principles (`44_AGENCYLIKE_UI`).
@@ -60,8 +65,12 @@ npm install
 # 2. Run local development server (Vite + React)
 npm run dev
 
-# 3. Run the 120-point automated QA, legal fidelity & child safety check
-node scripts/verify_foundation.mjs
+# 3. Run all 158 automated QA, legal fidelity & child safety checks (Parts 01–03)
+npm test
+
+# Run individual verification suites
+npm run test:foundation   # 120 checks (Parts 01 & 02)
+npm run test:part03       # 38 checks (Part 03 Scenario Engine)
 
 # 4. Build optimized production bundle with dynamic chunk splitting
 npm run build

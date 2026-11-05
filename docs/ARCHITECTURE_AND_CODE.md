@@ -1,26 +1,28 @@
 # RightsQuest India — Architecture & Codebase Deep Dive
 
 > **Governing Framework:** Creative OS (`44_AGENCYLIKE_UI`, `01_DESIGN_OS`, `02_ART_DIRECTION`, `04_TYPOGRAPHY_SYSTEM`, `05_MOTION_SYSTEM`, `11_FRONTEND_ARCHITECTURE`, `12_CREATIVE_QA`)  
-> **Status:** Parts 01 & 02 Implemented & Verified · 120/120 QA Tests Passing  
+> **Status:** Parts 01, 02 & 03 Implemented & Verified · 158/158 QA Tests Passing  
 > **Core Mission:** An agency-grade, story-driven gamified children's rights learning platform designed for children aged 8–16 across India.
 
 ---
 
 ## 1. Architectural Philosophy & Technology Stack
 
-RightsQuest India is built using **clean, standard React.js (JavaScript)** without heavy TypeScript scaffolding, external database dependencies, or premature backend bloat. It prioritizes **aesthetic wonder, child psychology, legal fidelity, and 60fps performance**.
+RightsQuest India is built using **clean, standard React.js (JavaScript)** without heavy TypeScript compilation overhead, external database dependencies, or premature backend bloat. It prioritizes **aesthetic wonder, child psychology, legal fidelity, and 60fps performance**.
 
 ### Technology Stack Decisions:
 
 | Technology | Version | Purpose in Architecture | Technical Rationale |
 | :--- | :---: | :--- | :--- |
-| **React.js** | `^18.3.1` | Component-based UI layer | Standard modern JavaScript (no TypeScript compilation overhead). Fast declarative state rendering. |
-| **Vite** | `^5.4.11` | ESM build tool & dev server | Sub-second HMR, Rollup production bundling, and fine-grained code splitting. |
+| **React.js** | `^18.3.1` | Component-based UI layer | Standard modern JavaScript. Fast declarative state rendering with zero compile friction. |
+| **Vite** | `^5.4.11` | ESM build tool & dev server | Sub-second HMR, Rollup production bundling, and manual chunk code-splitting. |
 | **React Router DOM** | `^6.28.0` | Client-side routing engine | Declarative route tree (`createBrowserRouter`) with dynamic `React.lazy()` chunking and fallback boundaries. |
-| **Lenis** | `^1.3.27` | Inertia smooth scrolling | Creative OS buttery smooth scrolling that eliminates jitter without scroll hijacking. |
-| **Framer Motion** | `^11.11.17` | Motion & spring physics | Smooth layout transitions, modal fade-ins, and companion gestures. |
+| **Lenis** | `^1.3.27` | Inertia smooth scrolling | Creative OS buttery smooth scrolling that eliminates scroll jitter without scroll hijacking. |
+| **GSAP** | `^3.15.1` | Timeline choreography & typewriter | High-precision typewriter text streams and dramatic multi-stage constitutional article reveals. |
+| **Framer Motion** | `^11.11.17` | Motion & spring physics | Staggered choice card reveals, modal in-flow transitions, and sovereign spring physics. |
 | **Lucide React** | `^0.460.0` | Vector interface iconography | Scalable, tree-shakeable SVG icons adhering to WCAG accessibility rules. |
 | **Custom Tokenized CSS** | Pure CSS | Design system & styling | Zero Tailwind or CSS-in-JS runtime overhead; tokenized HSL variables and fluid clamp equations. |
+| **@creative-os/core** | `^3.1.1` | Creative OS foundation tokens | Agency-grade sovereign easing curves, motion principles, and design system benchmarks. |
 
 ---
 
@@ -34,25 +36,52 @@ MajorProject/
 │   ├── ARCHITECTURE_AND_CODE.md              # This deep-dive codebase architecture guide
 │   └── VISUAL_DESIGN_SYSTEM.md               # Visual identity, typography & motion guide
 ├── scripts/
-│   └── verify_foundation.mjs                 # 120-point automated QA, legal fidelity & safety test suite
+│   ├── verify_foundation.mjs                 # 120-point automated QA suite (Parts 01 & 02)
+│   └── verify_part03.mjs                     # 38-point automated QA suite (Part 03 Scenario Engine)
 ├── public/                                   # Static public assets (favicons, manifest)
 ├── index.html                                # Accessible HTML5 document shell with font preconnects
 ├── vite.config.js                            # Manual chunk splitting (vendor, motion, icons, features)
-├── package.json                              # Project manifest and scripts
+├── package.json                              # Project manifest, scripts & dependencies
 ├── .gitignore                                # Strict exclusion of node_modules, dist, and local caches
 └── src/
     ├── main.jsx                              # Application entrypoint with React.StrictMode
     ├── app/
     │   ├── App.jsx                           # Root component wrapping DemoLearnerProvider & Router
-    │   └── router.jsx                        # React Router v6 route definitions with dynamic lazy loading
+    │   └── router.jsx                        # React Router v6 definitions with dynamic lazy loading & /play/:scenarioId
     ├── context/
-    │   └── DemoLearnerContext.jsx            # DPDP-compliant local state manager (profiles, intro, age bands)
+    │   └── DemoLearnerContext.jsx            # DPDP-compliant local state manager (profiles, intro, missionProgress)
     ├── data/
     │   ├── demoProfiles.js                   # 3 age bands & non-identifying learner personas
     │   ├── rightsCatalog.js                  # UNCRC 4 pillars, statutory articles, verified helplines
     │   ├── adventuresCatalog.js              # Curated everyday scenario quests
     │   └── navigation.js                     # Header navigation items & footer sitemap
     ├── features/                             # Modular feature domains
+    │   ├── gameplay/                         # Part 03: Branching Scenario Engine & Decision Trees
+    │   │   ├── index.js                      # Barrel export of gameplay components
+    │   │   ├── data/
+    │   │   │   └── scenarioScripts.js        # Branching dialogue AST scripts (Empty Bench, Whispering Screen)
+    │   │   ├── engine/
+    │   │   │   └── useScenarioEngine.js      # Core scenario state machine, chapter transitions & choices
+    │   │   ├── components/
+    │   │   │   ├── ScenarioRunner.jsx        # Full-screen gameplay orchestrator & in-flow controls
+    │   │   │   ├── ScenarioRunner.module.css # In-flow dialogue layout & responsive controls
+    │   │   │   ├── DialogueBox.jsx           # GSAP typewriter reveal & speaker variants
+    │   │   │   ├── DialogueBox.module.css    # Typography, speaker badges & advance hints
+    │   │   │   ├── ChoicePanel.jsx           # Staggered decision cards with sovereign easing
+    │   │   │   ├── ChoicePanel.module.css    # Selected badges & hover photon borders
+    │   │   │   ├── ConsequencePreview.jsx    # In-flow empathetic vs learning reflection feedback
+    │   │   │   ├── ConsequencePreview.module.css # In-flow consequence card styling
+    │   │   │   ├── ArticleRevealStamp.jsx    # Dramatic GSAP stamp drop & gold shimmer unlock
+    │   │   │   ├── ArticleRevealStamp.module.css # Fullscreen obsidian celebration overlay
+    │   │   │   ├── EvidenceInspector.jsx     # Cursor-tracking magnifying glass exhibit viewer
+    │   │   │   ├── EvidenceInspector.module.css # Parchment document modal styling
+    │   │   │   ├── MascotGuide.jsx           # Floating Mitra companion with 9 expressions & 1098 tag
+    │   │   │   ├── MascotGuide.module.css    # Dynamic facial expressions & speech bubbles
+    │   │   │   ├── ChapterProgress.jsx       # Linear saffron chapter progress indicator
+    │   │   │   └── ChapterProgress.module.css # Saffron progress track styling
+    │   │   └── pages/
+    │   │       ├── ScenarioPage.jsx          # Route page (/play/:scenarioId) with pre-mission briefing
+    │   │       └── ScenarioPage.module.css   # Briefing dossier styling & completion screens
     │   ├── world/                            # Part 02: Living Story World & Adventure Map
     │   │   ├── data/
     │   │   │   └── worlds.js                 # Data models for the 5 constitutional realms & landmarks
@@ -92,7 +121,7 @@ MajorProject/
     │   ├── AgeSelectionPage.jsx              # Age band switcher (8-10, 11-13, 14-16)
     │   ├── LearnerHomePage.jsx               # Personalized learner dashboard & world map banner
     │   ├── ExploreRightsPage.jsx             # Searchable catalog of articles & UNCRC pillars
-    │   ├── AdventuresPage.jsx                # Story quest directory with world map switcher
+    │   ├── AdventuresPage.jsx                # Story quest directory with direct quest launcher
     │   ├── AchievementsPage.jsx              # Rights passport & non-competitive dignity badges
     │   ├── GetHelpPage.jsx                   # Childline 1098, POCSO rules & safety guides
     │   └── AboutPage.jsx                     # Mission, DPDP 2023 compliance & pedagogy
@@ -197,6 +226,7 @@ To uphold **Section 9 of India's Digital Personal Data Protection (DPDP) Act 202
   activePersonaId: 'persona-kabir',      // Fictional non-identifying persona
   savedMissions: [],                     // In-progress story quests
   completedChapters: [],                 // Unlocked story milestones
+  missionProgress: {},                   // In-progress checkpoints & completed scenarios
   introPlaying: false,                   // Kinetic preloader controller
   isDemoMode: true                       // Safe offline prototype flag
 }
@@ -204,12 +234,51 @@ To uphold **Section 9 of India's Digital Personal Data Protection (DPDP) Act 202
 
 ---
 
-## 5. Automated Verification & QA Harness (`scripts/verify_foundation.mjs`)
+## 4. Deep Dive into Part 03 Features: Branching Scenario Engine (`src/features/gameplay/`)
 
-A custom Node.js verification test suite audits **120 automated assertions** covering every layer of the platform:
+Part 03 introduces the core interactive storytelling and branching dilemma engine of RightsQuest India:
+
+### A. Scenario AST & Dialogue Parser (`src/features/gameplay/data/scenarioScripts.js`)
+* **Stateful Dialogue Tree:** Scenarios are modeled as declarative abstract syntax trees (AST) containing chapters, speaker roles (`narrator`, `mitra`, character names), text strings, emotion states, and interactive decision branches.
+* **Production Scripts Authored:**
+  1. **The Mystery of the Empty Bench (`scenario-01-bench`):**
+     * *Legal Grounding:* Article 21A & Right of Children to Free and Compulsory Education (RTE) Act 2009.
+     * *Storyline:* Chintu stops coming to school because his family fell into financial hardship. Classmates discover the tea stall, learn about government scholarships/midday meals, and help him return with dignity.
+  2. **The Whispering Screen & The Unknown Request (`scenario-02-screen`):**
+     * *Legal Grounding:* POCSO Act 2012 & Digital Personal Data Protection (DPDP) Act 2023 (Section 9).
+     * *Storyline:* An online gamer buddy uses pressure tactics to demand private photos and home addresses. Learners navigate the pressure, recognize grooming red-flags, confide in a trusted adult, and learn about confidential reporting via Childline 1098.
+
+### B. In-Flow Dialogue & Decision UI (`DialogueBox.jsx` & `ChoicePanel.jsx`)
+* **GSAP Typewriter Stream:** Dialogues render smoothly using a character stream ticker (`gsap.to(progress)`) with full click-to-skip capabilities and speaker badge differentiation.
+* **In-Flow Action Controls:** In contrast to fixed bottom strips, the primary **Continue ›** and **Skip ››** buttons are located directly down from the active dialogue or question in natural reading order, adjusting responsively across mobile and desktop.
+* **Staggered Decision Trees:** Choices animate into view using Framer Motion with Creative OS sovereign easing (`[0.16, 1, 0.3, 1]`). Cards highlight the chosen option (`✓ Your choice`) and dim unselected options without punitive "Game Over" states.
+
+### C. In-Flow Consequence Evaluation (`ConsequencePreview.jsx`)
+* **Empathetic vs. Learning Reflection:** Instead of punitive red fail screens, mistakes are framed as thoughtful learning moments with terracotta borders, while empathetic choices glow forest green.
+* **Mitra Emotional Sync:** The companion immediately expresses appropriate emotional reactions (e.g. `concerned`, `happy`, `encouraging`) with custom SVG face rigs.
+* **In-Place Feedback Card:** The consequence panel renders directly beneath the choice question, containing detailed story outcomes, +XP rewards, and an embedded **"Understand & Continue →"** button.
+
+### D. Constitutional Article Reveal Stamp (`ArticleRevealStamp.jsx`)
+* **Agency-Tier Celebration:** When a statutory milestone is resolved, a full-screen obsidian overlay drops a dramatic circular wax seal stamp with rotational wobble (`gsap.to(scale: 1.15, rotation: 0, ease: 'back.out(1.4)')`).
+* **Statute Unlock:** Displays the unlocked constitutional article (e.g. Article 21A or POCSO Act 2012), official title, legal summary, and golden radial shimmer before returning to the questline.
+
+### E. Tactile Evidence Inspection Overlay (`EvidenceInspector.jsx`)
+* **Interactive Document Inspection:** Triggered by dialogue nodes marked `type: 'evidence'`.
+* **Cursor-Tracking Magnifying Glass:** An interactive SVG lens tracks pointer movement across parchment exhibits (such as attendance registers, handwritten notes, and digital chat logs), letting children uncover clues firsthand.
+
+---
+
+## 5. Automated Verification & QA Harness (`npm test`)
+
+The platform includes two automated test suites verifying **158 total assertions** across all layers of code:
 
 ```bash
-node scripts/verify_foundation.mjs
+# Run all 158 checks
+npm test
+
+# Run individual verification suites
+npm run test:foundation   # 120 checks (Parts 01 & 02)
+npm run test:part03       # 38 checks (Part 03 Scenario Engine)
 ```
 
 ### Audit Categories:
@@ -219,12 +288,13 @@ node scripts/verify_foundation.mjs
 4. **Mascot Integrity & Safeguards (10 checks):** Confirms all 9 mascot states exist and verifies the `concerned` state provides protective 1098 guidance.
 5. **Creative OS Tokens & Accessibility (17 checks):** Audits `--ease-sovereign`, fluid font scales, HSL tokens, `:focus-visible` outlines, `.skip-to-content`, and $44\times 44\text{px}$ minimum button targets.
 6. **Age Bands & Verified Helplines (8 checks):** Verifies 3 age bands and Childline 1098 marked as primary.
+7. **Part 03 Scenario Engine Architecture (38 checks):** Verifies all 21 gameplay components, AST data fidelity, GSAP typewriter animations, route registration, `DemoLearnerContext` progress actions, and child data safety boundaries.
 
 ---
 
-## 6. Handoff for Part 03 (Branching Scenario Engine)
+## 6. Handoff for Part 04 (XP, Badges & Cooperative Progression)
 
-With Part 02 complete, the application provides a seamless bridge into **Part 03 — Mission Gameplay, Scenarios, Decisions, Learning & Rewards**:
-* **Mission Entry Points:** Preview cards inside `WorldDetailModal.jsx` and `AdventuresPage.jsx` are ready to dispatch into the Part 03 Scenario Engine.
-* **Companion Reactions:** Mitra's state machine is ready to react to learner decisions during ethical dilemmas.
-* **Progress Tracking:** `DemoLearnerContext.jsx` is primed to store completed chapters and unlocked constitutional stamps without requiring backend accounts.
+With Part 03 complete, the mission engine cleanly hands off to **Part 04 — XP, Badges, Streaks & Cooperative Progression**:
+* **XP Pipeline Active:** `totalXp` is calculated on every choice and accumulated into `completeMission()`.
+* **Unlocked Articles Ready for Passport:** Completed scenario articles are saved into `DemoLearnerContext` state, ready to populate the Rights Passport wax seals.
+* **Audio Cue Integrations:** Sound sprite hooks (`Howler.js` / Web Audio API) can attach directly to `advanceDialogue`, `selectChoice`, and `ArticleRevealStamp`.

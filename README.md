@@ -26,7 +26,10 @@ Children in India between 8 and 16 years old, with content and interaction patte
 
 ## Project status
 
-**Part 01 Complete:** The application foundation, design system tokens, responsive application shell, landing experience, age selection prototype, learner home shell, and static catalog routes have been implemented. Full branching quest interactions and scoring will follow in Part 02.
+- **Part 01 Complete:** Application foundation, design system tokens, responsive application shell, Cormorant Garamond kinetic intro, Lenis smooth scroll, age selection prototype, learner home shell, and static catalog routes.
+- **Part 02 Complete:** The Living Story World (*The World of Every Child*), 5 constitutional realms, Mitra the Sun-Fox Mascot (9 expressive states & child safeguard behavior), interactive 60fps SVG vector adventure map, and 6-scene cinematic landing storytelling.
+- **Part 03 Complete:** Stateful branching scenario dialogue engine (`ScenarioRunner`), ethical decision trees (`ChoicePanel`), non-punitive consequence evaluation (`ConsequencePreview`), constitutional article reveal stamps (`ArticleRevealStamp`), tactile evidence inspector (`EvidenceInspector`), and `/play/:scenarioId` mission routing.
+- **Parts 04–08:** Dignity XP & rights passport, live classroom quiz rooms, teacher/parent dashboards, multilingual localization, and offline PWA.
 
 ## Getting started
 
@@ -42,8 +45,12 @@ npm install
 # Start the development server
 npm run dev
 
-# Run QA & Foundation Verification
-node scripts/verify_foundation.mjs
+# Run all 158 automated QA, legal fidelity & child safety checks (Parts 01–03)
+npm test
+
+# Run individual verification suites
+npm run test:foundation   # 120 checks (Parts 01 & 02)
+npm run test:part03       # 38 checks (Part 03 Scenario Engine)
 
 # Build for production
 npm run build
