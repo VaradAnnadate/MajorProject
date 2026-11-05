@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { 
   Compass, 
   Clock, 
@@ -14,7 +15,15 @@ import { ADVENTURES_CATALOG } from '../data/adventuresCatalog';
 import { AGE_BANDS } from '../data/demoProfiles';
 import { useDemoLearner } from '../context/DemoLearnerContext';
 
+const ADVENTURE_SCENARIO_MAP = {
+  'adv-01-schoolbag': 'scenario-01-bench',
+  'adv-02-screen': 'scenario-02-screen',
+};
+
 export default function AdventuresPage() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const highlightId = searchParams.get('highlight');
   const { activeAgeBand } = useDemoLearner();
   const [filterAgeBand, setFilterAgeBand] = useState('all');
 
@@ -203,12 +212,19 @@ export default function AdventuresPage() {
 
                 <button 
                   type="button"
-                  onClick={() => alert(`Part 01 Foundation Shell: Interactive adventure engine will launch "${adv.title}" in Part 02.`)}
+                  onClick={() => {
+                    const scenarioId = ADVENTURE_SCENARIO_MAP[adv.id];
+                    if (scenarioId) {
+                      navigate(`/play/${scenarioId}`);
+                    } else {
+                      alert(`Interactive scenario for "${adv.title}" is coming in Part 04.`);
+                    }
+                  }}
                   className="btn btn-primary btn-tactile"
                   style={{ fontSize: '0.84rem', padding: '0.4rem 1rem' }}
                 >
                   <Play size={14} fill="currentColor" />
-                  <span>Launch Quest</span>
+                  <span>{ADVENTURE_SCENARIO_MAP[adv.id] ? 'Play Quest' : 'Preview Quest'}</span>
                 </button>
               </div>
             </article>
@@ -229,11 +245,11 @@ export default function AdventuresPage() {
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: 'var(--space-2)' }}>
             <Sparkles size={18} style={{ color: 'var(--color-saffron-500)' }} />
-            <h3 style={{ fontSize: '1.05rem', margin: 0 }}>Part 01 Architecture Boundary</h3>
+            <h3 style={{ fontSize: '1.05rem', margin: 0 }}>Part 03 Scenario Engine Active</h3>
           </div>
           <p style={{ fontSize: '0.86rem', color: 'var(--color-ink-secondary)', lineHeight: 1.55 }}>
-            You are exploring the foundational application shell and quest directory. 
-            Full interactive choice-branching, stateful consequence trees, and scoring will be activated in <strong>Part 02</strong>.
+            Part 03 branching scenario gameplay is now live! Experience interactive ethical dilemmas, 
+            evidence inspection, and constitutional article reveals for <strong>The Mystery of the Empty Bench</strong> and <strong>The Whispering Screen</strong>.
           </p>
         </div>
       </div>

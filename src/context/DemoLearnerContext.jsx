@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { 
-  AGE_BANDS, 
-  DEMO_PERSONAS, 
-  DEMO_STORAGE_KEY, 
-  getInitialDemoState 
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import {
+  AGE_BANDS,
+  DEMO_PERSONAS,
+  DEMO_STORAGE_KEY,
+  getInitialDemoState
 } from '../data/demoProfiles';
 
 const DemoLearnerContext = createContext(null);
@@ -20,6 +20,24 @@ export function DemoLearnerProvider({ children }) {
     }
     return getInitialDemoState();
   });
+
+  // ── Mission progress (Part 03 — additive) ─────────────────────────────────
+  const [missionProgress, setMissionProgress] = useState(() => {
+    try {
+      const stored = localStorage.getItem('rq_mission_progress');
+      return stored ? JSON.parse(stored) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('rq_mission_progress', JSON.stringify(missionProgress));
+    } catch {
+      // Storage write error handled gracefully
+    }
+  }, [missionProgress]);
 
   useEffect(() => {
     try {
@@ -61,6 +79,48 @@ export function DemoLearnerProvider({ children }) {
     setState(getInitialDemoState());
   };
 
+  // ── Mission progress actions (Part 03 — additive) ─────────────────────────
+
+  /**
+   * Persist mid-mission checkpoint for a scenario.
+   * @param {string} scenarioId
+   * @param {{ currentChapter: string, choicesMade: Array, completed: boolean }} progress
+   */
+  const saveMissionProgress = useCallback((scenarioId, progress) => {
+    setMissionProgress((prev) => ({
+      ...prev,
+      [scenarioId]: {
+        ...prev[scenarioId],
+        ...progress,
+        lastUpdated: new Date().toISOString(),
+      },
+    }));
+  }, []);
+
+  /**
+   * Mark a mission as fully completed and record the article unlocked.
+   * @param {string} scenarioId
+   * @param {string|null} articleUnlocked
+   */
+  const completeMission = useCallback((scenarioId, articleUnlocked) => {
+    setMissionProgress((prev) => ({
+      ...prev,
+      [scenarioId]: {
+        ...prev[scenarioId],
+        completed: true,
+        articleUnlocked: articleUnlocked || null,
+        completedAt: new Date().toISOString(),
+      },
+    }));
+    // Also add to savedMissions list if not already there
+    setState((prev) => ({
+      ...prev,
+      savedMissions: prev.savedMissions.includes(scenarioId)
+        ? prev.savedMissions
+        : [...prev.savedMissions, scenarioId],
+    }));
+  }, []);
+
   // Cinematic Intro Orchestration
   const [introPlaying, setIntroPlaying] = useState(true);
   const [introCurtainLifting, setIntroCurtainLifting] = useState(false);
@@ -88,7 +148,11 @@ export function DemoLearnerProvider({ children }) {
     introCurtainLifting,
     setIntroCurtainLifting,
     triggerIntro,
-    finishIntro
+    finishIntro,
+    // Part 03 — mission progress
+    missionProgress,
+    saveMissionProgress,
+    completeMission,
   };
 
   return (

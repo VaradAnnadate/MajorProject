@@ -1,0 +1,152 @@
+/**
+ * ScenarioPage — Route page for /play/:scenarioId
+ * Pre-mission briefing → ScenarioRunner → Return to Adventures
+ */
+import React, { useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { getScenarioById } from '../data/scenarioScripts';
+import ScenarioRunner from '../components/ScenarioRunner';
+import { useDemoLearner } from '../../../context/DemoLearnerContext';
+import styles from './ScenarioPage.module.css';
+
+// Pillar → icon map
+const PILLAR_ICONS = {
+  Development: '📚',
+  Protection: '🛡️',
+  Participation: '🗣️',
+  Survival: '🌱',
+};
+
+export default function ScenarioPage() {
+  const { scenarioId } = useParams();
+  const navigate = useNavigate();
+  const { saveMissionProgress, completeMission } = useDemoLearner();
+  const [phase, setPhase] = useState('briefing'); // 'briefing' | 'playing' | 'done'
+
+  const scenario = getScenarioById(scenarioId);
+
+  const handleComplete = (totalXp, choicesMade) => {
+    if (completeMission) {
+      completeMission(scenarioId, scenario?.articleReveal);
+    }
+    setPhase('done');
+  };
+
+  // Unknown scenario
+  if (!scenario) {
+    return (
+      <div className={styles.notFound} role="main">
+        <div className={styles.notFoundInner}>
+          <span className={styles.notFoundIcon} aria-hidden="true">🗺️</span>
+          <h1 className={styles.notFoundTitle}>Scenario Not Found</h1>
+          <p className={styles.notFoundText}>
+            The scenario "<code>{scenarioId}</code>" doesn't exist yet.
+          </p>
+          <Link to="/adventures" className={styles.returnLink}>
+            ← Return to Adventures
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Playing phase — full screen, no nav
+  if (phase === 'playing') {
+    return (
+      <ScenarioRunner
+        scenarioId={scenarioId}
+        onComplete={handleComplete}
+      />
+    );
+  }
+
+  // Briefing screen
+  return (
+    <div className={styles.root} role="main">
+      <div className={styles.inner}>
+        {/* Back link */}
+        <Link to="/adventures" className={styles.backLink} aria-label="Return to Adventures">
+          ← Adventures
+        </Link>
+
+        {/* Header */}
+        <div className={styles.header}>
+          <div className={styles.pillRow}>
+            <span className={styles.difficultyPill}>{scenario.difficulty}</span>
+            <span className={styles.articlePill}>{scenario.articleRef}</span>
+            <span className={styles.timePill} aria-label={`Estimated ${scenario.estimatedMinutes} minutes`}>
+              ⏱ ~{scenario.estimatedMinutes} min
+            </span>
+          </div>
+          <h1 className={styles.title}>{scenario.title}</h1>
+          <p className={styles.tagline}>{scenario.tagline}</p>
+        </div>
+
+        {/* Synopsis card */}
+        <div className={styles.synopsisCard}>
+          <div className={styles.synopsisLabel}>Mission Briefing</div>
+          <p className={styles.synopsisText}>{scenario.synopsis}</p>
+        </div>
+
+        {/* Meta grid */}
+        <div className={styles.metaGrid}>
+          <div className={styles.metaItem}>
+            <span className={styles.metaLabel}>Chapters</span>
+            <span className={styles.metaValue}>{scenario.totalChapters}</span>
+          </div>
+          <div className={styles.metaItem}>
+            <span className={styles.metaLabel}>Difficulty</span>
+            <span className={styles.metaValue}>{scenario.difficulty}</span>
+          </div>
+          <div className={styles.metaItem}>
+            <span className={styles.metaLabel}>Badge</span>
+            <span className={styles.metaValue}>{scenario.badgeName}</span>
+          </div>
+          <div className={styles.metaItem}>
+            <span className={styles.metaLabel}>World</span>
+            <span className={styles.metaValue} style={{ textTransform: 'capitalize' }}>
+              {scenario.worldId?.replace(/-/g, ' ')}
+            </span>
+          </div>
+        </div>
+
+        {/* Mitra tip */}
+        <div className={styles.mitraTip} role="note">
+          <span className={styles.mitraTipIcon} aria-hidden="true">🦊</span>
+          <div>
+            <div className={styles.mitraTipLabel}>Mitra says</div>
+            <p className={styles.mitraTipText}>
+              There are no "wrong" answers — only choices that teach us something. Take your time,
+              think carefully, and remember: curiosity and kindness are your greatest tools.
+            </p>
+          </div>
+        </div>
+
+        {/* Legal article reference */}
+        <div className={styles.articleCard} aria-label="Legal article reference">
+          <div className={styles.articleCardIcon} aria-hidden="true">⚖️</div>
+          <div>
+            <div className={styles.articleCardLabel}>Constitutional Reference</div>
+            <div className={styles.articleCardText}>{scenario.articleRef}</div>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className={styles.ctaRow}>
+          <button
+            className={styles.startBtn}
+            onClick={() => setPhase('playing')}
+            aria-label={`Begin mission: ${scenario.title}`}
+          >
+            Begin Mission
+            <span className={styles.startBtnArrow} aria-hidden="true">→</span>
+          </button>
+          <Link to="/adventures" className={styles.cancelLink}>
+            Not now
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+

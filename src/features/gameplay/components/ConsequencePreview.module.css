@@ -1,0 +1,119 @@
+.root {
+  width: 100%;
+  margin-top: var(--space-4);
+  border-radius: 14px;
+  padding: var(--space-5) var(--space-6);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  position: relative;
+  z-index: 10;
+}
+
+.positive {
+  background: linear-gradient(160deg, #0d2a1b 0%, #0a2318 100%);
+  border: 1.5px solid rgba(41, 118, 82, 0.6);
+}
+
+.learning {
+  background: linear-gradient(160deg, #2a160d 0%, #231209 100%);
+  border: 1.5px solid rgba(208, 79, 54, 0.6);
+}
+
+.inner {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.mitraFace {
+  flex-shrink: 0;
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.headerLabel {
+  font-family: var(--font-family-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.positive .headerLabel {
+  color: var(--color-forest-500);
+}
+
+.learning .headerLabel {
+  color: var(--color-terracotta-500);
+}
+
+.xpBadge {
+  font-family: var(--font-family-mono);
+  font-size: 0.65rem;
+  color: var(--color-saffron-500);
+  letter-spacing: 0.06em;
+}
+
+/* ── Content ── */
+.heading {
+  font-family: var(--font-family-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+.text {
+  font-family: var(--font-family-serif);
+  font-size: clamp(0.95rem, 2vw, 1.08rem);
+  line-height: 1.7;
+  color: var(--color-ink-inverse);
+  margin: 0;
+}
+
+/* ── CTA ── */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  background: var(--color-saffron-500);
+  color: white;
+  font-family: var(--font-family-sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  min-height: 44px;
+  align-self: flex-start;
+  transition: background 0.2s var(--ease-sovereign), transform 0.15s var(--ease-sovereign);
+}
+
+.cta:hover {
+  background: #c96210;
+  transform: translateY(-1px);
+}
+
+.cta:active {
+  transform: translateY(0);
+}
+
+.ctaArrow {
+  font-size: 1rem;
+}
+

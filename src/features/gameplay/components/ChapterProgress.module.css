@@ -1,0 +1,88 @@
+.root {
+  position: relative;
+  width: 100%;
+  background: var(--color-canvas-dark-surface);
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  z-index: 10;
+}
+
+.barTrack {
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: var(--space-2);
+}
+
+.barFill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--color-saffron-500) 0%,
+    #f5a623 100%
+  );
+  border-radius: 999px;
+  box-shadow: 0 0 8px rgba(222, 114, 21, 0.5);
+  transition: width 0.65s var(--ease-sovereign);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.chapterBadge {
+  font-family: var(--font-family-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-saffron-500);
+  background: rgba(222, 114, 21, 0.12);
+  border: 1px solid rgba(222, 114, 21, 0.25);
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.chapterTitle {
+  font-family: var(--font-family-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-ink-inverse);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+.missionTitle {
+  font-family: var(--font-family-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+@media (max-width: 480px) {
+  .missionTitle {
+    display: none;
+  }
+  .chapterTitle {
+    max-width: 160px;
+  }
+}
+

@@ -1,0 +1,140 @@
+.root {
+  position: fixed;
+  bottom: var(--space-5);
+  right: var(--space-5);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
+  pointer-events: none;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  pointer-events: auto;
+  animation: mitraFloat 3.5s ease-in-out infinite;
+  transition: transform 0.4s var(--ease-sovereign);
+  filter: drop-shadow(0 4px 16px rgba(222, 114, 21, 0.3));
+}
+
+.concern {
+  animation: mitraConcern 2.5s ease-in-out infinite;
+  filter: drop-shadow(0 4px 16px rgba(208, 79, 54, 0.3));
+}
+
+.svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ── State-based glow tints ── */
+.state_celebrating .avatar {
+  filter: drop-shadow(0 4px 20px rgba(41, 118, 82, 0.5));
+  animation: mitraCelebrate 0.6s ease-in-out 3;
+}
+
+.state_discovering .avatar {
+  filter: drop-shadow(0 4px 24px rgba(222, 114, 21, 0.7));
+}
+
+/* ── Speech bubble ── */
+.bubble {
+  position: relative;
+  background: var(--color-canvas-dark-surface);
+  border: 1px solid rgba(222, 114, 21, 0.3);
+  border-radius: 12px 12px 4px 12px;
+  padding: var(--space-3) var(--space-4);
+  max-width: 220px;
+  pointer-events: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  animation: bubbleFadeIn 0.3s var(--ease-sovereign) forwards;
+}
+
+.bubbleText {
+  font-family: var(--font-family-sans);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--color-ink-inverse);
+  margin: 0;
+}
+
+.helplineTag {
+  display: inline-block;
+  margin-top: var(--space-2);
+  font-family: var(--font-family-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--color-terracotta-500);
+  background: rgba(208, 79, 54, 0.1);
+  border: 1px solid rgba(208, 79, 54, 0.25);
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+
+.bubbleTail {
+  position: absolute;
+  bottom: -8px;
+  right: 18px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid var(--color-canvas-dark-surface);
+}
+
+/* ── State label ── */
+.stateLabel {
+  font-family: var(--font-family-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+  opacity: 0.6;
+  pointer-events: none;
+  text-align: right;
+}
+
+/* ── Animations ── */
+@keyframes mitraFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes mitraConcern {
+  0%, 100% { transform: translateY(0px) rotate(-1deg); }
+  50% { transform: translateY(-4px) rotate(1deg); }
+}
+
+@keyframes mitraCelebrate {
+  0% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.1) rotate(-8deg); }
+  75% { transform: scale(1.1) rotate(8deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes bubbleFadeIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Mobile: smaller */
+@media (max-width: 480px) {
+  .root {
+    bottom: var(--space-3);
+    right: var(--space-3);
+  }
+  .avatar {
+    width: 60px;
+    height: 60px;
+  }
+  .bubble {
+    max-width: 170px;
+  }
+  .bubbleText {
+    font-size: 0.72rem;
+  }
+}
+

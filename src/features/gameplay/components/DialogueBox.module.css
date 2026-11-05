@@ -1,0 +1,150 @@
+.root {
+  position: relative;
+  border-radius: 12px;
+  padding: var(--space-5) var(--space-6);
+  cursor: default;
+  user-select: none;
+  transition: background 0.3s var(--ease-sovereign);
+}
+
+/* ── Variants ── */
+.variant_narrator {
+  background: rgba(27, 36, 56, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.variant_mitra {
+  background: rgba(222, 114, 21, 0.08);
+  border: 1px solid rgba(222, 114, 21, 0.2);
+}
+
+.variant_character {
+  background: rgba(251, 248, 243, 0.05);
+  border: 1px solid rgba(251, 248, 243, 0.1);
+}
+
+/* ── Speaker row ── */
+.speakerRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.speakerDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot_narrator {
+  background: var(--color-ink-muted);
+}
+
+.dot_mitra {
+  background: var(--color-saffron-500);
+  box-shadow: 0 0 6px rgba(222, 114, 21, 0.6);
+}
+
+.dot_character {
+  background: var(--color-peacock-500);
+  box-shadow: 0 0 6px rgba(27, 109, 128, 0.5);
+}
+
+.mitraIcon {
+  flex-shrink: 0;
+}
+
+.speakerLabel {
+  font-family: var(--font-family-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+.variant_mitra .speakerLabel {
+  color: var(--color-saffron-500);
+}
+
+.variant_narrator .speakerLabel {
+  color: var(--color-ink-muted);
+  font-style: italic;
+}
+
+/* ── Type pills ── */
+.typePill {
+  font-family: var(--font-family-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(122, 134, 158, 0.15);
+  color: var(--color-ink-muted);
+}
+
+.revealPill {
+  background: rgba(41, 118, 82, 0.2);
+  color: var(--color-forest-500);
+}
+
+.evidencePill {
+  background: rgba(208, 79, 54, 0.2);
+  color: var(--color-terracotta-500);
+}
+
+/* ── Dialogue text ── */
+.text {
+  font-family: var(--font-family-serif);
+  font-size: clamp(1rem, 2.2vw, 1.2rem);
+  line-height: 1.75;
+  color: var(--color-ink-inverse);
+  margin: 0;
+  min-height: 2.5em;
+  white-space: pre-wrap;
+}
+
+.variant_narrator .text {
+  font-style: italic;
+  color: rgba(251, 248, 243, 0.75);
+  font-size: clamp(0.9rem, 2vw, 1.05rem);
+}
+
+.variant_mitra .text {
+  color: #FBF8F3;
+}
+
+/* ── Advance hint dots ── */
+.advanceHint {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: var(--space-3);
+  justify-content: flex-end;
+}
+
+.hintDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  animation: hintPulse 1.4s ease-in-out infinite;
+}
+
+.hintDot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.hintDot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes hintPulse {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 0.7; transform: scale(1.1); }
+}
+

@@ -1,0 +1,152 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: rgba(10, 14, 24, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5) var(--space-4);
+  cursor: none; /* hide default cursor — glass replaces it */
+}
+
+/* ── Magnifying glass ── */
+.glassWrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  will-change: transform;
+  transition: transform 0.08s linear;
+  z-index: 10;
+}
+
+.magGlass {
+  display: block;
+  filter: drop-shadow(0 2px 8px rgba(222, 114, 21, 0.4));
+}
+
+/* ── Document card ── */
+.card {
+  background: #F5EDD8; /* parchment */
+  border-radius: 12px;
+  padding: var(--space-6);
+  max-width: 520px;
+  width: 100%;
+  position: relative;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  /* Parchment texture via repeated gradient */
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 28px,
+    rgba(0, 0, 0, 0.04) 28px,
+    rgba(0, 0, 0, 0.04) 29px
+  );
+}
+
+.docHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.docIcon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.docType {
+  font-family: var(--font-family-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+.docSource {
+  font-family: var(--font-family-sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-ink-primary);
+}
+
+.stampMark {
+  margin-left: auto;
+  font-family: var(--font-family-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--color-terracotta-500);
+  border: 2px solid var(--color-terracotta-500);
+  padding: 2px 10px;
+  border-radius: 4px;
+  opacity: 0.7;
+  transform: rotate(-3deg);
+}
+
+.divider {
+  height: 1px;
+  background: rgba(21, 26, 38, 0.15);
+  margin-bottom: var(--space-4);
+}
+
+.docText {
+  font-family: var(--font-family-serif);
+  font-size: clamp(0.95rem, 2vw, 1.05rem);
+  line-height: 1.8;
+  color: var(--color-ink-primary);
+  margin: 0 0 var(--space-4);
+  white-space: pre-wrap;
+}
+
+/* ── Mitra hint ── */
+.mitraHint {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  background: rgba(222, 114, 21, 0.1);
+  border-left: 3px solid var(--color-saffron-500);
+  padding: var(--space-2) var(--space-3);
+  border-radius: 0 6px 6px 0;
+  margin-bottom: var(--space-4);
+}
+
+.mitraHintIcon {
+  font-size: 1rem;
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+
+.mitraHint span:last-child {
+  font-family: var(--font-family-sans);
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--color-ink-primary);
+  line-height: 1.4;
+}
+
+/* ── Close button ── */
+.closeBtn {
+  display: block;
+  width: 100%;
+  padding: var(--space-3);
+  background: var(--color-ink-primary);
+  color: var(--color-ink-inverse);
+  font-family: var(--font-family-sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  min-height: 44px;
+  transition: background 0.2s var(--ease-sovereign);
+}
+
+.closeBtn:hover {
+  background: var(--color-canvas-dark-surface);
+}
+
