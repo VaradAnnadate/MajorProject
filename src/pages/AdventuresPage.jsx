@@ -32,17 +32,33 @@ export default function AdventuresPage() {
     >
       <div className="container">
         {/* Header */}
-        <div style={{ maxWidth: '780px', marginBottom: 'var(--space-8)' }}>
-          <span className="editorial-eyebrow">
-            Interactive Quest Directory
-          </span>
-          <h1 className="hero-headline" style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginTop: 'var(--space-2)', marginBottom: 'var(--space-3)' }}>
-            Story Quests & Ethical Adventures
-          </h1>
-          <p className="text-lead">
-            Every quest is a scenario based on real-world dilemmas faced by children in India. 
-            Step into the story, choose your actions, and uncover constitutional safeguards.
-          </p>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-4)', marginBottom: 'var(--space-8)' }}>
+          <div style={{ maxWidth: '680px' }}>
+            <span className="editorial-eyebrow">
+              Interactive Quest Directory
+            </span>
+            <h1 className="hero-headline" style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginTop: 'var(--space-2)', marginBottom: 'var(--space-3)' }}>
+              Story Quests & Ethical Adventures
+            </h1>
+            <p className="text-lead" style={{ margin: 0 }}>
+              Every quest is a scenario based on real-world dilemmas faced by children in India. 
+              Step into the story, choose your actions, and uncover constitutional safeguards.
+            </p>
+          </div>
+
+          <a 
+            href="/world"
+            className="btn btn-primary"
+            style={{
+              padding: '12px 20px',
+              fontSize: '0.9rem',
+              gap: '8px'
+            }}
+          >
+            <Compass size={18} />
+            <span>Open Living Adventure Map</span>
+            <ArrowRight size={14} />
+          </a>
         </div>
 
         {/* Age Band Filter Bar */}

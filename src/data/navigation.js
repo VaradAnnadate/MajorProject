@@ -8,6 +8,7 @@
 
 export const NAV_LINKS = [
   { path: '/', label: 'Home', isAction: false },
+  { path: '/world', label: 'World Map', isAction: false, badge: '5 Realms' },
   { path: '/rights', label: 'Explore Rights', isAction: false },
   { path: '/adventures', label: 'Adventures', isAction: false },
   { path: '/achievements', label: 'Achievements', isAction: false },
@@ -17,6 +18,7 @@ export const NAV_LINKS = [
 
 export const FOOTER_LINKS = {
   learning: [
+    { path: '/world', label: 'The Living World Map (5 Realms)' },
     { path: '/rights', label: 'The 4 Pillars of Child Rights' },
     { path: '/adventures', label: 'Quest Directory' },
     { path: '/enter', label: 'Age-Tailored Modes' }

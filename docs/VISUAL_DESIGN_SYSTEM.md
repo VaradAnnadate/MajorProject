@@ -174,3 +174,43 @@ A skewed diagonal laser light sheen passes across buttons and cards on hover at 
 * Smooth inertia scroll curve: `(t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))` with a `1.15s` duration.
 * Touch multiplier set to `1.5` for natural trackpad and touch response.
 * Full fallback for `prefers-reduced-motion: reduce`.
+
+---
+
+## 7. Mitra Companion Visual System (`src/styles/mascot.css`)
+
+Mitra the Sun-Fox is engineered as an expressive, scalable vector character adhering to high-craft editorial character principles:
+
+### A. Anatomy & Color Mapping:
+* **Terracotta Fur Body:** Multi-stop linear gradient (`#F28B36` $\to$ `#DE7215` $\to$ `#B34C1B`) providing natural physical depth without raster textures.
+* **Luminous Chest Bib:** Parchment gradient (`#FFFFFF` $\to$ `#FBF4E4`) creating soft contrast with the warm coat.
+* **Sun Jewel / Star Marking:** Sacred eight-point star on the forehead symbolizing the moral compass.
+* **Lantern Tail Tip:** Arched fox tail holding a glowing lantern jewel (`#FFFBE6` with radial gradient `#FFF2A3` $\to$ `#FFB834` $\to$ transparent), pulsating with ambient illumination (`lanternGlowPulse`).
+
+### B. Dynamic Facial Geometry:
+* **Idle & Curio Eyes:** Open dark ink ellipses with dual white catchlights reflecting ambient light.
+* **Happy & Winking Eyes:** Crisp upward strokes (`#151A26` stroke-width 3) forming warm arcs.
+* **Concerned / Safeguard Eyes:** Soft caring downward slope with muted brow strokes, providing a serious, protective demeanor for child safety contexts.
+* **Celebrating Eyes:** Eight-point golden star sparkle eyes radiating victory.
+
+### C. Procedural Animation Loops:
+* `mitraHeadBob`: Subtle $4.8\text{s}$ breathing rotation ($-1.5^{\circ} \to +1.5^{\circ}$) to keep the companion alive.
+* `earTwitchLeft` & `earTwitchRight`: Natural periodic ear twitches staggered at $6\text{s}$ and $8.8\text{s}$ intervals.
+* `tailSway`: Organic $3.6\text{s}$ tail pendulum swing.
+
+---
+
+## 8. The Living World Vector Terrain Craft (`src/styles/world.css`)
+
+### A. 60fps Native Vector Terrain:
+* Eliminates heavy 3D engine downloads (Three.js/Canvas) by leveraging mathematically defined SVG curves:
+  * Terracotta Ridges: `linearGradient id="terracottaHills"`
+  * Terraced Knowledge Orchards: `radialGradient id="forestCanopy"`
+  * The Winding River of Voices: Multi-stop gradient `stroke="url(#riverGradient)"` with an interior dashed wave shimmer path.
+
+### B. Animated Connecting Pathways (`.world-trail-path`):
+* Dashed paths (`stroke-dasharray: 8 8`) animate continuously using CSS `@keyframes trailDashFlow` (`stroke-dashoffset: -160` over $24\text{s}$).
+* Active quest paths glow saffron with a drop-shadow bloom (`filter: drop-shadow(0 0 6px rgba(222, 114, 21, 0.5))`).
+
+### C. Atmospheric Floating Spores (`.atmosphere-spore`):
+* Lightweight blurred particles drifting across the terrain with deterministic coordinates, emulating pollen, sunlight, and fireflies. Paused gracefully when `prefers-reduced-motion` is detected.

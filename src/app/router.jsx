@@ -8,6 +8,7 @@ const AgeSelectionPage = lazy(() => import('../pages/AgeSelectionPage'));
 const LearnerHomePage = lazy(() => import('../pages/LearnerHomePage'));
 const ExploreRightsPage = lazy(() => import('../pages/ExploreRightsPage'));
 const AdventuresPage = lazy(() => import('../pages/AdventuresPage'));
+const WorldMapPage = lazy(() => import('../features/world/pages/WorldMapPage'));
 const AchievementsPage = lazy(() => import('../pages/AchievementsPage'));
 const GetHelpPage = lazy(() => import('../pages/GetHelpPage'));
 const AboutPage = lazy(() => import('../pages/AboutPage'));
@@ -98,6 +99,14 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<PageFallback />}>
             <AdventuresPage />
+          </Suspense>
+        )
+      },
+      {
+        path: 'world',
+        element: (
+          <Suspense fallback={<PageFallback />}>
+            <WorldMapPage />
           </Suspense>
         )
       },

@@ -19,6 +19,7 @@ import {
 import { useDemoLearner } from '../context/DemoLearnerContext';
 import { ADVENTURES_CATALOG } from '../data/adventuresCatalog';
 import { UNCRC_FOUR_PILLARS } from '../data/rightsCatalog';
+import MascotReaction from '../features/mascot/components/MascotReaction';
 
 export default function LearnerHomePage() {
   const { activeAgeBand, activePersona } = useDemoLearner();
@@ -146,6 +147,53 @@ export default function LearnerHomePage() {
         >
           {/* Main Left Column: Current Adventure & Journey Map */}
           <div>
+            {/* Part 02: World Adventure Map Portal Banner */}
+            <div
+              className="interactive-card laser-beam-card"
+              style={{
+                backgroundColor: 'var(--color-canvas-elevated)',
+                border: '1.5px solid var(--color-saffron-border)',
+                borderRadius: 'var(--radius-2xl)',
+                padding: 'var(--space-5)',
+                marginBottom: 'var(--space-6)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: 'var(--space-4)',
+                boxShadow: '0 12px 30px rgba(18, 25, 39, 0.07)'
+              }}
+            >
+              <div style={{ flex: '1 1 300px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                  <Compass size={18} color="var(--color-saffron-500)" />
+                  <span style={{ fontSize: '0.72rem', fontFamily: 'var(--font-family-mono)', color: 'var(--color-saffron-600)', fontWeight: 700, textTransform: 'uppercase' }}>
+                    Living Adventure Map · Part 02
+                  </span>
+                </div>
+                <h2 style={{ fontFamily: 'var(--font-family-display)', fontSize: '1.35rem', margin: '0 0 4px 0', color: 'var(--color-ink-primary)' }}>
+                  The World of Every Child
+                </h2>
+                <p style={{ fontSize: '0.85rem', color: 'var(--color-ink-secondary)', margin: 0, lineHeight: 1.45 }}>
+                  Traverse 5 illustrated constitutional realms, discover ancient story landmarks, and explore scenarios.
+                </p>
+              </div>
+
+              <Link
+                to="/world"
+                className="btn btn-primary"
+                style={{
+                  padding: '12px 20px',
+                  fontSize: '0.9rem',
+                  gap: '6px'
+                }}
+              >
+                <Compass size={16} />
+                <span>Open Adventure Map</span>
+                <ArrowRight size={14} />
+              </Link>
+            </div>
+
             {/* Active Adventure Card — Agency-Grade Shared Element */}
             <div 
               className="card-story interactive-card"
@@ -443,6 +491,9 @@ export default function LearnerHomePage() {
             }
           }
         `}</style>
+
+        {/* Mitra Floating Companion Widget */}
+        <MascotReaction />
       </div>
     </div>
   );

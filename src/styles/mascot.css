@@ -1,0 +1,220 @@
+/* Mitra Mascot Animations & Editorial Speech Balloon */
+
+.mitra-mascot-container {
+  user-select: none;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mitra-avatar-wrap {
+  position: relative;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mitra-avatar-wrap:hover {
+  transform: translateY(-4px) scale(1.03);
+}
+
+.mitra-svg {
+  filter: drop-shadow(0 10px 18px rgba(18, 25, 39, 0.12));
+}
+
+/* Head gentle bobbing */
+.mitra-head-group {
+  transform-origin: 100px 85px;
+  animation: mitraHeadBob 4.8s ease-in-out infinite;
+}
+
+@keyframes mitraHeadBob {
+  0%, 100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  30% {
+    transform: rotate(1.5deg) translateY(-1px);
+  }
+  70% {
+    transform: rotate(-1.5deg) translateY(0.5px);
+  }
+}
+
+/* Ears twitch */
+.mitra-ear-left {
+  transform-origin: 75px 65px;
+  animation: earTwitchLeft 6s ease-in-out infinite;
+}
+
+.mitra-ear-right {
+  transform-origin: 125px 65px;
+  animation: earTwitchRight 6s ease-in-out infinite;
+}
+
+@keyframes earTwitchLeft {
+  0%, 90%, 100% { transform: rotate(0deg); }
+  93% { transform: rotate(-5deg); }
+  96% { transform: rotate(3deg); }
+}
+
+@keyframes earTwitchRight {
+  0%, 88%, 100% { transform: rotate(0deg); }
+  92% { transform: rotate(6deg); }
+  95% { transform: rotate(-3deg); }
+}
+
+/* Tail Lantern Wag & Pulse */
+.mitra-tail-group {
+  transform-origin: 70px 145px;
+  animation: tailSway 3.6s ease-in-out infinite;
+}
+
+@keyframes tailSway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-6deg); }
+}
+
+.mitra-lantern-pulse {
+  animation: lanternGlowPulse 2.8s ease-in-out infinite;
+}
+
+@keyframes lanternGlowPulse {
+  0%, 100% {
+    opacity: 0.75;
+    transform-origin: 24px 74px;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform-origin: 24px 74px;
+    transform: scale(1.18);
+  }
+}
+
+/* Speech Bubble */
+.mitra-speech-bubble {
+  position: relative;
+  max-width: 280px;
+  background-color: var(--color-canvas-elevated);
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-xl);
+  padding: var(--space-3) var(--space-4);
+  box-shadow: 0 12px 28px rgba(18, 25, 39, 0.09);
+  margin-bottom: var(--space-2);
+  animation: bubbleSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 10;
+}
+
+@keyframes bubbleSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.mitra-bubble-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+
+.mitra-name-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-family-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-saffron-600);
+  font-weight: 700;
+}
+
+.mitra-sparkle-icon {
+  color: var(--color-saffron-500);
+  animation: spinSlow 8s linear infinite;
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.mitra-mood-pill {
+  font-family: var(--font-family-mono);
+  font-size: 0.65rem;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-canvas-secondary);
+  color: var(--color-ink-muted);
+}
+
+.mitra-bubble-text {
+  font-family: var(--font-family-body);
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--color-ink-primary);
+  margin: 0;
+  font-style: italic;
+}
+
+.mitra-bubble-arrow {
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 14px;
+  height: 14px;
+  background-color: var(--color-canvas-elevated);
+  border-right: 1px solid var(--color-border-medium);
+  border-bottom: 1px solid var(--color-border-medium);
+}
+
+/* Quick Emotion Switcher Dots */
+.mitra-quick-states {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 4px 8px;
+  background-color: rgba(244, 239, 230, 0.8);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.mitra-state-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background-color: var(--color-ink-muted);
+  opacity: 0.45;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.mitra-state-dot:hover {
+  opacity: 0.9;
+  transform: scale(1.3);
+}
+
+.mitra-state-dot.active {
+  opacity: 1;
+  background-color: var(--color-saffron-500);
+  transform: scale(1.35);
+  box-shadow: 0 0 6px rgba(222, 114, 21, 0.6);
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .mitra-head-group,
+  .mitra-ear-left,
+  .mitra-ear-right,
+  .mitra-tail-group,
+  .mitra-lantern-pulse,
+  .mitra-sparkle-icon {
+    animation: none !important;
+  }
+}
+

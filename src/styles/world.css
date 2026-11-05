@@ -1,0 +1,345 @@
+/* Creative OS 44_AGENCYLIKE_UI — Living Story World & Adventure Map */
+
+.world-map-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 85vh;
+  background: radial-gradient(120% 90% at 50% 10%, #FDF9F3 0%, #F5ECE0 60%, #EADBCA 100%);
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  box-shadow: 
+    0 24px 60px rgba(21, 26, 38, 0.08),
+    inset 0 0 100px rgba(222, 114, 21, 0.05);
+}
+
+/* Atmospheric Parchment / Topographic Texture */
+.world-map-texture {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(222, 114, 21, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 80% 40%, rgba(27, 109, 128, 0.06) 0%, transparent 45%),
+    radial-gradient(circle at 50% 80%, rgba(41, 118, 82, 0.06) 0%, transparent 40%);
+  opacity: 0.9;
+}
+
+/* Vector Terrain SVG Layer */
+.world-terrain-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Winding Connecting Pathways */
+.world-trail-path {
+  fill: none;
+  stroke: #D6C2A5;
+  stroke-width: 3.5;
+  stroke-dasharray: 8 8;
+  stroke-linecap: round;
+  animation: trailDashFlow 24s linear infinite;
+}
+
+.world-trail-path.active {
+  stroke: var(--color-saffron-500);
+  stroke-width: 4;
+  filter: drop-shadow(0 0 6px rgba(222, 114, 21, 0.5));
+}
+
+@keyframes trailDashFlow {
+  to {
+    stroke-dashoffset: -160;
+  }
+}
+
+/* Compass Rose on Map */
+.world-compass-rose {
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  width: 80px;
+  height: 80px;
+  pointer-events: none;
+  opacity: 0.85;
+  filter: drop-shadow(0 4px 10px rgba(18, 25, 39, 0.08));
+}
+
+.compass-dial-spin {
+  transform-origin: center;
+  animation: compassSlowOscillate 12s ease-in-out infinite alternate;
+}
+
+@keyframes compassSlowOscillate {
+  0% { transform: rotate(-8deg); }
+  100% { transform: rotate(12deg); }
+}
+
+/* Map Header HUD Bar */
+.world-hud-bar {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  right: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  z-index: 20;
+  pointer-events: none;
+}
+
+.world-hud-title {
+  background-color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 10px 18px;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: 0 8px 24px rgba(18, 25, 39, 0.06);
+  pointer-events: auto;
+}
+
+/* Interactive Destination Node on Map */
+.world-destination-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 15;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.world-destination-node:hover {
+  transform: translate(-50%, -55%) scale(1.08);
+  z-index: 30;
+}
+
+.destination-crest {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-canvas-elevated);
+  box-shadow: 
+    0 12px 28px rgba(18, 25, 39, 0.14),
+    0 0 0 4px rgba(255, 255, 255, 0.9);
+  transition: all 0.3s ease;
+}
+
+.world-destination-node:hover .destination-crest {
+  box-shadow: 
+    0 16px 36px rgba(18, 25, 39, 0.22),
+    0 0 0 6px rgba(255, 255, 255, 1);
+}
+
+/* Aura Rings pulsating around unlocked realms */
+.destination-pulse-ring {
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  opacity: 0.6;
+  animation: destinationPulse 3.2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes destinationPulse {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.8;
+  }
+  70% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+/* Destination Tooltip / Preview Card */
+.destination-tooltip {
+  position: absolute;
+  bottom: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  width: 250px;
+  background-color: var(--color-canvas-elevated);
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-lg);
+  padding: 12px 14px;
+  box-shadow: 0 16px 36px rgba(18, 25, 39, 0.16);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
+}
+
+.world-destination-node:hover .destination-tooltip,
+.world-destination-node:focus-visible .destination-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+/* Landmark Discovery Marker */
+.world-landmark-beacon {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 12;
+  transition: transform 0.3s ease;
+}
+
+.world-landmark-beacon:hover {
+  transform: translate(-50%, -50%) scale(1.25);
+  z-index: 28;
+}
+
+.landmark-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #FFE79A 20%, #DE7215 90%);
+  box-shadow: 0 0 12px rgba(222, 114, 21, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.landmark-beacon-ripple {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(222, 114, 21, 0.6);
+  animation: beaconRipple 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+@keyframes beaconRipple {
+  0% { transform: scale(0.7); opacity: 1; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* Floating Fireflies & Atmospheric Spores */
+.atmosphere-spore {
+  position: absolute;
+  border-radius: 50%;
+  background-color: #FFECA1;
+  filter: blur(0.6px);
+  pointer-events: none;
+  animation: floatSpore 8s ease-in-out infinite;
+}
+
+@keyframes floatSpore {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-24px) translateX(12px);
+    opacity: 0.85;
+  }
+}
+
+/* World Detail Modal Overlay */
+.world-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(18, 25, 39, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 120;
+  padding: var(--space-4);
+  animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.world-modal-container {
+  width: 100%;
+  max-width: 860px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background-color: var(--color-canvas-primary);
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-2xl);
+  box-shadow: 0 32px 80px rgba(18, 25, 39, 0.28);
+  position: relative;
+  animation: modalScaleUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalScaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Landmark Discovery Alert Parchment */
+.landmark-lore-sheet {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 520px;
+  background: #FFFDF9;
+  border: 1.5px solid var(--color-saffron-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4) var(--space-5);
+  box-shadow: 0 20px 50px rgba(18, 25, 39, 0.2);
+  z-index: 100;
+  animation: slideUpSheet 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUpSheet {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Mobile Responsive Controls */
+@media (max-width: 768px) {
+  .world-map-wrapper {
+    min-height: 650px;
+    border-radius: var(--radius-lg);
+  }
+
+  .world-hud-bar {
+    left: 12px;
+    right: 12px;
+    top: 12px;
+  }
+
+  .destination-crest {
+    width: 52px;
+    height: 52px;
+  }
+
+  .destination-tooltip {
+    display: none; /* Tooltip on hover disabled on touch; replaced by direct tap to modal */
+  }
+}
+

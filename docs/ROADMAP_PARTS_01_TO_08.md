@@ -11,7 +11,7 @@
 | Part | Milestone Scope | Core Deliverables | Technical & Creative Stack | Status |
 | :---: | :--- | :--- | :--- | :---: |
 | **01** | **Product foundation, architecture, design system & application shell** | Responsive React shell, design tokens, Cormorant Garamond cinematic intro, Lenis smooth scroll, laser-beam cards, demo state manager, 8 lazy routes, 66-point QA suite. | React 18, Vite 5, Lenis, Framer Motion, Semantic CSS Tokens. | **COMPLETE** |
-| **02** | **Story world, mascot, interactive mission map & age-based journeys** | Illustrated storybook universe (*The Bharat Quest Realm*), child-friendly guide mascot (*Nyaya the Owl / Mitra the Compass*), SVG interactive territory map, age journey forks. | SVG Pathing, Canvas / CSS coordinates, Mascot Sprite States. | **PLANNED** |
+| **02** | **Story world, mascot, interactive mission map & age-based journeys** | Five living realms (*The World of Every Child*), Mitra the Sun-Fox Mascot (9 expressive states & safeguard behavior), SVG interactive adventure map with connecting trails, 6-scene cinematic landing storytelling, 120-point QA harness. | SVG Terrain, Dynamic Vector Rigging, Parallax Scenes, Lenis Scroll. | **COMPLETE** |
 | **03** | **Mission gameplay, scenarios, decisions, learning & rewards** | Stateful scenario dialogue engine, branching ethical decision trees, consequences preview, statutory article reveals, tactile evidence inspection. | State machine, Dialogue AST parser, Consequence evaluation engine. | **PLANNED** |
 | **04** | **XP, badges, streaks & cooperative progression** | Non-competitive dignity XP, rights passport stamp unlocks, empathy milestones, anti-addiction streak shields, shared community goals. | LocalStorage/IndexedDB sync, Web Audio API sound sprites. | **PLANNED** |
 | **05** | **Live classroom mode, quiz rooms & WebSocket integration** | Teacher-moderated multiplayer quiz rooms, collaborative consensus dilemmas, real-time live room state, zero PII child pseudonyms. | WebSockets / Socket.io client, ephemeral room channels. | **PLANNED** |
@@ -35,16 +35,31 @@
 
 ---
 
-### Part 02 — Story World, Mascot, Interactive Mission Map & Age-Based Journeys
-* **Objective:** Transport the child into an imaginative digital world where India’s geography and rights become an adventurous terrain to explore.
-* **Components to Build:**
-  * **The Guide Mascot:** Create *Nyaya* (the wise, empathetic owl) or *Mitra* (the friendly animated compass creature) who guides children through tricky situations without lecturing.
-  * **The Interactive Realm Map:** An illustrated, zoomable SVG map representing four provinces corresponding to the 4 UNCRC Pillars:
-    1. *The Grove of Learning & Play* (Right to Development / Article 21A)
-    2. *The Shielded Citadel* (Right to Protection / Article 24 & POCSO)
-    3. *The Commons of Fair Play* (Right to Equality / Article 15)
-    4. *The Council of Voices* (Right to Participation / UNCRC Article 12)
-  * **Age-Adapted Journey Branching:** Dynamic UI skinning and narrative framing adapting to the learner's chosen band (gentle storybook for 8–10; graphic novel/comic for 11–13; legal mystery dossier for 14–16).
+### Part 02 — Story World, Mascot, Interactive Mission Map & Age-Based Journeys (COMPLETED)
+* **Objective:** Transport the child into an imaginative digital story world (*The World of Every Child*) where India’s constitutional rights and UNCRC pillars become a living, explorable adventure terrain.
+* **Key Achievements:**
+  * **Five Living Illustrated Realms:**
+    1. *The Village of Belonging* (Article 14 & 15(3) — Non-discrimination, inclusion, community circle)
+    2. *The Gardens of Growth* (Article 21A & RTE Act 2009 — Free compulsory education, midday nutrition)
+    3. *The Forest of Safety* (POCSO Act 2012 & Helpline 1098 — Safe touch, boundaries, trusted adults)
+    4. *The River of Voices* (UNCRC Article 12 & Article 19(1)(a) — Freedom of expression, Bal Sansad)
+    5. *The Haven of Dignity* (Article 24 & Child Labour Act 2016 — Freedom from exploitation, fair treatment)
+  * **Mitra the Guardian Companion:**
+    * Original vector illustrated Sun-Fox / Lantern companion with dynamic eyes, ear twitches, and glowing tail.
+    * 9 emotional states: `idle`, `happy`, `curious`, `thinking`, `celebrating`, `encouraging`, `explaining`, `discovering`, and `concerned`.
+    * Strict child safeguarding: Never trivializes violence/abuse; compassionate and serious in helpline and distress contexts.
+  * **Interactive Illustrated Adventure Map:**
+    * Living vector topography with winding connecting trails, compass rose, floating atmosphere spores, interactive destination crests, and discoverable golden landmark beacons.
+    * Detailed realm modal view with environmental lore, constitutional wisdom, discoverable landmarks, and story quest previews.
+    * Mobile responsive duality: interactive SVG canvas + accessible Expedition List trail.
+  * **6-Scene Cinematic Persuasion Spine:**
+    * Scene 01: The Invitation ("Every child has a world of rights. Come discover yours.")
+    * Scene 02: The World Awakens (Five connected realms)
+    * Scene 03: Discover the Meaning (Constitutional & UNCRC metaphors)
+    * Scene 04: The Companion (Interactive Mitra Showcase)
+    * Scene 05: The Adventure Begins (Live embedded map)
+    * Scene 06: Final Invitation (High-conviction closing CTA)
+  * **Verification:** 120/120 automated test assertions passing cleanly.
 
 ---
 
