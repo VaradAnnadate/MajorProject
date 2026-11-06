@@ -1,0 +1,288 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  width: 100%;
+}
+
+.topHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.titleCol {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.eyebrow {
+  font-family: var(--font-family-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  color: var(--color-saffron-700, #B34C1B);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.title {
+  font-family: var(--font-family-display);
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  font-weight: 700;
+  color: var(--color-ink-primary, #151A26);
+  margin: 0;
+  letter-spacing: -0.015em;
+}
+
+.desc {
+  font-family: var(--font-family-sans);
+  font-size: 0.95rem;
+  color: var(--color-ink-secondary, #4A5568);
+  margin: 0;
+  max-width: 600px;
+}
+
+.unlockedCounter {
+  background: #FFFFFF;
+  border: 1.5px solid var(--color-border-medium, #E6DCCD);
+  border-radius: 16px;
+  padding: var(--space-3) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  box-shadow: 0 4px 16px rgba(18, 25, 39, 0.04);
+}
+
+.counterVal {
+  font-family: var(--font-family-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-saffron-700, #B34C1B);
+}
+
+.counterLabel {
+  font-family: var(--font-family-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-ink-muted, #718096);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Category Filter Tabs */
+.tabBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.tabBar::-webkit-scrollbar {
+  display: none;
+}
+
+.tabBtn {
+  padding: 8px 16px;
+  background: #FFFFFF;
+  border: 1px solid var(--color-border-medium, #E6DCCD);
+  border-radius: 999px;
+  color: var(--color-ink-secondary, #4A5568);
+  font-family: var(--font-family-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.tabBtn:hover {
+  background: var(--color-canvas-secondary, #EFECE6);
+  color: var(--color-ink-primary, #151A26);
+}
+
+.tabActive {
+  background: var(--color-saffron-500, #DE7215) !important;
+  border-color: var(--color-saffron-600, #C96210) !important;
+  color: #FFFFFF !important;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(222, 114, 21, 0.25);
+}
+
+/* Badges Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-5);
+}
+
+.badgeCard {
+  background: #FFFFFF;
+  border: 1.5px solid var(--color-border-subtle, #EDE7DD);
+  border-radius: 18px;
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-4);
+  cursor: pointer;
+  transition: transform 0.25s var(--ease-sovereign), border-color 0.25s, box-shadow 0.25s;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(18, 25, 39, 0.04);
+}
+
+.badgeCard:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-saffron-400, #F6AD55);
+  box-shadow: 0 12px 30px rgba(18, 25, 39, 0.08);
+}
+
+.cardUnlocked {
+  border-color: var(--color-saffron-border, #FAD6A5);
+}
+
+.cardLocked {
+  opacity: 0.78;
+  background: #FAF8F5;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.catTag {
+  font-family: var(--font-family-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid;
+  letter-spacing: 0.04em;
+}
+
+.unlockedText {
+  font-family: var(--font-family-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--color-forest-600, #225E40);
+  background: var(--color-forest-100, #EBF5F0);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.lockedText {
+  font-family: var(--font-family-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-ink-muted, #718096);
+  background: var(--color-canvas-secondary, #EFECE6);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+/* Medallion */
+.medallionWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2) 0;
+}
+
+.medallion {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+  box-shadow: 0 6px 18px rgba(18, 25, 39, 0.06);
+}
+
+.badgeCard:hover .medallion {
+  transform: scale(1.08) rotate(4deg);
+}
+
+.medallionGlow {
+  box-shadow: 0 6px 20px rgba(222, 114, 21, 0.18);
+}
+
+.symbol {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.badgeName {
+  font-family: var(--font-family-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-ink-primary, #151A26);
+  margin: 0;
+}
+
+.articleRef {
+  font-family: var(--font-family-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--color-peacock-600, #165666);
+}
+
+.badgeDescription {
+  font-family: var(--font-family-sans);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--color-ink-secondary, #4A5568);
+  margin: 0;
+}
+
+.cardFooter {
+  border-top: 1px solid var(--color-border-subtle, #EDE7DD);
+  padding-top: var(--space-3);
+}
+
+.unlockedDate {
+  font-family: var(--font-family-mono);
+  font-size: 0.7rem;
+  color: var(--color-forest-600, #225E40);
+  font-weight: 600;
+}
+
+.progressWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.progressBar {
+  width: 100%;
+  height: 6px;
+  background: var(--color-canvas-secondary, #EFECE6);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.progressNum {
+  font-family: var(--font-family-mono);
+  font-size: 0.68rem;
+  color: var(--color-ink-muted, #718096);
+}

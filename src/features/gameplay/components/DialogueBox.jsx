@@ -48,40 +48,66 @@ function MitraIcon() {
   );
 }
 
-export default function DialogueBox({ dialogue, onComplete }) {
+export default function DialogueBox({ dialogue, onComplete, ageBandId }) {
   const textRef = useRef(null);
   const containerRef = useRef(null);
   const tweenRef = useRef(null);
 
   const variant = dialogue ? getSpeakerVariant(dialogue.speaker) : 'narrator';
+  const resolvedText = (dialogue?.textByAge && ageBandId && dialogue.textByAge[ageBandId]) || dialogue?.text || '';
 
   const runTypewriter = useCallback(() => {
-    if (!textRef.current || !dialogue?.text) return;
+    if (!textRef.current || !resolvedText) return;
     const el = textRef.current;
-    const fullText = dialogue.text;
     el.textContent = '';
 
     // Kill previous tween
     if (tweenRef.current) tweenRef.current.kill();
 
+    // Creative OS Accessibility: respect prefers-reduced-motion
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      el.textContent = resolvedText;
+      if (onComplete) onComplete();
+      return;
+    }
+
     const obj = { progress: 0 };
     tweenRef.current = gsap.to(obj, {
       progress: 1,
-      duration: Math.min(fullText.length * 0.028, 4.5),
+      duration: Math.min(resolvedText.length * 0.028, 4.5),
       ease: 'none',
       onUpdate() {
-        const chars = Math.floor(obj.progress * fullText.length);
-        el.textContent = fullText.slice(0, chars);
+        const chars = Math.floor(obj.progress * resolvedText.length);
+        el.textContent = resolvedText.slice(0, chars);
       },
       onComplete() {
-        el.textContent = fullText;
+        el.textContent = resolvedText;
         if (onComplete) onComplete();
       },
     });
-  }, [dialogue, onComplete]);
+  }, [resolvedText, onComplete]);
 
   useEffect(() => {
     if (!dialogue) return;
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      if (containerRef.current) {
+        containerRef.current.style.opacity = '1';
+        containerRef.current.style.transform = 'none';
+      }
+      runTypewriter();
+      return;
+    }
+
     // Fade in container
     gsap.fromTo(
       containerRef.current,
@@ -91,17 +117,17 @@ export default function DialogueBox({ dialogue, onComplete }) {
     return () => {
       if (tweenRef.current) tweenRef.current.kill();
     };
-  }, [dialogue?.id]); // Re-run only when dialogue id changes
+  }, [dialogue?.id, resolvedText, runTypewriter]);
 
   // Skip animation on click
   const handleSkip = useCallback(() => {
-    if (!tweenRef.current || !dialogue?.text || !textRef.current) return;
-    if (tweenRef.current.progress() < 1) {
+    if (!resolvedText || !textRef.current) return;
+    if (tweenRef.current && tweenRef.current.progress() < 1) {
       tweenRef.current.kill();
-      textRef.current.textContent = dialogue.text;
-      if (onComplete) onComplete();
     }
-  }, [dialogue, onComplete]);
+    textRef.current.textContent = resolvedText;
+    if (onComplete) onComplete();
+  }, [resolvedText, onComplete]);
 
   if (!dialogue) return null;
 

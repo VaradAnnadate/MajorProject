@@ -27,7 +27,19 @@ export default function ScenarioPage() {
 
   const handleComplete = (totalXp, choicesMade) => {
     if (completeMission) {
-      completeMission(scenarioId, scenario?.articleReveal);
+      const empatheticCount = Array.isArray(choicesMade)
+        ? choicesMade.filter((c) => c.isCorrect).length
+        : 0;
+      const isPerfect = Array.isArray(choicesMade) && choicesMade.length > 0 && empatheticCount === choicesMade.length;
+      completeMission(
+        scenarioId,
+        scenario?.articleReveal?.article || scenario?.articleRef,
+        {
+          missionTitle: scenario?.title || scenarioId,
+          empatheticChoicesCount: empatheticCount,
+          isPerfectEmpathy: isPerfect,
+        }
+      );
     }
     setPhase('done');
   };
@@ -62,7 +74,11 @@ export default function ScenarioPage() {
 
   // Briefing screen
   return (
-    <div className={styles.root} role="main">
+    <div 
+      className={styles.root} 
+      role="main"
+      data-world={scenario.worldId || 'haven-of-dignity'}
+    >
       <div className={styles.inner}>
         {/* Back link */}
         <Link to="/adventures" className={styles.backLink} aria-label="Return to Adventures">

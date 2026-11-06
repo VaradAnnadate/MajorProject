@@ -5,6 +5,12 @@ import {
   DEMO_STORAGE_KEY,
   getInitialDemoState
 } from '../data/demoProfiles';
+import {
+  loadProgressionState,
+  saveProgressionState,
+  clearProgressionState
+} from '../features/progression/services/progressionPersistence';
+import { processRewardEvent, getInitialProgressionState } from '../features/progression/engine/rewardEngine';
 
 const DemoLearnerContext = createContext(null);
 
@@ -30,6 +36,13 @@ export function DemoLearnerProvider({ children }) {
       return {};
     }
   });
+
+  // ── Living Progression State (Part 04 — XP, Badges, Streaks, Levels) ──────
+  const [progression, setProgression] = useState(() => loadProgressionState());
+
+  useEffect(() => {
+    saveProgressionState(progression);
+  }, [progression]);
 
   useEffect(() => {
     try {
@@ -97,12 +110,81 @@ export function DemoLearnerProvider({ children }) {
     }));
   }, []);
 
+  // ── Living Progression Actions (Part 04 — Deterministic Reward Engine) ───
+
+  const awardReward = useCallback((event) => {
+    let result = null;
+    setProgression((prev) => {
+      result = processRewardEvent(prev, {
+        ...event,
+        learnerId: activePersona?.id || 'demo-learner',
+      });
+      return result.newState;
+    });
+    return result;
+  }, [activePersona?.id]);
+
+  const awardMissionCompletion = useCallback((scenarioId, missionTitle, empatheticChoicesCount = 0, articleUnlocked = null) => {
+    return awardReward({
+      eventType: 'MISSION_COMPLETED',
+      sourceId: scenarioId,
+      metadata: {
+        missionTitle,
+        empatheticChoicesCount,
+        articleUnlocked,
+      },
+    });
+  }, [awardReward]);
+
+  const inspectEvidenceReward = useCallback((evidenceId, evidenceTitle = '') => {
+    return awardReward({
+      eventType: 'EVIDENCE_INSPECTED',
+      sourceId: evidenceId,
+      metadata: {
+        evidenceTitle,
+      },
+    });
+  }, [awardReward]);
+
+  const contributeToCoop = useCallback((projectId, projectName = '') => {
+    return awardReward({
+      eventType: 'COOP_CONTRIBUTED',
+      sourceId: projectId,
+      metadata: {
+        projectName,
+      },
+    });
+  }, [awardReward]);
+
+  const recordHelplineAccess = useCallback(() => {
+    return awardReward({
+      eventType: 'HELPLINE_ACCESSED',
+      sourceId: 'childline-1098-modal',
+      metadata: {
+        source: 'helpline_trigger',
+      },
+    });
+  }, [awardReward]);
+
+  const dismissCelebration = useCallback(() => {
+    setProgression((prev) => ({
+      ...prev,
+      lastAwardEvent: null,
+    }));
+  }, []);
+
+  const resetProgression = useCallback(() => {
+    clearProgressionState();
+    setProgression(getInitialProgressionState());
+  }, []);
+
   /**
    * Mark a mission as fully completed and record the article unlocked.
    * @param {string} scenarioId
    * @param {string|null} articleUnlocked
+   * @param {object} [missionMeta]
    */
-  const completeMission = useCallback((scenarioId, articleUnlocked) => {
+  const completeMission = useCallback((scenarioId, articleUnlocked, missionMeta = {}) => {
     setMissionProgress((prev) => ({
       ...prev,
       [scenarioId]: {
@@ -119,7 +201,23 @@ export function DemoLearnerProvider({ children }) {
         ? prev.savedMissions
         : [...prev.savedMissions, scenarioId],
     }));
-  }, []);
+
+    // Trigger deterministic reward engine
+    setProgression((prevProg) => {
+      const res = processRewardEvent(prevProg, {
+        eventType: 'MISSION_COMPLETED',
+        sourceId: scenarioId,
+        learnerId: activePersona?.id || 'demo-learner',
+        metadata: {
+          missionTitle: missionMeta.missionTitle || scenarioId,
+          empatheticChoicesCount: missionMeta.empatheticChoicesCount || 0,
+          articleUnlocked: articleUnlocked || null,
+          isPerfectEmpathy: missionMeta.isPerfectEmpathy || false,
+        },
+      });
+      return res.newState;
+    });
+  }, [activePersona?.id]);
 
   // Cinematic Intro Orchestration
   const [introPlaying, setIntroPlaying] = useState(true);
@@ -153,6 +251,15 @@ export function DemoLearnerProvider({ children }) {
     missionProgress,
     saveMissionProgress,
     completeMission,
+    // Part 04 — living progression system
+    progression,
+    awardReward,
+    awardMissionCompletion,
+    inspectEvidenceReward,
+    contributeToCoop,
+    recordHelplineAccess,
+    dismissCelebration,
+    resetProgression,
   };
 
   return (

@@ -52,6 +52,7 @@ export default function EvidenceInspector({ dialogue, visible, onClose }) {
           role="dialog"
           aria-modal="true"
           aria-label="Evidence inspection"
+          data-lenis-prevent="true"
         >
           {/* Floating magnifying glass */}
           <div ref={glassRef} className={styles.glassWrap} aria-hidden="true">
@@ -61,6 +62,7 @@ export default function EvidenceInspector({ dialogue, visible, onClose }) {
           {/* Document card */}
           <motion.div
             className={styles.card}
+            data-lenis-prevent="true"
             initial={{ scale: 0.9, y: 32, opacity: 0 }}
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.9, y: 32, opacity: 0 }}

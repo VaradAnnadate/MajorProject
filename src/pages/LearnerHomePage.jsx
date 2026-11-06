@@ -22,7 +22,7 @@ import { UNCRC_FOUR_PILLARS } from '../data/rightsCatalog';
 import MascotReaction from '../features/mascot/components/MascotReaction';
 
 export default function LearnerHomePage() {
-  const { activeAgeBand, activePersona } = useDemoLearner();
+  const { activeAgeBand, activePersona, progression } = useDemoLearner();
 
   const currentAdventure = activePersona.activeAdventure;
   const filteredAdventures = ADVENTURES_CATALOG.filter(a => a.ageBandId === activeAgeBand.id);
@@ -104,7 +104,7 @@ export default function LearnerHomePage() {
           >
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontFamily: 'var(--font-family-mono)', fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-saffron-600)' }}>
-                {activePersona.stats.adventuresCompleted}
+                {progression?.completedMissions?.length ?? activePersona.stats.adventuresCompleted}
               </div>
               <div style={{ fontSize: '0.72rem', color: 'var(--color-ink-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                 Quests Done
@@ -115,7 +115,7 @@ export default function LearnerHomePage() {
 
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontFamily: 'var(--font-family-mono)', fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-peacock-500)' }}>
-                {activePersona.stats.rightsDiscovered}
+                {progression?.unlockedArticles?.length || activePersona.stats.rightsDiscovered}
               </div>
               <div style={{ fontSize: '0.72rem', color: 'var(--color-ink-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                 Articles Unlocked
@@ -126,10 +126,10 @@ export default function LearnerHomePage() {
 
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontFamily: 'var(--font-family-mono)', fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-forest-500)' }}>
-                {activePersona.stats.dignityShields}
+                {progression?.totalXp || 80}
               </div>
               <div style={{ fontSize: '0.72rem', color: 'var(--color-ink-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                Dignity Shields
+                Total Points
               </div>
             </div>
           </div>
@@ -407,7 +407,10 @@ export default function LearnerHomePage() {
               </p>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
-                {activePersona.recentBadges.map((badge) => (
+                {(progression?.allBadges?.filter(b => b.unlocked).length > 0
+                  ? progression.allBadges.filter(b => b.unlocked).slice(0, 3)
+                  : activePersona.recentBadges
+                ).map((badge) => (
                   <div 
                     key={badge.id}
                     style={{
@@ -425,8 +428,9 @@ export default function LearnerHomePage() {
                         width: '32px',
                         height: '32px',
                         borderRadius: '50%',
-                        backgroundColor: 'var(--color-saffron-100)',
-                        color: 'var(--color-saffron-600)',
+                        backgroundColor: badge.bg || 'var(--color-saffron-100)',
+                        color: badge.color || 'var(--color-saffron-600)',
+                        border: `1px solid ${badge.border || 'var(--color-saffron-border)'}`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -434,12 +438,12 @@ export default function LearnerHomePage() {
                         fontWeight: 700
                       }}
                     >
-                      ★
+                      {badge.symbol || '★'}
                     </div>
                     <div>
-                      <div style={{ fontWeight: 700, fontSize: '0.88rem' }}>{badge.title}</div>
+                      <div style={{ fontWeight: 700, fontSize: '0.88rem' }}>{badge.name || badge.title}</div>
                       <div style={{ fontSize: '0.72rem', color: 'var(--color-ink-muted)', fontFamily: 'var(--font-family-mono)' }}>
-                        Unlocked on {badge.date}
+                        {badge.constitutionalArticle || `Unlocked on ${badge.date || 'Demo'}`}
                       </div>
                     </div>
                   </div>

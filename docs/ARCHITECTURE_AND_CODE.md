@@ -239,46 +239,109 @@ To uphold **Section 9 of India's Digital Personal Data Protection (DPDP) Act 202
 Part 03 introduces the core interactive storytelling and branching dilemma engine of RightsQuest India:
 
 ### A. Scenario AST & Dialogue Parser (`src/features/gameplay/data/scenarioScripts.js`)
-* **Stateful Dialogue Tree:** Scenarios are modeled as declarative abstract syntax trees (AST) containing chapters, speaker roles (`narrator`, `mitra`, character names), text strings, emotion states, and interactive decision branches.
-* **Production Scripts Authored:**
-  1. **The Mystery of the Empty Bench (`scenario-01-bench`):**
-     * *Legal Grounding:* Article 21A & Right of Children to Free and Compulsory Education (RTE) Act 2009.
-     * *Storyline:* Chintu stops coming to school because his family fell into financial hardship. Classmates discover the tea stall, learn about government scholarships/midday meals, and help him return with dignity.
-  2. **The Whispering Screen & The Unknown Request (`scenario-02-screen`):**
-     * *Legal Grounding:* POCSO Act 2012 & Digital Personal Data Protection (DPDP) Act 2023 (Section 9).
-     * *Storyline:* An online gamer buddy uses pressure tactics to demand private photos and home addresses. Learners navigate the pressure, recognize grooming red-flags, confide in a trusted adult, and learn about confidential reporting via Childline 1098.
+* **Stateful Dialogue Tree:** Scenarios are modeled as declarative abstract syntax trees (AST) containing chapters, speaker roles (`narrator`, `mitra`, character names), text strings, emotion states, interactive decision branches, and age-band adaptation (`textByAge`).
+* **Production Scripts Authored & Runnable:**
+  1. **Mission A: The Mystery of the Empty Bench (`scenario-01-bench`):**
+     * *World Realm:* Gardens of Growth (Article 21A & RTE Act 2009).
+     * *Storyline:* Chintu stops attending Standard 4 class due to economic distress. Classmates investigate, uncover the tea stall at the bus stand, learn about government midday meal schemes and free books, and help him return with dignity.
+  2. **Mission B: The Forest of Unkind Words (`scenario-02-words`):**
+     * *World Realm:* Village of Belonging (Articles 14 & 15(3) — Right to Equality & Dignity).
+     * *Storyline:* A new student, Priya, faces teasing and exclusion in the schoolyard. Learners make active bystander interventions, defuse cyber/verbal harassment, and champion inclusive classroom environments.
+  3. **Mission C: The Silent Workshop (`scenario-03-workshop`):**
+     * *World Realm:* Haven of Dignity (Article 24 & Child Labour Prohibition and Regulation Amendment Act 2016).
+     * *Storyline:* Exploring an unmonitored glassware and brickyard workshop where underage youth perform hazardous labour. Learners collect evidence, discover safe rehabilitation pathways, and learn how to alert local child welfare committees without endangering the child.
+  4. **Digital Safety: The Whispering Screen & The Unknown Request (`scenario-02-screen`):**
+     * *World Realm:* Haven of Dignity (POCSO Act 2012 & DPDP Act 2023 §9).
+     * *Storyline:* Navigating online gaming chats, recognizing predatory manipulation, preserving privacy without guilt, and confiding in trusted guardians and Childline 1098.
 
 ### B. In-Flow Dialogue & Decision UI (`DialogueBox.jsx` & `ChoicePanel.jsx`)
-* **GSAP Typewriter Stream:** Dialogues render smoothly using a character stream ticker (`gsap.to(progress)`) with full click-to-skip capabilities and speaker badge differentiation.
-* **In-Flow Action Controls:** In contrast to fixed bottom strips, the primary **Continue ›** and **Skip ››** buttons are located directly down from the active dialogue or question in natural reading order, adjusting responsively across mobile and desktop.
+* **GSAP Typewriter Stream & Reduced-Motion:** Dialogues render smoothly using a character stream ticker with full click-to-skip capabilities and speaker badge differentiation. Respects `prefers-reduced-motion` by displaying instantly without animation.
+* **Age-Band Adaptation:** Automatically renders age-tailored vocabulary (`textByAge`) dynamically according to the active explorer profile (`8-10`, `11-13`, `14-16`).
+* **In-Flow Action Controls:** The primary **Continue ›** and **Skip ››** buttons are located directly down from the active dialogue or question in natural reading order, adjusting responsively across mobile and desktop.
 * **Staggered Decision Trees:** Choices animate into view using Framer Motion with Creative OS sovereign easing (`[0.16, 1, 0.3, 1]`). Cards highlight the chosen option (`✓ Your choice`) and dim unselected options without punitive "Game Over" states.
 
 ### C. In-Flow Consequence Evaluation (`ConsequencePreview.jsx`)
 * **Empathetic vs. Learning Reflection:** Instead of punitive red fail screens, mistakes are framed as thoughtful learning moments with terracotta borders, while empathetic choices glow forest green.
 * **Mitra Emotional Sync:** The companion immediately expresses appropriate emotional reactions (e.g. `concerned`, `happy`, `encouraging`) with custom SVG face rigs.
-* **In-Place Feedback Card:** The consequence panel renders directly beneath the choice question, containing detailed story outcomes, +XP rewards, and an embedded **"Understand & Continue →"** button.
+* **In-Place Feedback Card:** The consequence panel renders directly beneath the choice question, containing detailed story outcomes, dignity mastery scores, and an embedded **"Understand & Continue →"** button.
 
 ### D. Constitutional Article Reveal Stamp (`ArticleRevealStamp.jsx`)
 * **Agency-Tier Celebration:** When a statutory milestone is resolved, a full-screen obsidian overlay drops a dramatic circular wax seal stamp with rotational wobble (`gsap.to(scale: 1.15, rotation: 0, ease: 'back.out(1.4)')`).
-* **Statute Unlock:** Displays the unlocked constitutional article (e.g. Article 21A or POCSO Act 2012), official title, legal summary, and golden radial shimmer before returning to the questline.
+* **Statute Unlock:** Displays the unlocked constitutional article (e.g. Article 21A, Article 14, Article 24, or POCSO Act 2012), official title, legal summary, and golden radial shimmer before returning to the questline.
 
 ### E. Tactile Evidence Inspection Overlay (`EvidenceInspector.jsx`)
 * **Interactive Document Inspection:** Triggered by dialogue nodes marked `type: 'evidence'`.
-* **Cursor-Tracking Magnifying Glass:** An interactive SVG lens tracks pointer movement across parchment exhibits (such as attendance registers, handwritten notes, and digital chat logs), letting children uncover clues firsthand.
+* **Cursor-Tracking Magnifying Glass:** An interactive SVG lens tracks pointer movement across parchment exhibits (such as attendance registers, handwritten notes, wage slips, and digital chat logs), letting children uncover clues firsthand.
+
+### F. Persistent Safeguarding & Privacy Harbor (`ScenarioRunner.jsx`)
+* **Childline 1098 Quick Bar:** A persistent top-bar button provides instant access to India's 24/7 toll-free Childline (1098) protocol at any moment during gameplay.
+* **DPDP Act 2023 §9 Child Privacy Guarantee:** Strict architectural guarantee of zero personal identification inputs (no password, telephone, email, or biometric fields).
+* **Dignity Milestones Over Arcade XP:** Completion screens celebrate constitutional knowledge, empathetic decision milestones, and safe harbor awareness rather than competitive arcade scoring.
+
+## 5. Deep Dive into Part 04 Features: The Living Progression System (`src/features/progression/`)
+
+Part 04 introduces a deterministic, non-punitive, and cooperative progression architecture designed to motivate continuous civic discovery without competitive anxiety:
+
+### A. Central Reward Configuration & Idempotent XP Engine (`rewardConfig.js` & `rewardEngine.js`)
+* **Single Source of Truth:** Centralized in `src/features/progression/data/rewardConfig.js`:
+  - `MISSION_COMPLETION_XP`: 120 XP
+  - `EMPATHETIC_CHOICE_XP`: 15 XP (per empathetic decision)
+  - `EVIDENCE_INSPECT_XP`: 25 XP (tactile document inspection)
+  - `RIGHTS_DISCOVERY_XP`: 30 XP (statutory rights topic)
+  - `DAILY_LEARNING_BONUS`: 40 XP (calendar day activation)
+  - `REPEAT_MISSION_XP`: 25 XP (anti-inflation replay policy)
+* **Deterministic Idempotency:** Every transaction requires a unique event ID (`generateEventId(learnerId, eventType, sourceId, qualifier)`). Re-processing identical events (via reloads or page refreshes) is automatically rejected with zero duplicate XP awarded.
+* **Audit Transaction Ledger:** Every point granted generates an immutable transaction object containing `id`, `learnerId`, `eventId`, `eventType`, `sourceId`, `amount`, `title`, `description`, `category`, and ISO `awardedAt` timestamp.
+
+### B. Level & Journey Progression (`levels.js` & `LevelProgress.jsx`)
+* **Civic Recognition Tiers:** 7 narrative milestones celebrating engagement and curiosity without implying formal legal certification:
+  1. *Curious Explorer* (0–150 XP) — 🧭
+  2. *Story Pathfinder* (151–350 XP) — 🗺️
+  3. *Dignity Scout* (351–650 XP) — ⚖️
+  4. *Rights Champion* (651–1050 XP) — 🛡️
+  5. *Kindness Guardian* (1051–1550 XP) — 🌿
+  6. *Voice of Change* (1551–2200 XP) — 📢
+  7. *Guardian of Tomorrow* (2201+ XP) — 🌟
+* **Real-time Level Calculation:** Pure calculation function computes level boundaries, current tier progress bar percentage, and remaining XP needed for the next recognition tier.
+
+### C. Collectible Badges & Treasure Cabinet (`achievements.js`, `AchievementCollection.jsx`, `AchievementDetail.jsx`)
+* **Tactile Skeuomorphism:** Badges resemble physical wax seal medallions and embossed story artifacts with custom silhouettes (`bell-seal`, `book-beacon`, `harmony-shield`, `scale-dignity`, `lock-hexagon`, etc.).
+* **Four Artifact Categories:**
+  - *Explorer Badges:* Seal of the First Bell, Wanderer of Realms, Keen Investigator.
+  - *Constitutional Badges:* Beacon of the Classroom (Art 21A), Seal of Equal Ground (Arts 14 & 15(3)), Protector of Childhood (Art 24), Guardian of Safe Boundaries (POCSO Act).
+  - *Kindness & Empathy Badges:* Courageous Ally (Active Bystander), Helpline Harbinger (1098), Heart of Compassion (100% Empathy).
+  - *Discovery & Digital Safety:* Cyber Sentinel (DPDP Act §9), Harmony Builder (Cooperative Quests), Constitution Archivist (UNCRC 4 Pillars).
+* **Tactile Detail Inspector:** Interactive modal dialog showcasing the enlarged wax seal with glowing radial aura, statutory legal references, learning outcomes, and discovery timestamps.
+
+### D. Streaks Without Punishment (`streakEngine.js` & `StreakCalendar.jsx`)
+* **Creative OS Anti-Addiction Policy:**
+  - Missing a day **never** deducts XP.
+  - Missing a day **never** removes unlocked badges or seals.
+  - Zero guilt-inducing notifications or manipulative countdown timers.
+  - Friendly welcome back: *"Welcome back, explorer! Your adventure was waiting for you."*
+* **14-Day Calendar Window:** Visual participation strip displaying active quest days alongside a persistent child safety guarantee.
+
+### E. Cooperative Community Progression (`CooperativeProgress.jsx`)
+* **Product Differentiator:** Eliminates toxic individual leaderboards in favor of shared community milestones:
+  - *The Pan-India Rights Grove:* Collective goal of 5,000 discovered rights.
+  - *The Kindness Bench Initiative:* Collective goal of 2,500 active bystander interventions.
+  - *The Safe Digital Village:* Collective goal of 2,000 cyber safety protections.
+* **Child Safety Invariant:** Zero public usernames, zero personal ratings, and complete DPDP Act 2023 §9 compliance.
 
 ---
 
-## 5. Automated Verification & QA Harness (`npm test`)
+## 6. Automated Verification & QA Harness (`npm test`)
 
-The platform includes two automated test suites verifying **158 total assertions** across all layers of code:
+The platform includes three automated test suites verifying **237 total assertions** across all layers of code:
 
 ```bash
-# Run all 158 checks
+# Run all 237 checks across Parts 01, 02, 03 & 04
 npm test
 
 # Run individual verification suites
 npm run test:foundation   # 120 checks (Parts 01 & 02)
-npm run test:part03       # 38 checks (Part 03 Scenario Engine)
+npm run test:part03       # 50 checks (Part 03 Scenario Engine)
+npm run test:part04       # 67 checks (Part 04 Progression System)
 ```
 
 ### Audit Categories:
@@ -288,13 +351,14 @@ npm run test:part03       # 38 checks (Part 03 Scenario Engine)
 4. **Mascot Integrity & Safeguards (10 checks):** Confirms all 9 mascot states exist and verifies the `concerned` state provides protective 1098 guidance.
 5. **Creative OS Tokens & Accessibility (17 checks):** Audits `--ease-sovereign`, fluid font scales, HSL tokens, `:focus-visible` outlines, `.skip-to-content`, and $44\times 44\text{px}$ minimum button targets.
 6. **Age Bands & Verified Helplines (8 checks):** Verifies 3 age bands and Childline 1098 marked as primary.
-7. **Part 03 Scenario Engine Architecture (38 checks):** Verifies all 21 gameplay components, AST data fidelity, GSAP typewriter animations, route registration, `DemoLearnerContext` progress actions, and child data safety boundaries.
+7. **Part 03 Scenario Engine Architecture (50 checks):** Verifies all 21 gameplay components, AST data fidelity for Missions A, B, and C, age adaptation hooks, GSAP typewriter animations, reduced-motion accessibility, route registration, `DemoLearnerContext` progress actions, and child data safety boundaries.
+8. **Part 04 Progression System Architecture (67 checks):** Verifies 33 progression files, deterministic XP processing, strict event idempotency, repeat replay policies, level threshold calculations, badge evaluations across 4 categories, non-punitive streak logic, cooperative quest contributions, route registrations (`/achievements` and `/progression`), and DPDP Act 2023 §9 child privacy invariants.
 
 ---
 
-## 6. Handoff for Part 04 (XP, Badges & Cooperative Progression)
+## 7. Handoff for Part 05 (Live Classroom Mode & WebSocket Rooms)
 
-With Part 03 complete, the mission engine cleanly hands off to **Part 04 — XP, Badges, Streaks & Cooperative Progression**:
-* **XP Pipeline Active:** `totalXp` is calculated on every choice and accumulated into `completeMission()`.
-* **Unlocked Articles Ready for Passport:** Completed scenario articles are saved into `DemoLearnerContext` state, ready to populate the Rights Passport wax seals.
-* **Audio Cue Integrations:** Sound sprite hooks (`Howler.js` / Web Audio API) can attach directly to `advanceDialogue`, `selectChoice`, and `ArticleRevealStamp`.
+With Parts 01–04 complete, the core single-player learning and progression architecture is fully hardened for **Part 05 — Live Classroom Mode, Quiz Rooms & WebSocket Integration**:
+* **Progression Pipeline Ready:** Room activities can directly dispatch `COOP_CONTRIBUTED` and `MISSION_COMPLETED` events into the deterministic XP engine.
+* **Anonymous Animal Personas:** Classroom student lobbies can instantiate dynamic non-identifying codenames (e.g. *Brave Tiger*, *Clever Falcon*) inheriting the existing `DemoLearnerContext` model.
+* **Collective Consensus Visualizations:** Real-time dilemma voting can leverage the existing `ChoicePanel` and `ConsequencePreview` design tokens.

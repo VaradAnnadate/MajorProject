@@ -1,0 +1,125 @@
+.banner {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  z-index: 1050;
+  max-width: 480px;
+  width: calc(100% - var(--space-8));
+  animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.innerCard {
+  background: #FFFFFF;
+  border: 1.5px solid var(--color-border-medium, #E6DCCD);
+  border-radius: 16px;
+  padding: var(--space-4) var(--space-5);
+  box-shadow: 0 16px 40px rgba(18, 25, 39, 0.12);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  position: relative;
+  overflow: hidden;
+}
+
+.innerCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, var(--color-saffron-500), #DE7215);
+}
+
+.iconCircle {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--color-saffron-100, #FDF4E7);
+  border: 1px solid var(--color-saffron-border, #FAD6A5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.textCol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.eyebrow {
+  font-family: var(--font-family-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-saffron-700, #B34C1B);
+  text-transform: uppercase;
+}
+
+.title {
+  font-family: var(--font-family-display);
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--color-ink-primary, #151A26);
+  margin: 0;
+}
+
+.subtext {
+  font-family: var(--font-family-sans);
+  font-size: 0.82rem;
+  color: var(--color-ink-secondary, #4A5568);
+  margin: 0;
+}
+
+.dismissBtn {
+  padding: 8px 16px;
+  background: var(--color-saffron-500, #DE7215);
+  color: white;
+  font-family: var(--font-family-sans);
+  font-size: 0.82rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(222, 114, 21, 0.25);
+}
+
+.dismissBtn:hover {
+  background: #C96210;
+  transform: translateY(-1px);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 500px) {
+  .banner {
+    bottom: var(--space-4);
+    right: var(--space-4);
+    left: var(--space-4);
+    width: auto;
+  }
+  
+  .innerCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dismissBtn {
+    align-self: flex-end;
+  }
+}

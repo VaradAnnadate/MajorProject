@@ -1,26 +1,31 @@
 .root {
   position: relative;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: var(--space-5) var(--space-6);
   cursor: default;
   user-select: none;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   transition: background 0.3s var(--ease-sovereign);
 }
 
 /* ── Variants ── */
 .variant_narrator {
-  background: rgba(27, 36, 56, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(18, 26, 45, 0.72);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .variant_mitra {
-  background: rgba(222, 114, 21, 0.08);
-  border: 1px solid rgba(222, 114, 21, 0.2);
+  background: linear-gradient(135deg, rgba(222, 114, 21, 0.18) 0%, rgba(245, 166, 35, 0.08) 100%);
+  border: 1.5px solid rgba(245, 166, 35, 0.35);
+  box-shadow: 0 16px 40px rgba(222, 114, 21, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .variant_character {
-  background: rgba(251, 248, 243, 0.05);
-  border: 1px solid rgba(251, 248, 243, 0.1);
+  background: rgba(25, 34, 58, 0.68);
+  border: 1.5px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 /* ── Speaker row ── */

@@ -14,7 +14,7 @@ import { useDemoLearner } from '../../context/DemoLearnerContext';
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { activeAgeBand, activePersona, triggerIntro } = useDemoLearner();
+  const { activeAgeBand, activePersona, triggerIntro, progression } = useDemoLearner();
   const location = useLocation();
 
   const closeMenu = () => setMobileMenuOpen(false);
@@ -201,6 +201,30 @@ export default function Navbar() {
             >
               Demo
             </span>
+          </Link>
+
+          {/* Rights Passport & XP Badge */}
+          <Link
+            to="/achievements"
+            title="View Constitutional Rights Passport & Badges"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              padding: '0.35rem 0.75rem',
+              borderRadius: 'var(--radius-pill)',
+              backgroundColor: 'rgba(222, 114, 21, 0.1)',
+              border: '1px solid rgba(222, 114, 21, 0.35)',
+              color: 'var(--color-saffron-600)',
+              fontSize: '0.8rem',
+              fontFamily: 'var(--font-family-mono)',
+              fontWeight: 700,
+              textDecoration: 'none',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            <span>✨</span>
+            <span>{progression?.totalXp || 80} XP</span>
           </Link>
 
           {/* Learner Dashboard Link */}

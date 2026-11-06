@@ -32,6 +32,10 @@
   border-radius: 12px;
   padding: var(--space-6);
   max-width: 520px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   width: 100%;
   position: relative;
   box-shadow:

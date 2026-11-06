@@ -1,0 +1,201 @@
+.root {
+  background: #FFFFFF;
+  border: 1.5px solid var(--color-border-medium, #E6DCCD);
+  border-radius: 20px;
+  padding: var(--space-6) var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  box-shadow: 0 4px 20px rgba(18, 25, 39, 0.04);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.titleCol {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.eyebrow {
+  font-family: var(--font-family-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  color: var(--color-saffron-700, #B34C1B);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.heading {
+  font-family: var(--font-family-display);
+  font-size: clamp(1.4rem, 3vw, 1.9rem);
+  font-weight: 700;
+  color: var(--color-ink-primary, #151A26);
+  margin: 0;
+}
+
+.welcomeText {
+  font-family: var(--font-family-serif);
+  font-style: italic;
+  font-size: 0.92rem;
+  color: var(--color-saffron-700, #B34C1B);
+  margin: var(--space-1) 0 0;
+}
+
+.streakStats {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  background: var(--color-saffron-100, #FDF4E7);
+  border: 1px solid var(--color-saffron-border, #FAD6A5);
+  border-radius: 14px;
+  padding: var(--space-2) var(--space-4);
+}
+
+.statBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.statNumber {
+  font-family: var(--font-family-display);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--color-saffron-700, #B34C1B);
+  line-height: 1;
+}
+
+.statLabel {
+  font-family: var(--font-family-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--color-ink-muted, #718096);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.statDivider {
+  width: 1px;
+  height: 24px;
+  background: var(--color-saffron-border, #FAD6A5);
+}
+
+/* 14-day calendar */
+.calendarStrip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  overflow-x: auto;
+  padding: var(--space-3) 0;
+  scrollbar-width: none;
+}
+
+.calendarStrip::-webkit-scrollbar {
+  display: none;
+}
+
+.dayPill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 46px;
+  padding: 8px 6px;
+  border-radius: 12px;
+  background: #FAF8F5;
+  border: 1px solid var(--color-border-subtle, #EDE7DD);
+  transition: all 0.2s ease;
+}
+
+.dayName {
+  font-family: var(--font-family-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--color-ink-muted, #718096);
+}
+
+.dayCircle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-family-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-ink-secondary, #4A5568);
+  background: #FFFFFF;
+  border: 1px solid var(--color-border-subtle, #EDE7DD);
+}
+
+.dayActive {
+  background: var(--color-saffron-100, #FDF4E7);
+  border-color: var(--color-saffron-border, #FAD6A5);
+}
+
+.dayActive .dayCircle {
+  background: var(--color-saffron-500, #DE7215);
+  border-color: var(--color-saffron-600, #C96210);
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(222, 114, 21, 0.3);
+}
+
+.dayActive .dayName {
+  color: var(--color-saffron-700, #B34C1B);
+  font-weight: 700;
+}
+
+.dayToday {
+  border-color: var(--color-peacock-500, #1B6D80);
+}
+
+.todayIndicator {
+  font-family: var(--font-family-mono);
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--color-peacock-600, #165666);
+  text-transform: uppercase;
+}
+
+/* Guarantee */
+.guaranteeBox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--color-forest-100, #EBF5F0);
+  border: 1px solid rgba(41, 118, 82, 0.2);
+  border-radius: 12px;
+  padding: var(--space-3) var(--space-4);
+}
+
+.heartIcon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.guaranteeText {
+  font-family: var(--font-family-sans);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--color-forest-800, #1A4D35);
+}
+
+.guaranteeText strong {
+  color: var(--color-forest-700, #1E5137);
+  font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  .root {
+    padding: var(--space-4);
+  }
+}

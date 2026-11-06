@@ -41,16 +41,19 @@
 
 .card {
   width: 100%;
-  min-height: 56px;
+  min-height: 58px;
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  background: rgba(27, 36, 56, 0.6);
-  border: 1.5px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
+  padding: var(--space-4);
+  background: rgba(18, 26, 45, 0.72);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
   cursor: pointer;
   text-align: left;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.12);
   transition:
     border-color 0.22s var(--ease-sovereign),
     background 0.22s var(--ease-sovereign),
@@ -66,8 +69,8 @@
   left: 0;
   top: 0;
   bottom: 0;
-  width: 3px;
-  background: var(--color-saffron-500);
+  width: 4px;
+  background: linear-gradient(180deg, #FF9E2C, #E65100);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.2s var(--ease-sovereign);
@@ -75,10 +78,10 @@
 
 .card:hover:not(:disabled),
 .card:focus-visible:not(:disabled) {
-  border-color: rgba(222, 114, 21, 0.4);
-  background: rgba(222, 114, 21, 0.06);
+  border-color: rgba(255, 166, 44, 0.6);
+  background: rgba(255, 158, 44, 0.12);
   transform: translateX(4px);
-  box-shadow: 0 4px 20px rgba(222, 114, 21, 0.1);
+  box-shadow: 0 12px 30px rgba(222, 114, 21, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.25);
   outline: none;
 }
 

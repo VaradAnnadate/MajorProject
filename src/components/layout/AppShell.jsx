@@ -12,8 +12,29 @@ export default function AppShell() {
   const location = useLocation();
   const { introPlaying, introCurtainLifting } = useDemoLearner();
 
+  const isGameplay = location.pathname.startsWith('/play');
+
+  // Ensure clean minimal white background during scenario pages
+  useEffect(() => {
+    if (isGameplay) {
+      const origBg = document.body.style.backgroundColor;
+      const origHtmlBg = document.documentElement.style.backgroundColor;
+      document.body.style.backgroundColor = '#FFFFFF';
+      document.documentElement.style.backgroundColor = '#FFFFFF';
+      return () => {
+        document.body.style.backgroundColor = origBg;
+        document.documentElement.style.backgroundColor = origHtmlBg;
+      };
+    }
+  }, [isGameplay]);
+
   // Lenis Smooth Inertia Scroll (Creative OS Standard)
   useEffect(() => {
+    // During full-screen story gameplay, allow 100% native responsive scrolling
+    if (isGameplay) {
+      return;
+    }
+
     const lenis = new Lenis({
       duration: 1.15,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -33,49 +54,65 @@ export default function AppShell() {
       cancelAnimationFrame(animationFrameId);
       lenis.destroy();
     };
-  }, []);
+  }, [location.pathname]);
 
   // Scroll to top on route change
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  // Bottom part comes upper choreography
-  const isRising = introPlaying && !introCurtainLifting;
+  // Bottom part comes upper choreography (only during initial home intro, never in gameplay)
+  const isRising = !isGameplay && introPlaying && !introCurtainLifting;
 
   return (
-    <div className="app-shell" style={{ position: 'relative', overflowX: 'hidden' }}>
+    <div 
+      className="app-shell" 
+      style={{ 
+        position: 'relative', 
+        overflowX: 'hidden',
+        backgroundColor: isGameplay ? '#FFFFFF' : undefined 
+      }}
+    >
       {/* GOATED Minimalist Agency Story Intro */}
-      <IntroPreloader />
+      {!isGameplay && <IntroPreloader />}
 
       {/* Accessibility Skip Link */}
-      <a href="#main-content" className="skip-to-content">
-        Skip to main content
-      </a>
+      {!isGameplay && (
+        <a href="#main-content" className="skip-to-content">
+          Skip to main content
+        </a>
+      )}
 
       {/* Main Website Wrapper with Bottom-Up Reveal */}
       <div
         style={{
-          transform: isRising ? 'translateY(95px) scale(0.985)' : 'translateY(0px) scale(1)',
+          transform: isRising ? 'translateY(95px) scale(0.985)' : undefined,
           opacity: isRising ? 0.7 : 1,
-          filter: isRising ? 'brightness(0.9) blur(1px)' : 'brightness(1) blur(0px)',
+          filter: isRising ? 'brightness(0.9) blur(1px)' : undefined,
           transition: 'transform 0.92s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.85s ease-out, filter 0.85s ease',
-          willChange: 'transform, opacity, filter'
+          willChange: isRising ? 'transform, opacity, filter' : 'auto',
+          backgroundColor: isGameplay ? '#FFFFFF' : undefined,
+          minHeight: isGameplay ? '100vh' : undefined
         }}
       >
         {/* Childline Safety Quickbar */}
-        <EmergencyQuickBar />
+        {!isGameplay && <EmergencyQuickBar />}
 
         {/* Main Navigation Bar */}
-        <Navbar />
+        {!isGameplay && <Navbar />}
 
         {/* Dynamic Lazy Route Content */}
-        <main id="main-content" className="main-content" role="main">
+        <main 
+          id="main-content" 
+          className="main-content" 
+          role="main"
+          style={{ minHeight: isGameplay ? '100vh' : undefined }}
+        >
           <Outlet />
         </main>
 
         {/* Master Editorial Footer */}
-        <Footer />
+        {!isGameplay && <Footer />}
       </div>
     </div>
   );

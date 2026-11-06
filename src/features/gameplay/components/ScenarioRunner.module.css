@@ -1,10 +1,117 @@
 .root {
   min-height: 100vh;
-  background: var(--color-canvas-dark);
+  background-color: #0A0F1D;
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  transition: background 0.6s ease;
+}
+
+/* World-specific restrained cinematic ambient environments */
+.root[data-world="haven-of-dignity"] {
+  background: 
+    radial-gradient(circle at 50% 0%, rgba(222, 114, 21, 0.12) 0%, transparent 60%),
+    #0B0D14;
+}
+
+.root[data-world="gardens-of-growth"] {
+  background: 
+    radial-gradient(circle at 50% 0%, rgba(41, 148, 92, 0.12) 0%, transparent 60%),
+    #0B0D14;
+}
+
+.root[data-world="forest-of-safety"] {
+  background: 
+    radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.12) 0%, transparent 60%),
+    #0B0D14;
+}
+
+.root[data-world="summit-of-voices"],
+.root[data-world="river-of-voices"] {
+  background: 
+    radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.12) 0%, transparent 60%),
+    #0B0D14;
+}
+
+.root[data-world="village-of-belonging"] {
+  background: 
+    radial-gradient(circle at 50% 0%, rgba(249, 115, 22, 0.12) 0%, transparent 60%),
+    #0B0D14;
+}
+
+/* Top bar with progress and safety button */
+.topBar {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.topActions {
+  position: absolute;
+  top: 50%;
+  right: var(--space-4);
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  z-index: 20;
+}
+
+.safeguardQuickBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(222, 114, 21, 0.12);
+  border: 1px solid rgba(222, 114, 21, 0.35);
+  border-radius: 999px;
+  padding: 4px 10px;
+  color: var(--color-saffron-400, #F5A623);
+  font-family: var(--font-family-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.safeguardQuickBtn:hover {
+  background: rgba(222, 114, 21, 0.25);
+  border-color: var(--color-saffron-500);
+  transform: scale(1.02);
+}
+
+.exitBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  padding: 4px 10px;
+  color: var(--color-ink-inverse, #FFFFFF);
+  font-family: var(--font-family-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.exitBtn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: scale(1.02);
+}
+
+.safeguardIcon {
+  font-size: 0.8rem;
+}
+
+.safeguardText {
+  white-space: nowrap;
 }
 
 /* Cinematic background grain */
@@ -53,10 +160,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: var(--space-6) var(--space-5) var(--space-10);
+  justify-content: flex-start;
+  padding: var(--space-6) var(--space-5) calc(var(--space-10) + 90px);
   position: relative;
   z-index: 1;
+  width: 100%;
 }
 
 .dialogueWrap {
@@ -88,31 +196,39 @@
 .advanceBtn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-2);
-  padding: var(--space-3) var(--space-7);
-  background: var(--color-saffron-500);
-  color: white;
+  padding: 12px 32px;
+  background: linear-gradient(135deg, #FF9E2C 0%, #F57C00 48%, #D84315 100%);
+  border: 1px solid rgba(255, 220, 150, 0.5);
+  border-radius: 12px;
+  color: #FFFFFF;
   font-family: var(--font-family-sans);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 700;
   letter-spacing: 0.03em;
-  border: none;
-  border-radius: 10px;
   cursor: pointer;
-  min-height: 48px;
-  min-width: 160px;
-  transition: background 0.2s var(--ease-sovereign), transform 0.15s var(--ease-sovereign), box-shadow 0.2s;
-  box-shadow: 0 4px 20px rgba(222, 114, 21, 0.3);
+  min-height: 50px;
+  min-width: 170px;
+  box-shadow: 
+    0 8px 24px rgba(230, 81, 0, 0.42),
+    0 2px 5px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  transition: all 0.25s var(--ease-sovereign);
 }
 
 .advanceBtn:hover {
-  background: #c96210;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 24px rgba(222, 114, 21, 0.4);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 
+    0 12px 32px rgba(230, 81, 0, 0.55),
+    0 4px 8px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
 }
 
 .advanceBtn:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.99);
 }
 
 .advanceBtnIcon {
@@ -125,18 +241,31 @@
 }
 
 .skipBtn {
-  padding: var(--space-2) var(--space-4);
-  background: transparent;
-  color: var(--color-ink-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 18px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: rgba(255, 255, 255, 0.85);
   font-family: var(--font-family-mono);
-  font-size: 0.65rem;
+  font-size: 0.72rem;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
   cursor: pointer;
-  min-height: 36px;
-  transition: color 0.2s, border-color 0.2s;
+  min-height: 38px;
+  transition: all 0.2s ease;
+}
+
+.skipBtn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #FFFFFF;
+  transform: translateY(-1px);
 }
 
 .skipBtn:hover {
@@ -216,6 +345,42 @@
   font-size: 0.95rem;
   color: var(--color-ink-muted);
   margin: 0;
+}
+
+.articleBadge {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: rgba(41, 118, 82, 0.14);
+  border: 1px solid rgba(41, 118, 82, 0.4);
+  border-radius: 999px;
+  padding: 6px 16px;
+  margin: var(--space-1) 0;
+}
+
+.articleBadgeLabel {
+  font-family: var(--font-family-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #48BB78;
+}
+
+.articleBadgeText {
+  font-family: var(--font-family-sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #E2E8F0;
+}
+
+.completeSafeguardNote {
+  font-family: var(--font-family-sans);
+  font-size: 0.78rem;
+  color: var(--color-ink-muted);
+  max-width: 440px;
+  line-height: 1.4;
+  margin-top: 4px;
 }
 
 .xpSummary {
@@ -315,5 +480,139 @@
   .skipBtn {
     align-self: center;
   }
+
+  .safeguardQuickBtn {
+    padding: 3px 8px;
+    font-size: 0.68rem;
+  }
+}
+
+/* Safeguard Overlay & Card */
+.safeguardOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 14, 23, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  z-index: 1000;
+  animation: fadeIn 0.25s ease forwards;
+}
+
+.safeguardCard {
+  background: #172133;
+  border: 1.5px solid rgba(222, 114, 21, 0.4);
+  border-radius: 16px;
+  padding: var(--space-6);
+  max-width: 520px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5), 0 0 30px rgba(222, 114, 21, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.safeguardPill {
+  align-self: flex-start;
+  font-family: var(--font-family-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #F6AD55;
+  background: rgba(222, 114, 21, 0.16);
+  border: 1px solid rgba(222, 114, 21, 0.3);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.safeguardHeading {
+  font-family: var(--font-family-display);
+  font-size: 1.4rem;
+  color: var(--color-ink-inverse);
+  margin: 0;
+}
+
+.safeguardText {
+  font-family: var(--font-family-sans);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: #CBD5E0;
+  margin: 0;
+}
+
+.safeguardCallout {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  background: rgba(222, 114, 21, 0.1);
+  border: 1px solid rgba(222, 114, 21, 0.35);
+  border-radius: 12px;
+  padding: var(--space-3) var(--space-4);
+}
+
+.safeguardNumber {
+  font-family: var(--font-family-mono);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ED8936;
+  white-space: nowrap;
+}
+
+.safeguardInfo {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-family-sans);
+  font-size: 0.8rem;
+  color: #E2E8F0;
+  line-height: 1.35;
+}
+
+.safeguardPrivacy {
+  font-family: var(--font-family-sans);
+  font-size: 0.75rem;
+  color: #A0AEC0;
+  line-height: 1.45;
+  background: rgba(255, 255, 255, 0.03);
+  padding: var(--space-3);
+  border-radius: 8px;
+  border-left: 3px solid #48BB78;
+}
+
+.safeguardCloseBtn {
+  margin-top: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  background: var(--color-saffron-500);
+  color: white;
+  font-family: var(--font-family-sans);
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.safeguardCloseBtn:hover {
+  background: #C96210;
+  transform: translateY(-1px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
 

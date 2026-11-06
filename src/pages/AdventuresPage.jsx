@@ -18,6 +18,13 @@ import { useDemoLearner } from '../context/DemoLearnerContext';
 const ADVENTURE_SCENARIO_MAP = {
   'adv-01-schoolbag': 'scenario-01-bench',
   'adv-02-screen': 'scenario-02-screen',
+  'adv-03-brickyard': 'scenario-03-workshop',
+  'adv-04-playfield': 'scenario-02-words',
+  // Direct scenario id mappings
+  'scenario-01-bench': 'scenario-01-bench',
+  'scenario-02-screen': 'scenario-02-screen',
+  'scenario-02-words': 'scenario-02-words',
+  'scenario-03-workshop': 'scenario-03-workshop',
 };
 
 export default function AdventuresPage() {
@@ -213,18 +220,14 @@ export default function AdventuresPage() {
                 <button 
                   type="button"
                   onClick={() => {
-                    const scenarioId = ADVENTURE_SCENARIO_MAP[adv.id];
-                    if (scenarioId) {
-                      navigate(`/play/${scenarioId}`);
-                    } else {
-                      alert(`Interactive scenario for "${adv.title}" is coming in Part 04.`);
-                    }
+                    const scenarioId = ADVENTURE_SCENARIO_MAP[adv.id] || 'scenario-01-bench';
+                    navigate(`/play/${scenarioId}`);
                   }}
                   className="btn btn-primary btn-tactile"
                   style={{ fontSize: '0.84rem', padding: '0.4rem 1rem' }}
                 >
                   <Play size={14} fill="currentColor" />
-                  <span>{ADVENTURE_SCENARIO_MAP[adv.id] ? 'Play Quest' : 'Preview Quest'}</span>
+                  <span>Play Quest</span>
                 </button>
               </div>
             </article>

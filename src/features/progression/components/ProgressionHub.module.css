@@ -1,0 +1,86 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  width: 100%;
+}
+
+.topSection {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--space-6);
+  align-items: stretch;
+}
+
+.profileCol {
+  display: flex;
+}
+
+.xpCol {
+  display: flex;
+}
+
+/* Nav strip */
+.navigationStrip {
+  border-bottom: 1.5px solid var(--color-border-medium, #E6DCCD);
+  padding-bottom: var(--space-3);
+}
+
+.tabBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabBar::-webkit-scrollbar {
+  display: none;
+}
+
+.navTabBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--color-ink-secondary, #4A5568);
+  font-family: var(--font-family-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.navTabBtn:hover {
+  color: var(--color-ink-primary, #151A26);
+  background: var(--color-canvas-secondary, #EFECE6);
+}
+
+.navTabActive {
+  color: #FFFFFF !important;
+  background: var(--color-ink-primary, #151A26) !important;
+  border-color: var(--color-ink-primary, #151A26);
+  box-shadow: 0 4px 16px rgba(18, 25, 39, 0.15);
+}
+
+.tabIcon {
+  font-size: 1.1rem;
+}
+
+.tabLabel {
+  letter-spacing: 0.02em;
+}
+
+.tabContentArea {
+  min-height: 400px;
+}
+
+@media (max-width: 900px) {
+  .topSection {
+    grid-template-columns: 1fr;
+  }
+}

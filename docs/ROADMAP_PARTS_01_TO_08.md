@@ -67,23 +67,33 @@
 * **Objective:** Build the core branching story engine where children make impactful ethical decisions in everyday situations.
 * **Key Achievements:**
   * **Dialogue & Scenario Runner (`ScenarioRunner.jsx`):** Interactive visual novel layout with chapter progress, scene setting contextual strip, speaker labeling, and GSAP typewriter reveal text.
+  * **Persistent Child Safeguarding Modal (`ScenarioRunner.jsx`):** One-click persistent access to India's 24/7 Childline 1098 protocol, emergency reassurance, and DPDP Act 2023 §9 zero-PII privacy guarantees.
+  * **Age-Band Adaptation System (`DialogueBox.jsx`):** In-flow text adaptation rendering dynamic vocabulary according to explorer age group (`8-10`, `11-13`, `14-16`) alongside full `prefers-reduced-motion` compliance.
   * **Branching Choice Engine (`ChoicePanel.jsx` & `useScenarioEngine.js`):** Staggered Framer Motion decision cards allowing children to weigh immediate impulses against empathy and child rights.
   * **Consequence Preview System (`ConsequencePreview.jsx`):** Non-punitive feedback system categorizing choices into empathetic victories and thoughtful learning moments with Mitra emotional reactions.
-  * **Constitutional Article Reveal Stamp (`ArticleRevealStamp.jsx`):** Full-screen celebration with dramatic GSAP stamp drop, rotation wobble, and radial gold shimmer unlocking Article 21A, RTE Act 2009, and POCSO Act 2012.
+  * **Constitutional Article Reveal Stamp (`ArticleRevealStamp.jsx`):** Full-screen celebration with dramatic GSAP stamp drop, rotation wobble, and radial gold shimmer unlocking Articles 21A, 14, 15(3), 24, RTE Act 2009, and POCSO Act 2012.
   * **Tactile Evidence Inspection Overlay (`EvidenceInspector.jsx`):** Cursor-tracking magnifying glass inspection for critical story documents and exhibits.
-  * **Production Scripts:** Fully authored branching scenarios for *The Mystery of the Empty Bench* and *The Whispering Screen*.
-  * **Verification:** 38/38 dedicated automated Part 03 test assertions passing cleanly in `scripts/verify_part03.mjs`.
+  * **Three Core Demonstration Missions + Digital Safety Quest:**
+    1. *Mission A: The Mystery of the Empty Bench* (`scenario-01-bench`, Article 21A & RTE Act 2009).
+    2. *Mission B: The Forest of Unkind Words* (`scenario-02-words`, Articles 14 & 15(3) Dignity & Equality).
+    3. *Mission C: The Silent Workshop* (`scenario-03-workshop`, Article 24 & Child Labour Amendment Act 2016).
+    4. *Special Mission: The Whispering Screen* (`scenario-02-screen`, POCSO Act 2012 & Online Safety).
+  * **Direct Map & Catalog Routing:** World Map and Adventures catalog seamlessly launch directly into `/play/:scenarioId`.
+  * **Verification:** 50/50 dedicated automated Part 03 test assertions passing cleanly in `scripts/verify_part03.mjs` (170/170 assertions overall).
 
 ---
 
-### Part 04 — XP, Badges, Streaks & Cooperative Progression
-* **Objective:** Motivate learning through positive behavioral reinforcement while avoiding toxic dark patterns or competitive anxiety.
-* **Components to Build:**
-  * **Dignity XP (Knowledge Sparks):** Points earned through thoughtful choices and completing legal quests.
-  * **Rights Passport & Stamp Seals:** Tactile physical stamps rendered with wax seal and embossed paper effects that unlock inside the child’s local passport.
-  * **Anti-Addiction Streak Protectors:** If a child misses a day, their progress is never wiped or penalized.
-  * **Cooperative Community Milestones:** Collective goals (e.g., "1,000 children across India learned about cyber safety this week") fostering shared unity.
-  * **Audio Sprites:** Subtle interactive acoustic sounds (page turns, stamp thud, gentle chime) using Howler.js or Web Audio API.
+### Part 04 — XP, Badges, Streaks & Cooperative Progression (COMPLETED)
+* **Objective:** Motivate learning through positive behavioral reinforcement while avoiding toxic dark patterns, manipulative urgency, or competitive anxiety.
+* **Key Achievements:**
+  * **Deterministic Transactional XP Engine (`rewardEngine.js` & `rewardConfig.js`):** Centralized rule engine processing qualifying events (`MISSION_COMPLETED`, `EVIDENCE_INSPECTED`, `RIGHTS_DISCOVERY`, `HELPLINE_ACCESSED`, `COOP_CONTRIBUTED`, `DAILY_BONUS`). Pure idempotency checks prevent duplicate awards on reloads or re-opens.
+  * **Narrative Recognition Tiers (`levels.js`):** 7 progression levels celebrating engagement and curiosity without false legal credentialing (Level 1: *Curious Explorer* through Level 7: *Guardian of Tomorrow*).
+  * **Treasure Cabinet & Tactile Medallions (`AchievementCollection.jsx` & `achievements.js`):** 12 collectible artifacts with custom silhouettes, category filters (*Explorer*, *Constitutional*, *Kindness*, *Discovery*), and modal inspector (`AchievementDetail.jsx`).
+  * **Non-Punitive Consistency Tracker (`streakEngine.js` & `StreakCalendar.jsx`):** 14-day participation grid that celebrates regular exploration while strictly guaranteeing zero loss of XP, badges, or passport stamps on days taken off to rest or study.
+  * **Shared Community Quests (`CooperativeProgress.jsx`):** Collective milestones (*Pan-India Rights Grove*, *Kindness Bench*, *Safe Digital Village*) rewarding mutual progress with zero public child rankings or individual leaderboards (DPDP Act 2023 §9).
+  * **Master Progression Hub (`ProgressionHub.jsx` & `ProgressionPage.jsx`):** Illustrated adventure archive mounted at `/achievements` and `/progression`, featuring the Explorer Profile, Journey Path, and real-time activity journal.
+  * **Full Mission & Navbar Integration:** Completing missions in Part 03 seamlessly grants XP, updates levels, logs transactions, and reflects live in the navigation bar and learner home.
+  * **Automated QA Verification:** 67/67 dedicated automated Part 04 test assertions passing cleanly in `scripts/verify_part04.mjs` (237/237 total across all project suites).
 
 ---
 

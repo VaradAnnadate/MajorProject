@@ -11,7 +11,14 @@ export default function StoryMapPortal() {
   const navigate = useNavigate();
 
   const handleOpenMission = (mission) => {
-    navigate(`/adventures?highlight=${mission.id}`);
+    const scenarioId = mission.scenarioId || (
+      mission.id?.includes('bench') || mission.id?.includes('pencil') || mission.id?.includes('library') ? 'scenario-01-bench' :
+      mission.id?.includes('secret') || mission.id?.includes('digital') ? 'scenario-02-screen' :
+      mission.id?.includes('circle') || mission.id?.includes('panchayat') || mission.id?.includes('paper') ? 'scenario-02-words' :
+      mission.id?.includes('dhabba') || mission.id?.includes('brick') ? 'scenario-03-workshop' :
+      'scenario-01-bench'
+    );
+    navigate(`/play/${scenarioId}`);
   };
 
   return (

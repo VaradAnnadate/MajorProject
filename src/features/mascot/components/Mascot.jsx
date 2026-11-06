@@ -24,6 +24,10 @@ export default function Mascot({
   const [bubbleOpen, setBubbleOpen] = useState(showBubble);
 
   useEffect(() => {
+    setBubbleOpen(showBubble);
+  }, [showBubble]);
+
+  useEffect(() => {
     setCurrentState(state);
   }, [state]);
 
@@ -69,7 +73,7 @@ export default function Mascot({
       }}
     >
       {/* Interactive Speech Bubble */}
-      {bubbleOpen && (
+      {showBubble && bubbleOpen && (
         <div 
           className="mitra-speech-bubble"
           role="status"

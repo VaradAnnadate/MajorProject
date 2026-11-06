@@ -120,6 +120,14 @@ export const router = createBrowserRouter([
         )
       },
       {
+        path: 'progression',
+        element: (
+          <Suspense fallback={<PageFallback />}>
+            <AchievementsPage />
+          </Suspense>
+        )
+      },
+      {
         path: 'help',
         element: (
           <Suspense fallback={<PageFallback />}>

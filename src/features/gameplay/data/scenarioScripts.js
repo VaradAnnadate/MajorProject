@@ -60,6 +60,11 @@ export const SCENARIO_01_BENCH = {
           speaker: 'mitra',
           speakerLabel: 'Mitra',
           text: 'Hmm, four days is a long time, Riya. Every child your age has a special right — the right to come to school and learn, completely free! I wonder what could be keeping Chintu away. Shall we be detectives today?',
+          textByAge: {
+            'age-8-10': 'Hmm, four days is a long time! Every child has the right to come to school, read stories, and play. Let us find out what happened to Chintu!',
+            'age-11-13': 'Four days is a long time, Riya. Under Article 21A and the RTE Act, free elementary education is a guaranteed fundamental right. Let’s investigate what is keeping Chintu away.',
+            'age-14-16': 'Four consecutive absences is a serious warning sign. Under Article 21A, the state must ensure compulsory schooling until age 14. We need to document why Chintu is missing class.',
+          },
           mascotState: 'curious',
           isPlayer: false,
           type: 'dialogue',
@@ -809,11 +814,525 @@ export const SCENARIO_02_SCREEN = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
+// MISSION 03 (MISSION B) — The Forest of Unkind Words
+// Article 14 & 15(3) | Age Band: All (8–16) | World: Village of Belonging
+// ─────────────────────────────────────────────────────────────────────────────
+export const SCENARIO_02_WORDS = {
+  id: 'scenario-02-words',
+  missionId: 'adv-03-words',
+  worldId: 'village-of-belonging',
+  title: 'The Forest of Unkind Words',
+  tagline: 'Standing together against schoolyard bullying, exclusion, and mockery',
+  articleRef: 'Article 14 & Article 15(3) — Right to Equality & Dignity',
+  estimatedMinutes: 10,
+  difficulty: 'Pathfinder',
+  badgeName: 'Seal of Inclusion & Empathy',
+  synopsis:
+    'When a new student, Samar, is mocked and excluded from the schoolyard circle because of his regional accent and background, the class faces a moral choice: look away and let exclusion grow, or practice active allyship under India’s constitutional pledge of equal dignity.',
+  mascotStateDefault: 'curious',
+  totalChapters: 4,
+
+  chapters: [
+    // ── CHAPTER 1 ───────────────────────────────────────────────────────────
+    {
+      id: 'words-ch-01',
+      chapterNumber: 1,
+      title: 'The Whispering Playground',
+      setting:
+        'The banyan schoolyard during afternoon recess. Dust kicks up around the football field. Under the old bell tower, a group of students giggles while pointing at Samar standing alone by the water cooler.',
+      dialogues: [
+        {
+          id: 'w-dlg-001',
+          speaker: 'narrator',
+          speakerLabel: 'Narrator',
+          text: 'The lunch bell rings. Twenty children dash onto the red clay playground. But at the edge of the cricket circle, Samar stands with his tiffin box clutched tight. His family moved here two weeks ago from a small Himalayan valley.',
+          mascotState: 'curious',
+          isPlayer: false,
+          type: 'narrative',
+        },
+        {
+          id: 'w-dlg-002',
+          speaker: 'rohit',
+          speakerLabel: 'Older Student (Rohit)',
+          text: 'Hey Pahadi! Listen to how he speaks Hindi! Hey Samar, say that poem again so we can all laugh!',
+          mascotState: 'concerned',
+          isPlayer: false,
+          type: 'dialogue',
+        },
+        {
+          id: 'w-dlg-003',
+          speaker: 'mitra',
+          speakerLabel: 'Mitra',
+          text: 'Notice Samar’s shoulders shrinking. Mocking someone’s home, dialect, or background isn’t just teasing — it creates an invisible wall that denies equal dignity. How does this make our circle feel?',
+          mascotState: 'concerned',
+          isPlayer: false,
+          type: 'dialogue',
+        },
+      ],
+      choices: [
+        {
+          id: 'w-ch1-opt-a',
+          text: 'Walk over to Samar, invite him to join your table, and ask about his favourite games back home.',
+          isCorrect: true,
+          isEmpathetic: true,
+          consequence:
+            'Samar’s face lights up with relief. Breaking the isolation immediately diffuses the mockery without violence, showing the whole class that Samar has friends standing with him.',
+          learningExplanation:
+            'Active allyship dismantles bullying. Article 15(3) and India’s child policies celebrate diversity and require schools to foster inclusive environments where no child is isolated.',
+          mascotReaction: 'happy',
+          nextChapterId: 'words-ch-02',
+          xpGain: 25,
+        },
+        {
+          id: 'w-ch1-opt-b',
+          text: 'Laugh along quietly so the older students don\'t turn on you, but feel bad inside.',
+          isCorrect: false,
+          isEmpathetic: false,
+          consequence:
+            'Silence signals permission to bullies. Samar feels completely abandoned and spends the rest of recess hiding inside the washroom.',
+          learningExplanation:
+            'Being a passive bystander empowers bullies. Empathy requires moral courage. Standing beside a peer protects their constitutional right to dignity.',
+          mascotReaction: 'concerned',
+          nextChapterId: 'words-ch-02',
+          xpGain: 10,
+        },
+        {
+          id: 'w-ch1-opt-c',
+          text: 'Scream insults back at Rohit and shove him to teach him a lesson.',
+          isCorrect: false,
+          isEmpathetic: false,
+          consequence:
+            'A fight breaks out, drawing the physical education teacher. Both groups receive detention, and Samar feels even more embarrassed for being the center of trouble.',
+          learningExplanation:
+            'Retaliatory anger rarely protects the victim. Firm, calm boundary-setting and inclusive allyship protect dignity much more effectively than physical conflict.',
+          mascotReaction: 'thinking',
+          nextChapterId: 'words-ch-02',
+          xpGain: 10,
+        },
+      ],
+    },
+
+    // ── CHAPTER 2 ───────────────────────────────────────────────────────────
+    {
+      id: 'words-ch-02',
+      chapterNumber: 2,
+      title: 'Words that Leave Marks',
+      setting:
+        'The quiet library corridor after recess. Samar is trying to clean chalk marks scribbled across his school bag.',
+      dialogues: [
+        {
+          id: 'w-dlg-004',
+          speaker: 'samar',
+          speakerLabel: 'Samar',
+          text: 'I told my mother I don\'t want to come to this school anymore. Back in my village school, everyone played together. Here, they hid my social studies notebook behind the water tank.',
+          mascotState: 'concerned',
+          isPlayer: false,
+          type: 'dialogue',
+        },
+        {
+          id: 'w-dlg-005',
+          speaker: 'narrator',
+          speakerLabel: 'Narrator',
+          text: 'You inspect the chalkboard behind the stairs. Scrawled in yellow dust is an unkind nickname caricature mocking Samar’s accent.',
+          mascotState: 'concerned',
+          isPlayer: false,
+          type: 'evidence',
+          evidenceDetails: {
+            title: 'Scribbled Chalk Graffiti',
+            description: 'Derogatory nickname and caricature drawn on the school wall targeting Samar’s regional dialect.',
+            legalNote: 'School bullying and discrimination based on place of birth or language violate the fundamental equality code of Articles 14 and 15.',
+          },
+        },
+        {
+          id: 'w-dlg-006',
+          speaker: 'mitra',
+          speakerLabel: 'Mitra',
+          text: 'Every child has the right to learn in an environment free from fear and discrimination. Persistent bullying can cause lasting emotional harm. What is the most constructive way to solve this?',
+          mascotState: 'thinking',
+          isPlayer: false,
+          type: 'dialogue',
+        },
+      ],
+      choices: [
+        {
+          id: 'w-ch2-opt-a',
+          text: 'Report the repeated harassment to Teacher Shalini and request a Bal Sansad (Children’s Parliament) discussion on inclusive school rules.',
+          isCorrect: true,
+          isEmpathetic: true,
+          consequence:
+            'Teacher Shalini wipes off the graffiti immediately, praises your courage, and calls a circle meeting to establish clear, restorative anti-bullying agreements.',
+          learningExplanation:
+            'Involving trusted teachers and student councils institutionalizes safety. India’s RTE guidelines require schools to maintain zero tolerance for emotional or physical abuse.',
+          mascotReaction: 'happy',
+          nextChapterId: 'words-ch-03',
+          xpGain: 30,
+        },
+        {
+          id: 'w-ch2-opt-b',
+          text: 'Tell Samar to ignore it and pretend he doesn\'t care, so the bullies get bored.',
+          isCorrect: false,
+          isEmpathetic: false,
+          consequence:
+            'Telling someone to "just ignore it" minimizes their pain. The bullying continues the next day because no boundaries were set.',
+          learningExplanation:
+            'Bullying is a structural behavior, not a minor misunderstanding. Support requires intervention, not asking victims to silently endure humiliation.',
+          mascotReaction: 'concerned',
+          nextChapterId: 'words-ch-03',
+          xpGain: 10,
+        },
+      ],
+    },
+
+    // ── CHAPTER 3 ───────────────────────────────────────────────────────────
+    {
+      id: 'words-ch-03',
+      chapterNumber: 3,
+      title: 'The Circle of Respect',
+      setting:
+        'Standard 5 classroom after the final period. The desks are arranged in a wide circle. Teacher Shalini sits with the students, including Rohit and Samar.',
+      dialogues: [
+        {
+          id: 'w-dlg-007',
+          speaker: 'shalini',
+          speakerLabel: 'Teacher Shalini',
+          text: 'Our Constitution begins with the promise of Equality and Fraternity — which means treating every person with dignity and respect. What does our classroom charter need to say about how we treat each other?',
+          mascotState: 'explaining',
+          isPlayer: false,
+          type: 'dialogue',
+        },
+        {
+          id: 'w-dlg-008',
+          speaker: 'rohit',
+          speakerLabel: 'Rohit',
+          text: 'I... I thought it was just fun. I didn\'t think it made Samar feel like he couldn\'t come to school.',
+          mascotState: 'thinking',
+          isPlayer: false,
+          type: 'dialogue',
+        },
+        {
+          id: 'w-dlg-009',
+          speaker: 'mitra',
+          speakerLabel: 'Mitra',
+          text: 'A learning moment! When we realize words cause harm, true strength comes from taking accountability and creating a shared pact of respect.',
+          mascotState: 'encouraging',
+          isPlayer: false,
+          type: 'dialogue',
+        },
+      ],
+      choices: [
+        {
+          id: 'w-ch3-opt-a',
+          text: 'Draft the "Playground Charter of Respect" where every student pledges to welcome newcomers, rotate games fairly, and call out bullying immediately.',
+          isCorrect: true,
+          isEmpathetic: true,
+          consequence:
+            'The entire class signs the charter. Rohit personally returns Samar’s notebook and apologizes. The following morning, Samar leads his team in football.',
+          learningExplanation:
+            'Restorative community justice builds lasting empathy. Under UNCRC Article 29, education must prepare children for responsible life in a free society in the spirit of tolerance and friendship.',
+          mascotReaction: 'celebrating',
+          nextChapterId: 'words-ch-04',
+          xpGain: 35,
+        },
+      ],
+    },
+
+    // ── CHAPTER 4 ───────────────────────────────────────────────────────────
+    {
+      id: 'words-ch-04',
+      chapterNumber: 4,
+      title: 'The Sovereign Circle',
+      setting:
+        'The Village of Belonging sunlit courtyard. A parchment banner inscribed with the student charter hangs proudly beside the national emblem.',
+      dialogues: [
+        {
+          id: 'w-dlg-010',
+          speaker: 'samar',
+          speakerLabel: 'Samar',
+          text: 'Thank you for standing with me. Today I felt like this school is my home too.',
+          mascotState: 'happy',
+          isPlayer: false,
+          type: 'dialogue',
+        },
+        {
+          id: 'w-dlg-011',
+          speaker: 'mitra',
+          speakerLabel: 'Mitra',
+          text: 'You have shown that dignity is not given by permission — it is a constitutional birthright. When we stand together, the circle of belonging is unbreakable.',
+          mascotState: 'celebrating',
+          isPlayer: false,
+          type: 'dialogue',
+        },
+      ],
+      choices: null,
+      articleReveal: {
+        article: 'Article 14 & Article 15(3)',
+        title: 'Equality Before Law & Protection Against Discrimination',
+        text: 'Article 14 guarantees equality before the law to every person, while Article 15 prohibits discrimination on grounds of religion, race, caste, sex, or place of birth. Article 15(3) empowers special provisions to protect children and ensure their welfare, dignity, and equal opportunity in every school and playground across India.',
+        stampColor: '#DE7215',
+        actReference: 'Constitution of India, Part III (Fundamental Rights)',
+        xpReward: 60,
+      },
+    },
+  ],
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MISSION 04 (MISSION C) — The Silent Workshop
+// Article 24 & Child Labour Act 2016 | Age Band: All (8–16) | World: Haven of Dignity
+// ─────────────────────────────────────────────────────────────────────────────
+export const SCENARIO_03_WORKSHOP = {
+  id: 'scenario-03-workshop',
+  missionId: 'adv-04-workshop',
+  worldId: 'haven-of-dignity',
+  title: 'The Silent Workshop',
+  tagline: 'Recognizing hazardous child labour and defending childhood freedom',
+  articleRef: 'Article 24 & Child Labour Amendment Act, 2016',
+  estimatedMinutes: 14,
+  difficulty: 'Advocate',
+  badgeName: 'Torch of Freedom & Dignity',
+  synopsis:
+    'While searching for a missing classmate’s art supplies in the bazaar alley, you discover 13-year-old Dev toiling late inside an unventilated glass polishing workshop instead of preparing for exams. Learn why Article 24 prohibits hazardous work and how to safely mobilize trusted adults and Childline 1098.',
+  mascotStateDefault: 'curious',
+  totalChapters: 4,
+
+  chapters: [
+    // ── CHAPTER 1 ───────────────────────────────────────────────────────────
+    {
+      id: 'work-ch-01',
+      chapterNumber: 1,
+      title: 'The Alley Behind the Bazaar',
+      setting:
+        'A narrow cobblestone lane behind the bangle market. Evening shadows stretch across damp walls. From a low cellar doorway, the hiss of soldering torches and acrid chemical fumes drift into the cool air.',
+      dialogues: [
+        {
+          id: 'wk-dlg-001',
+          speaker: 'narrator',
+          speakerLabel: 'Narrator',
+          text: 'It is 7:30 PM. The market shops are pulling down their iron shutters. But in a subterranean cellar beneath a tea depot, fluorescent tubelights hum. Through the cracked wooden door, you see a familiar silhouette: Dev, your classmate from Standard 7.',
+          mascotState: 'curious',
+          isPlayer: false,
+          type: 'narrative',
+        },
+        {
+          id: 'wk-dlg-002',
+          speaker: 'dev',
+          speakerLabel: 'Dev',
+          text: 'Pssssht! Please don’t stand there! The manager will shout if he thinks I’m wasting time. I have sixty more glass frames to polish before 10 PM.',
+          mascotState: 'concerned',
+          isPlayer: false,
+          type: 'dialogue',
+        },
+        {
+          id: 'wk-dlg-003',
+          speaker: 'mitra',
+          speakerLabel: 'Mitra',
+          text: 'Notice the chemical smell and Dev’s reddened eyes. Under Indian law, children belong in classrooms and homes, never in hazardous workshops with chemical dust and extreme heat. We must handle this carefully.',
+          mascotState: 'concerned',
+          isPlayer: false,
+          type: 'dialogue',
+        },
+      ],
+      choices: [
+        {
+          id: 'wk-ch1-opt-a',
+          text: 'Gently ask Dev why he is working here at night instead of studying for tomorrow\'s science test, while keeping a safe distance from the manager.',
+          isCorrect: true,
+          isEmpathetic: true,
+          consequence:
+            'Dev speaks in a whispered voice, relieved that someone noticed him. He explains his situation without alerting the manager.',
+          learningExplanation:
+            'Approaching calmly and respectfully builds trust. Children forced into labour often fear punishment or losing their family’s livelihood.',
+          mascotReaction: 'thinking',
+          nextChapterId: 'work-ch-02',
+          xpGain: 25,
+        },
+        {
+          id: 'wk-ch1-opt-b',
+          text: 'Kick open the workshop door and angrily accuse the manager of breaking the law.',
+          isCorrect: false,
+          isEmpathetic: false,
+          consequence:
+            'The manager becomes aggressive, chases you out of the alley, and locks Dev into an inner room. You have put yourself and Dev in direct physical danger.',
+          learningExplanation:
+            'Never confront exploitative employers alone. Child protection situations require coordination with trusted authorities, Child Welfare Committees, and Childline 1098.',
+          mascotReaction: 'concerned',
+          nextChapterId: 'work-ch-02',
+          xpGain: 10,
+        },
+      ],
+    },
+
+    // ── CHAPTER 2 ───────────────────────────────────────────────────────────
+    {
+      id: 'work-ch-02',
+      chapterNumber: 2,
+      title: 'The Bondage Ledger',
+      setting:
+        'Behind the workshop dumpster. Dev slips out for two minutes to drink water from the tap.',
+      dialogues: [
+        {
+          id: 'wk-dlg-004',
+          speaker: 'dev',
+          speakerLabel: 'Dev',
+          text: 'My uncle fell sick last month and borrowed ten thousand rupees from the contractor. The contractor said I must work every evening until the interest is paid off. He holds my school transfer certificate in his drawer.',
+          mascotState: 'concerned',
+          isPlayer: false,
+          type: 'dialogue',
+        },
+        {
+          id: 'wk-dlg-005',
+          speaker: 'narrator',
+          speakerLabel: 'Narrator',
+          text: 'Dev shows you the yellow paper receipt the contractor forced his family to sign — claiming an endless "advance" that keeps Dev bonded.',
+          mascotState: 'concerned',
+          isPlayer: false,
+          type: 'evidence',
+          evidenceDetails: {
+            title: 'Subcontractor Debt Receipt',
+            description: 'Informal paper note claiming bonded labour to repay medical advance.',
+            legalNote: 'Bonded labour is strictly illegal under the Bonded Labour System (Abolition) Act 1976. Furthermore, Article 24 of the Constitution forbids employing children in hazardous factories.',
+          },
+        },
+        {
+          id: 'wk-dlg-006',
+          speaker: 'mitra',
+          speakerLabel: 'Mitra',
+          text: 'Holding a child’s education hostage for debt is a serious crime under Indian law. A child cannot be pledged for labour. What is the safest, most effective action?',
+          mascotState: 'concerned',
+          isPlayer: false,
+          type: 'dialogue',
+        },
+      ],
+      choices: [
+        {
+          id: 'wk-ch2-opt-a',
+          text: 'Tell your school Principal and immediately dial Childline 1098 to report the hazardous workshop location and illegal debt bondage.',
+          isCorrect: true,
+          isEmpathetic: true,
+          consequence:
+            'Childline 1098 coordinates with the District Child Protection Unit (DCPU) and the labour inspector. A verified welfare team is dispatched to safely rescue Dev.',
+          learningExplanation:
+            'Childline 1098 is India’s 24×7 emergency helpline for children in distress. They work with legal authorities to enforce Article 24 and ensure rehabilitation without putting students in harm’s way.',
+          mascotReaction: 'happy',
+          nextChapterId: 'work-ch-03',
+          xpGain: 35,
+        },
+        {
+          id: 'wk-ch2-opt-b',
+          text: 'Try to pool pocket money from classmates to pay off the contractor\'s debt.',
+          isCorrect: false,
+          isEmpathetic: false,
+          consequence:
+            'Pocket money cannot solve illegal exploitation. The contractor takes the cash and invents new "penalties" to keep Dev working.',
+          learningExplanation:
+            'Exploitative contractors exploit ignorance of the law. Illegal debt bondage must be broken by statutory enforcement and government rehabilitation funds, not private buyouts.',
+          mascotReaction: 'thinking',
+          nextChapterId: 'work-ch-03',
+          xpGain: 10,
+        },
+      ],
+    },
+
+    // ── CHAPTER 3 ───────────────────────────────────────────────────────────
+    {
+      id: 'work-ch-03',
+      chapterNumber: 3,
+      title: 'The Haven of Freedom',
+      setting:
+        'The District Child Welfare Committee (CWC) office the following afternoon. Soft sunlight falls on the wooden conference table. A counselor and social worker are present.',
+      dialogues: [
+        {
+          id: 'wk-dlg-007',
+          speaker: 'counselor',
+          speakerLabel: 'Child Welfare Officer',
+          text: 'Because you called 1098, our team inspected the workshop this morning. Dev has been safely reunited with his mother, the illegal loan was nullified under the Bonded Labour Act, and Dev is enrolled in the Kasturba residential bridge school.',
+          mascotState: 'happy',
+          isPlayer: false,
+          type: 'dialogue',
+        },
+        {
+          id: 'wk-dlg-008',
+          speaker: 'dev',
+          speakerLabel: 'Dev',
+          text: 'I have my books back. The counselor said I will sit for my exams next month. I don\'t have to breathe glass dust anymore.',
+          mascotState: 'celebrating',
+          isPlayer: false,
+          type: 'dialogue',
+        },
+        {
+          id: 'wk-dlg-009',
+          speaker: 'mitra',
+          speakerLabel: 'Mitra',
+          text: 'Look at the difference legal knowledge and brave citizenship can make. Childhood is sacred. No furnace, loom, or tea stall has the right to extinguish a child’s future.',
+          mascotState: 'celebrating',
+          isPlayer: false,
+          type: 'dialogue',
+        },
+      ],
+      choices: [
+        {
+          id: 'wk-ch3-opt-a',
+          text: 'Help Dev catch up on his science notes and invite him to lead the classroom project on fundamental rights.',
+          isCorrect: true,
+          isEmpathetic: true,
+          consequence:
+            'Dev thrives in the classroom. Your peer support ensures that his return to schooling is filled with friendship and confidence.',
+          learningExplanation:
+            'Rehabilitation is complete when a child feels fully welcomed back into academic and social life.',
+          mascotReaction: 'celebrating',
+          nextChapterId: 'work-ch-04',
+          xpGain: 30,
+        },
+      ],
+    },
+
+    // ── CHAPTER 4 ───────────────────────────────────────────────────────────
+    {
+      id: 'work-ch-04',
+      chapterNumber: 4,
+      title: 'The Quenched Furnace',
+      setting:
+        'The Haven of Dignity sandstone pavilion. In the distance, the old furnace tower is overgrown with cool jasmine vines.',
+      dialogues: [
+        {
+          id: 'wk-dlg-010',
+          speaker: 'mitra',
+          speakerLabel: 'Mitra',
+          text: 'You have defended Article 24 of the Constitution. Every time a child is freed from exploitation, our entire nation moves closer to true justice.',
+          mascotState: 'celebrating',
+          isPlayer: false,
+          type: 'dialogue',
+        },
+      ],
+      choices: null,
+      articleReveal: {
+        article: 'Article 24 & Child Labour Amendment Act, 2016',
+        title: 'Prohibition of Employment of Children in Hazardous Occupations',
+        text: 'Article 24 of the Constitution of India provides: "No child below the age of fourteen years shall be employed to work in any factory or mine or engaged in any other hazardous employment." Under the 2016 Amendment, employment of children under 14 in all occupations is strictly banned, and adolescents (14–18) are prohibited from hazardous occupations. For assistance or reporting, dial Childline 1098 toll-free, 24×7.',
+        stampColor: '#D04F36',
+        actReference: 'Constitution of India & Child Labour (P&R) Act 2016',
+        xpReward: 60,
+      },
+    },
+  ],
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Registry — lookup by scenarioId
 // ─────────────────────────────────────────────────────────────────────────────
 export const SCENARIO_REGISTRY = {
   'scenario-01-bench': SCENARIO_01_BENCH,
   'scenario-02-screen': SCENARIO_02_SCREEN,
+  'scenario-02-words': SCENARIO_02_WORDS,
+  'scenario-03-workshop': SCENARIO_03_WORKSHOP,
+  // Aliases for seamless routing
+  'adv-01-schoolbag': SCENARIO_01_BENCH,
+  'adv-02-screen': SCENARIO_02_SCREEN,
+  'adv-03-words': SCENARIO_02_WORDS,
+  'adv-04-workshop': SCENARIO_03_WORKSHOP,
+  'scenario-missing-classroom': SCENARIO_01_BENCH,
+  'scenario-forest-words': SCENARIO_02_WORDS,
+  'scenario-silent-workshop': SCENARIO_03_WORKSHOP,
 };
 
 /**
@@ -832,4 +1351,5 @@ export function getScenarioById(scenarioId) {
 export function listScenarioIds() {
   return Object.keys(SCENARIO_REGISTRY);
 }
+
 
