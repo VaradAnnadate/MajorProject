@@ -1,7 +1,7 @@
 # RightsQuest India — Architecture & Codebase Deep Dive
 
 > **Governing Framework:** Creative OS (`44_AGENCYLIKE_UI`, `01_DESIGN_OS`, `02_ART_DIRECTION`, `04_TYPOGRAPHY_SYSTEM`, `05_MOTION_SYSTEM`, `11_FRONTEND_ARCHITECTURE`, `12_CREATIVE_QA`)  
-> **Status:** Parts 01, 02 & 03 Implemented & Verified · 158/158 QA Tests Passing  
+> **Status:** Parts 01, 02, 03 & 04 Implemented & Verified · 237/237 QA Tests Passing  
 > **Core Mission:** An agency-grade, story-driven gamified children's rights learning platform designed for children aged 8–16 across India.
 
 ---
@@ -37,7 +37,8 @@ MajorProject/
 │   └── VISUAL_DESIGN_SYSTEM.md               # Visual identity, typography & motion guide
 ├── scripts/
 │   ├── verify_foundation.mjs                 # 120-point automated QA suite (Parts 01 & 02)
-│   └── verify_part03.mjs                     # 38-point automated QA suite (Part 03 Scenario Engine)
+│   ├── verify_part03.mjs                     # 50-point automated QA suite (Part 03 Scenario Engine)
+│   └── verify_part04.mjs                     # 67-point automated QA suite (Part 04 Progression System)
 ├── public/                                   # Static public assets (favicons, manifest)
 ├── index.html                                # Accessible HTML5 document shell with font preconnects
 ├── vite.config.js                            # Manual chunk splitting (vendor, motion, icons, features)
@@ -99,14 +100,43 @@ MajorProject/
     │   │   └── components/
     │   │       ├── Mascot.jsx                # Expressive vector Sun-Fox character with speech bubble
     │   │       └── MascotReaction.jsx        # Docked floating companion widget for real-time guidance
-    │   └── storytelling/                     # Part 02: 6-Scene Cinematic Persuasion Spine
-    │       └── components/
-    │           ├── StoryHero.jsx             # Scene 01: The Invitation
-    │           ├── StoryWorldParallax.jsx    # Scene 02: The World Awakens (5 connected realms)
-    │           ├── StoryRightsMetaphor.jsx   # Scene 03: Discover the Meaning (Constitutional pillars)
-    │           ├── StoryMascotIntro.jsx      # Scene 04: The Companion Stage (Interactive emotions)
-    │           ├── StoryMapPortal.jsx        # Scene 05: The Adventure Begins (Live embedded map)
-    │           └── StoryFinalCta.jsx         # Scene 06: Final Invitation & emergency 1098 assurance
+    │   ├── storytelling/                     # Part 02: 6-Scene Cinematic Persuasion Spine
+    │   │   └── components/
+    │   │       ├── StoryHero.jsx             # Scene 01: The Invitation
+    │   │       ├── StoryWorldParallax.jsx    # Scene 02: The World Awakens (5 connected realms)
+    │   │       ├── StoryRightsMetaphor.jsx   # Scene 03: Discover the Meaning (Constitutional pillars)
+    │   │       ├── StoryMascotIntro.jsx      # Scene 04: The Companion Stage (Interactive emotions)
+    │   │       ├── StoryMapPortal.jsx        # Scene 05: The Adventure Begins (Live embedded map)
+    │   │       └── StoryFinalCta.jsx         # Scene 06: Final Invitation & emergency 1098 assurance
+    │   └── progression/                      # Part 04: Living Progression System & Rights Passport
+    │       ├── index.js                      # Barrel export of progression hooks, components & engine
+    │       ├── data/                         # Progression constants, tiers, achievements & levels
+    │       │   ├── rewardConfig.js           # XP reward values, multipliers, repeat policies
+    │       │   ├── levels.js                 # 7 narrative recognition tiers (Level 1 to 7)
+    │       │   ├── achievements.js           # 12 collectible tactile badges across 4 categories
+    │       │   └── demoActivity.js           # Non-PII demo activity log seed data
+    │       ├── engine/                       # Deterministic calculation engines
+    │       │   ├── rewardEngine.js           # Idempotent XP event processing & transaction ledger
+    │       │   └── streakEngine.js           # Non-punitive consistency tracking & streak shields
+    │       ├── services/
+    │       │   └── progressionPersistence.js # LocalStorage sync with safe fallback
+    │       ├── hooks/
+    │       │   └── useProgression.js         # Unified progression hook with real-time level & badge state
+    │       ├── components/                   # Progression UI components
+    │       │   ├── ProgressionHub.jsx        # Master tabbed progression container
+    │       │   ├── ExplorerProfile.jsx       # Learner recognition dossier & stats strip
+    │       │   ├── XPDisplay.jsx             # Level rank, XP points, and streak counter
+    │       │   ├── LevelProgress.jsx         # Progress bar to next narrative recognition tier
+    │       │   ├── AchievementCollection.jsx # Treasure cabinet & badge grid with category filters
+    │       │   ├── AchievementDetail.jsx     # Tactile modal inspector for wax seal medallions
+    │       │   ├── JourneyPath.jsx           # Vertical visual milestone path through Level 7
+    │       │   ├── CooperativeProgress.jsx   # Shared national community quests & milestones
+    │       │   ├── StreakCalendar.jsx        # 14-day consistency grid without punitive loss
+    │       │   ├── ActivityJournal.jsx       # Immutable chronological activity audit trail
+    │       │   └── RewardCelebration.jsx     # Fullscreen modal celebration on level-up or new badge
+    │       └── pages/
+    │           ├── ProgressionPage.jsx       # Dedicated /achievements & /progression route view
+    │           └── ProgressionPage.module.css # Rights Passport page styling & typography
     ├── components/
     │   ├── common/
     │   │   ├── EmergencyQuickBar.jsx         # Persistent 1098 Childline emergency quickbar

@@ -214,3 +214,33 @@ Mitra the Sun-Fox is engineered as an expressive, scalable vector character adhe
 
 ### C. Atmospheric Floating Spores (`.atmosphere-spore`):
 * Lightweight blurred particles drifting across the terrain with deterministic coordinates, emulating pollen, sunlight, and fireflies. Paused gracefully when `prefers-reduced-motion` is detected.
+
+---
+
+## 9. Dual-Mode Visual Architecture (Briefing vs. Gameplay)
+
+Following Creative OS `44_AGENCYLIKE_UI`, RightsQuest India enforces an intentional dual-mode visual architecture that modulates between focused daytime preparation and immersive night-time story engagement:
+
+### A. Minimalist Studio White Scenario Briefing (`/play/:scenarioId`):
+* **Canvas Ground:** Clean, radiant studio white (`#FFFFFF`) with a subtle warmth gradient (`linear-gradient(180deg, #FFFFFF 0%, #FAFAF8 100%)`).
+* **High-Contrast Editorial Typography:** Deep charcoal headlines (`#0F172A`) paired with slate italic taglines (`#475569`).
+* **Refined Studio Cards:** Physical 1.5px bordered cards (`#E2E8F0`) with warm amber top-trim and micro-shadows (`0 4px 20px rgba(0, 0, 0, 0.04)`), replacing dark muddy glassmorphism.
+* **Balanced Dual CTAs:** High-conviction saffron gradient button (`#FF9E2C` $\to$ `#D84315`, 52px height) alongside a crisp white secondary action button (`#FFFFFF` with `#CBD5E1` border).
+
+### B. Cinematic Night Story Canvas (`ScenarioRunner.jsx`):
+* **Canvas Ground:** Deep midnight obsidian (`#0A0F1D` / `#0B0D14`) focusing visual cognitive load entirely onto narrative dialogue.
+* **Restrained Apex Realm Lighting:** Single, delicate 12% opacity apex radial ambient glow tailored to realm hue (*haven* saffron, *gardens* emerald, *safety* sky, *voices* violet), completely eliminating multi-color muddy clashes.
+* **Full-Bleed Viewport Isolation:** Body and document element backgrounds lock cleanly to `#FFFFFF` during briefings and `#0A0F1D` during runner active gameplay, preventing 95px translation gaps.
+
+---
+
+## 10. Modal Viewport Containment & Character Speech Invariants
+
+### A. Realm Detail Modal Viewport Safety (`WorldDetailModal.jsx` & `world.css`):
+* **Flexbox Alignment:** Backdrop uses `align-items: flex-start; padding: clamp(1rem, 4vh, 2.5rem) var(--space-4);` to prevent flex centering from clipping top and bottom content on smaller laptop screens.
+* **Scroll Isolation:** Container max-height capped at `calc(100vh - clamp(2.5rem, 8vh, 5rem))` with `overscroll-behavior: contain` and `data-lenis-prevent="true"`, ensuring smooth scrolling down to story quests and action buttons without nested scroll collisions.
+* **Portal Architecture:** Rendered via `createPortal(..., document.body)` to escape any stacking context or filter traps.
+
+### B. Mascot Dialogue Isolation (`Mascot.jsx`):
+* **Strict Prop Sync:** `bubbleOpen` state dynamically synchronizes with `showBubble` prop via `useEffect`.
+* **Render Guard:** Speech bubble strictly guarded with `{showBubble && bubbleOpen && (...)}`, preventing accidental speech balloons from obscuring learner dossier titles or hero text.

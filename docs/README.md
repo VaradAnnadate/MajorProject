@@ -24,6 +24,7 @@ flowchart TD
     Gameplay --> Choices["Ethical Decision Trees & In-Flow Controls"]
     Choices --> Consequence["Non-Punitive Consequence Feedback (Empathetic vs Learning)"]
     Consequence --> ArticleStamp["Constitutional Article Reveal Stamp (Art. 21A, POCSO, RTE)"]
+    ArticleStamp --> Progression["Part 04: Living Progression System (/achievements)<br/>(XP Engine • 12 Badges • Streaks • Cooperative Goals)"]
     
     subgraph Safeguards ["DPDP 2023 Child Privacy & Safety Layer"]
         Helpline["Childline 1098 Quickbar"]
