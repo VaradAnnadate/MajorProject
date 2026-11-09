@@ -19,10 +19,9 @@ import styles from './ScenarioRunner.module.css';
 export default function ScenarioRunner({ scenarioId, onComplete }) {
   const navigate = useNavigate();
   const engine = useScenarioEngine(scenarioId);
-  const { activeAgeBand, inspectEvidenceReward, recordHelplineAccess } = useDemoLearner();
+  const { activeAgeBand, inspectEvidenceReward } = useDemoLearner();
   const [evidenceOpen, setEvidenceOpen] = useState(false);
   const [pendingEvidence, setPendingEvidence] = useState(null);
-  const [safeguardModalOpen, setSafeguardModalOpen] = useState(false);
 
   const {
     scenario,
@@ -127,7 +126,7 @@ export default function ScenarioRunner({ scenarioId, onComplete }) {
       data-world={scenario.worldId || 'gardens-of-growth'}
       data-lenis-prevent="true"
     >
-      {/* Top: chapter progress & safeguard trigger */}
+      {/* Top: chapter progress & navigation */}
       <div className={styles.topBar}>
         <ChapterProgress
           chapterProgress={chapterProgress}
@@ -135,18 +134,6 @@ export default function ScenarioRunner({ scenarioId, onComplete }) {
           missionTitle={scenario.title}
         />
         <div className={styles.topActions}>
-          <button
-            className={styles.safeguardQuickBtn}
-            onClick={() => {
-              setSafeguardModalOpen(true);
-              if (recordHelplineAccess) recordHelplineAccess();
-            }}
-            title="Child Helpline 1098 & Safety Protocol"
-            aria-label="Open Childline 1098 helpline and safety protocol"
-          >
-            <span className={styles.safeguardIcon} aria-hidden="true">📞</span>
-            <span className={styles.safeguardText}>Childline 1098</span>
-          </button>
           <button
             className={styles.exitBtn}
             onClick={() => navigate('/world')}
@@ -260,53 +247,6 @@ export default function ScenarioRunner({ scenarioId, onComplete }) {
         dialogue={isMitraSpeaking ? currentDialogue?.text : null}
         isMitraSpeaking={isMitraSpeaking}
       />
-
-      {/* Safeguarding & Childline 1098 Modal */}
-      {safeguardModalOpen && (
-        <div
-          className={styles.safeguardOverlay}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="safeguardTitle"
-          onClick={() => setSafeguardModalOpen(false)}
-        >
-          <div
-            className={styles.safeguardCard}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className={styles.safeguardPill}>
-              🛡️ Safe Harbor Protocol · National Safeguard
-            </div>
-            <h2 id="safeguardTitle" className={styles.safeguardHeading}>
-              You Are Safe & Valued
-            </h2>
-            <p className={styles.safeguardText}>
-              RightsQuest India is a safe space for learning constitutional rights and civic empathy.
-              If you or any young person around you faces harm, distress, child labour, or unsafe situations,
-              free and confidential help is always available.
-            </p>
-            <div className={styles.safeguardCallout}>
-              <div className={styles.safeguardNumber} aria-label="Helpline number 1098">
-                📞 1098
-              </div>
-              <div className={styles.safeguardInfo}>
-                <strong>Childline India · 24/7 Emergency Helpline</strong>
-                <span>Toll-free · Confidential · National Emergency Support</span>
-              </div>
-            </div>
-            <div className={styles.safeguardPrivacy}>
-              🔒 <strong>DPDP Act 2023 §9 Child Privacy Guarantee:</strong> RightsQuest India never asks for your personal information, phone numbers, or passwords. Your journey is completely private and secure.
-            </div>
-            <button
-              className={styles.safeguardCloseBtn}
-              onClick={() => setSafeguardModalOpen(false)}
-              autoFocus
-            >
-              Return to Story Adventure
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

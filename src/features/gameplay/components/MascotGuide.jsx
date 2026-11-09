@@ -185,11 +185,6 @@ export default function MascotGuide({ mascotState = 'idle', dialogue = null, isM
       {isMitraSpeaking && dialogue && (
         <div className={styles.bubble} role="status" aria-live="polite">
           <p className={styles.bubbleText}>{dialogue}</p>
-          {isConcerned && (
-            <span className={styles.helplineTag} aria-label="Childline helpline number">
-              📞 Childline: 1098
-            </span>
-          )}
           <div className={styles.bubbleTail} aria-hidden="true" />
         </div>
       )}

@@ -60,20 +60,6 @@
   margin: 0;
 }
 
-.helplineTag {
-  display: inline-block;
-  margin-top: var(--space-2);
-  font-family: var(--font-family-mono);
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: var(--color-terracotta-500);
-  background: rgba(208, 79, 54, 0.1);
-  border: 1px solid rgba(208, 79, 54, 0.25);
-  border-radius: 4px;
-  padding: 2px 8px;
-}
-
 .bubbleTail {
   position: absolute;
   bottom: -8px;

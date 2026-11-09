@@ -86,8 +86,7 @@ assert(!scenarioPageContent.includes('type="password"'), 'Zero PII: No password 
 assert(!scenarioPageContent.includes('type="tel"'), 'Zero PII: No phone number input in ScenarioPage');
 assert(!scenarioPageContent.includes('type="email"'), 'Zero PII: No email input in ScenarioPage');
 assert(!runnerContent.includes('leaderboard'), 'No competitive leaderboard in ScenarioRunner');
-assert(runnerContent.includes('Childline 1098'), 'Persistent Childline 1098 safeguard accessible in ScenarioRunner');
-assert(runnerContent.includes('DPDP Act 2023 §9'), 'DPDP Act 2023 §9 child privacy guarantee present in safeguard modal');
+assert(!runnerContent.includes('Childline 1098'), 'Childline 1098 feature removed from ScenarioRunner quest interface');
 assert(runnerContent.includes('Constitutional Insight Milestone'), 'Dignity milestone presentation replaces raw arcade XP');
 
 // 6. Creative OS, Motion Integration & Accessibility
