@@ -126,23 +126,13 @@ export default function ScenarioRunner({ scenarioId, onComplete }) {
       data-world={scenario.worldId || 'gardens-of-growth'}
       data-lenis-prevent="true"
     >
-      {/* Top: chapter progress & navigation */}
+      {/* Top: chapter progress */}
       <div className={styles.topBar}>
         <ChapterProgress
           chapterProgress={chapterProgress}
           chapterTitle={currentChapter.title}
           missionTitle={scenario.title}
         />
-        <div className={styles.topActions}>
-          <button
-            className={styles.exitBtn}
-            onClick={() => navigate('/world')}
-            title="Return to World Map"
-            aria-label="Return to World Map"
-          >
-            ← Map
-          </button>
-        </div>
       </div>
 
       {/* Setting context strip */}
@@ -241,12 +231,22 @@ export default function ScenarioRunner({ scenarioId, onComplete }) {
         onClose={handleEvidenceClose}
       />
 
-      {/* Mitra companion */}
+      {/* Mitra companion (bottom-right) */}
       <MascotGuide
         mascotState={activeMascotState}
         dialogue={isMitraSpeaking ? currentDialogue?.text : null}
         isMitraSpeaking={isMitraSpeaking}
       />
+
+      {/* Return to Map (bottom-left footer) */}
+      <button
+        className={styles.exitBtn}
+        onClick={() => navigate('/world')}
+        title="Return to World Map"
+        aria-label="Return to World Map"
+      >
+        ← Map
+      </button>
     </div>
   );
 }
