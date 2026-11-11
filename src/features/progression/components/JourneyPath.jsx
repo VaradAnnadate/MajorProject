@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { GamifiedMilestoneCelebration } from './GamifiedMilestoneCelebration';
 import styles from './JourneyPath.module.css';
 
 const JOURNEY_WAYPOINTS = [
@@ -7,6 +9,7 @@ const JOURNEY_WAYPOINTS = [
     number: 1,
     title: 'The Schoolyard Gate',
     realm: 'Gardens of Growth',
+    worldId: 'gardens-of-growth',
     right: 'Article 21A & RTE Act',
     icon: '🏫',
     requiredLevel: 1,
@@ -16,7 +19,8 @@ const JOURNEY_WAYPOINTS = [
     id: 'wp-02',
     number: 2,
     title: 'The Whispering Screen',
-    realm: 'Haven of Dignity',
+    realm: 'Forest of Safety',
+    worldId: 'forest-of-safety',
     right: 'POCSO Act & DPDP Act §9',
     icon: '📱',
     requiredLevel: 2,
@@ -27,6 +31,7 @@ const JOURNEY_WAYPOINTS = [
     number: 3,
     title: 'The Silent Brickyard',
     realm: 'Haven of Dignity',
+    worldId: 'haven-of-dignity',
     right: 'Article 24 & Child Labour Act',
     icon: '🧱',
     requiredLevel: 3,
@@ -37,6 +42,7 @@ const JOURNEY_WAYPOINTS = [
     number: 4,
     title: 'The Equal Playfield',
     realm: 'Village of Belonging',
+    worldId: 'village-of-belonging',
     right: 'Articles 14 & 15(3)',
     icon: '⚽',
     requiredLevel: 4,
@@ -47,6 +53,7 @@ const JOURNEY_WAYPOINTS = [
     number: 5,
     title: 'The River Assembly',
     realm: 'River of Voices',
+    worldId: 'river-of-voices',
     right: 'UNCRC Article 12 (Participation)',
     icon: '🛶',
     requiredLevel: 5,
@@ -56,7 +63,8 @@ const JOURNEY_WAYPOINTS = [
     id: 'wp-06',
     number: 6,
     title: 'The Summit of Guardians',
-    realm: 'Summit of Voices',
+    realm: 'Haven of Dignity',
+    worldId: 'haven-of-dignity',
     right: 'Constitutional Charter of Dignity',
     icon: '🏔️',
     requiredLevel: 6,
@@ -65,13 +73,32 @@ const JOURNEY_WAYPOINTS = [
 ];
 
 export default function JourneyPath({ currentLevelNumber = 1 }) {
+  const [activeCelebration, setActiveCelebration] = useState(null);
+
   return (
     <div className={styles.root} role="region" aria-label="Constitutional Journey Path">
+      {activeCelebration && (
+        <GamifiedMilestoneCelebration
+          worldId={activeCelebration.worldId}
+          onClose={() => setActiveCelebration(null)}
+          onContinue={() => setActiveCelebration(null)}
+        />
+      )}
+
       <div className={styles.header}>
-        <div className={styles.eyebrow}>DISCOVERY TRAIL</div>
+        <div className={styles.eyebrowStrip}>
+          <span className={styles.eyebrow}>DISCOVERY TRAIL</span>
+          <button
+            type="button"
+            className={styles.headerLaunchBtn}
+            onClick={() => setActiveCelebration({ worldId: 'village-of-belonging' })}
+          >
+            🏆 View Realm Milestone Celebration
+          </button>
+        </div>
         <h2 className={styles.heading}>The Path of Constitutional Light</h2>
         <p className={styles.subtext}>
-          As your civic knowledge and empathy deepen, milestones along the five realms illuminate.
+          As your civic knowledge and empathy deepen, milestones along the five realms illuminate. Unlock realm crests, celebrate constitutional protections, and level up your guardian tier.
         </p>
       </div>
 
@@ -112,6 +139,16 @@ export default function JourneyPath({ currentLevelNumber = 1 }) {
                 <h3 className={styles.waypointTitle}>{wp.title}</h3>
                 <div className={styles.waypointRight}>{wp.right}</div>
                 <p className={styles.waypointDesc}>{wp.description}</p>
+
+                {isReached && (
+                  <button
+                    type="button"
+                    className={styles.waypointGatewayBtn}
+                    onClick={() => setActiveCelebration({ worldId: wp.worldId })}
+                  >
+                    <span>🎖️ Celebrate {wp.realm} Milestone →</span>
+                  </button>
+                )}
               </div>
             </div>
           );

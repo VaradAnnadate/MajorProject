@@ -14,6 +14,7 @@ import ConsequencePreview from './ConsequencePreview';
 import ArticleRevealStamp from './ArticleRevealStamp';
 import MascotGuide from './MascotGuide';
 import EvidenceInspector from './EvidenceInspector';
+import { GamifiedMilestoneCelebration } from '../../progression/components/GamifiedMilestoneCelebration';
 import styles from './ScenarioRunner.module.css';
 
 export default function ScenarioRunner({ scenarioId, onComplete }) {
@@ -22,6 +23,7 @@ export default function ScenarioRunner({ scenarioId, onComplete }) {
   const { activeAgeBand, inspectEvidenceReward } = useDemoLearner();
   const [evidenceOpen, setEvidenceOpen] = useState(false);
   const [pendingEvidence, setPendingEvidence] = useState(null);
+  const [showCelebration, setShowCelebration] = useState(false);
 
   const {
     scenario,
@@ -78,6 +80,15 @@ export default function ScenarioRunner({ scenarioId, onComplete }) {
   if (isScenarioComplete && !articleRevealVisible) {
     return (
       <div className={styles.completeScreen} role="main" aria-label="Mission complete" data-world={scenario.worldId}>
+        {showCelebration && (
+          <GamifiedMilestoneCelebration
+            worldId={scenario.worldId || 'haven-of-dignity'}
+            scenarioTitle={scenario.title}
+            earnedXp={engine.totalXp}
+            onClose={() => setShowCelebration(false)}
+            onContinue={() => onComplete(engine.totalXp, engine.choicesMade)}
+          />
+        )}
         <div className={styles.completeInner}>
           <div className={styles.completeIcon} aria-hidden="true">🌟</div>
           <h1 className={styles.completeTitle}>Constitutional Insight Milestone!</h1>
@@ -104,10 +115,18 @@ export default function ScenarioRunner({ scenarioId, onComplete }) {
             </button>
             {onComplete && (
               <button
+                className={styles.gatewayFlyBtn}
+                onClick={() => setShowCelebration(true)}
+              >
+                🎉 Claim Reward & Celebrate Milestone
+              </button>
+            )}
+            {onComplete && (
+              <button
                 className={styles.continueBtn}
                 onClick={() => onComplete(engine.totalXp, engine.choicesMade)}
               >
-                Return to World Map →
+                Return to World Map
               </button>
             )}
           </div>

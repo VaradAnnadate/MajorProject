@@ -57,9 +57,16 @@
     * Scene 02: The World Awakens (Five connected realms)
     * Scene 03: Discover the Meaning (Constitutional & UNCRC metaphors)
     * Scene 04: The Companion (Interactive Mitra Showcase)
+    * Signature 3D Gateway Moment: Procedural Three.js dimensional portal fly-through with expanding white-light threshold
     * Scene 05: The Adventure Begins (Live embedded map)
     * Scene 06: Final Invitation (High-conviction closing CTA)
-  * **Verification:** 120/120 automated test assertions passing cleanly.
+  * **Cinematic 3D World Transitions & Level Gateways:**
+    * Three.js procedural 3D architectural engine with monumental world-specific structures (Torana Gateway, Banyan Arbor, Root Sanctuary, Ripple Colonnade, Sovereign Colonnade).
+    * 5-Act spatial camera flight: Act I (Emergence), Act II (3D Reveal & Gate Opening), Act III (Tunnel Passage), Act IV (White-Light Threshold), Act V (Destination World Arrival).
+    * Web Audio API harmonic chime on threshold crossing.
+    * Integrated across Landing Page, Journey Path milestones, scenario completions, and `/transition` studio.
+    * 60 dedicated QA checks in `scripts/verify_transition.mjs` (465 total project assertions).
+  * **Verification:** 120/120 foundation checks + 60/60 3D transition checks passing cleanly.
 
 ---
 

@@ -42,7 +42,8 @@ MajorProject/
 │   ├── verify_part03.mjs                     # 50-point automated QA suite (Part 03 Scenario Engine)
 │   ├── verify_part04.mjs                     # 67-point automated QA suite (Part 04 Progression System)
 │   ├── verify_part05.mjs                     # 64-point automated QA suite (Part 05 Classroom System)
-│   └── verify_part06.mjs                     # 104-point automated QA suite (Part 06 Intelligence System)
+│   ├── verify_part06.mjs                     # 104-point automated QA suite (Part 06 Intelligence System)
+│   └── verify_transition.mjs                 # 60-point automated QA suite (3D World Transitions)
 ├── server/
 │   └── classroom-server.js                    # Part 05 in-memory WebSocket room relay
 ├── public/                                   # Static public assets (favicons, manifest)
@@ -173,6 +174,14 @@ MajorProject/
     │           ├── FamilyConversationStarters.jsx # "At the Dinner Table" prompts & offline activities
     │           ├── SupportivePillarsGrid.jsx # Zero streak penalties & anti-addiction commitments
     │           └── GuardianResourcesAccordion.jsx # Plain-language RTE, POCSO & DPDP §9 guides
+    │   └── transition/                       # Cinematic 3D World Transitions & Gateways
+    │       ├── data/transitionWorlds.js      # 5 realm configurations, architecture & lighting presets
+    │       ├── engine/WorldTransitionScene.js# Three.js 3D procedural architecture & camera flight
+    │       ├── hooks/useWorldTransition.js   # Transition state, harmonic chimes & act milestones
+    │       ├── components/
+    │       │   ├── CinematicWorldTransition.jsx # Fullscreen 5-act 3D portal with white burst overlay
+    │       │   └── LandingGatewayScene.jsx   # Pinned scroll-scrubbed gateway on landing page
+    │       └── pages/TransitionPage.jsx      # /transition interactive gateway studio
     ├── components/
     │   ├── common/
     │   │   ├── EmergencyQuickBar.jsx         # Persistent 1098 Childline emergency quickbar

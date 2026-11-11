@@ -187,6 +187,14 @@ export const router = createBrowserRouter([
         element: <Navigate to="/guardian" replace />
       },
       {
+        path: 'gateway',
+        element: <Navigate to="/" replace />
+      },
+      {
+        path: 'transition',
+        element: <Navigate to="/" replace />
+      },
+      {
         path: '*',
         element: <Navigate to="/" replace />
       }

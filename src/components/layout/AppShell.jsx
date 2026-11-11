@@ -69,7 +69,7 @@ export default function AppShell() {
       className="app-shell" 
       style={{ 
         position: 'relative', 
-        overflowX: 'hidden',
+        overflowX: 'clip',
         backgroundColor: isGameplay ? '#0B0D14' : undefined 
       }}
     >
