@@ -1,0 +1,21 @@
+.root { padding: clamp(1rem, 3vw, 1.5rem); border: 1px solid var(--color-border-medium); border-radius: 18px; background: #fcfaf5; }
+.header { display: flex; align-items: center; gap: .8rem; }
+.icon { display: grid; width: 46px; height: 46px; flex: none; place-items: center; border-radius: 14px; background: #fff0d7; font-size: 1.45rem; }
+.eyebrow, .promptLabel, .sources > span { color: var(--color-saffron-600); font: 700 .65rem var(--font-family-mono); letter-spacing: .1em; }
+.header h3 { margin: .25rem 0 0; font-size: 1.2rem; }
+.promptCard { margin: 1.1rem 0; padding: 1rem 1.1rem; border-left: 3px solid var(--color-saffron-500); border-radius: 0 12px 12px 0; background: var(--color-canvas-card); }
+.promptCard p { margin: .4rem 0 0; color: var(--color-ink-primary); font-weight: 650; line-height: 1.55; }
+.rules { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; }
+.rule { display: flex; align-items: flex-start; gap: .6rem; padding: .75rem; border: 1px solid var(--color-border-subtle); border-radius: 12px; background: #fff; }
+.rule > span { font-size: 1.1rem; }
+.rule h4 { margin: 0 0 .2rem; font-size: .8rem; }
+.rule p { margin: 0; color: var(--color-ink-muted); font-size: .72rem; line-height: 1.45; }
+.rightsNote { margin: 1rem 0 0; color: var(--color-ink-secondary); font-size: .8rem; line-height: 1.55; }
+.sources { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-top: .9rem; }
+.sources > span { width: 100%; }
+.sources a { display: inline-flex; padding: .45rem .6rem; border: 1px solid var(--color-border-medium); border-radius: 8px; color: var(--color-ink-secondary); font-size: .72rem; text-decoration: none; }
+.sources a:hover { border-color: var(--color-saffron-500); color: var(--color-ink-primary); }
+.sources a:focus-visible { outline: 3px solid var(--color-saffron-500); outline-offset: 2px; }
+.disclaimer { margin: .8rem 0 0; color: var(--color-ink-muted); font-size: .68rem; }
+
+@media (max-width: 600px) { .rules { grid-template-columns: 1fr; } }
