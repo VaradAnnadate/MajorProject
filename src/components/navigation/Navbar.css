@@ -1,0 +1,55 @@
+.desktop-nav,
+.desktop-actions {
+  display: none !important;
+}
+
+.compact-help {
+  display: none !important;
+}
+
+@media (min-width: 900px) and (max-width: 1999px) {
+  .compact-help {
+    display: inline-flex !important;
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 0.45rem 0.75rem !important;
+    font-size: 0.82rem !important;
+    white-space: nowrap;
+  }
+
+  .mobile-toggle {
+    display: inline-flex !important;
+    flex: 0 0 44px;
+  }
+}
+
+@media (min-width: 2000px) {
+  .navbar-container {
+    max-width: 1900px !important;
+  }
+
+  .desktop-nav {
+    display: flex !important;
+    flex: 1 1 auto;
+    justify-content: center;
+    min-width: 0;
+    gap: 0.15rem !important;
+  }
+
+  .desktop-nav a {
+    flex: 0 0 auto;
+    padding-inline: 0.5rem !important;
+    white-space: nowrap;
+  }
+
+  .desktop-actions {
+    display: flex !important;
+    flex: 0 0 auto;
+    gap: 0.5rem !important;
+  }
+
+  .compact-help,
+  .mobile-toggle {
+    display: none !important;
+  }
+}

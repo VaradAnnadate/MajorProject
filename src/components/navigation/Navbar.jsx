@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { NAV_LINKS } from '../../data/navigation';
 import { useDemoLearner } from '../../context/DemoLearnerContext';
+import './Navbar.css';
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -31,7 +32,7 @@ export default function Navbar() {
       }}
     >
       <div 
-        className="container"
+        className="container navbar-container"
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -254,6 +255,12 @@ export default function Navbar() {
           </Link>
         </div>
 
+        {/* Compact desktop help action while the full navigation is collapsed */}
+        <Link to="/help" className="btn btn-help compact-help">
+          <ShieldAlert size={15} />
+          <span>Get Help (1098)</span>
+        </Link>
+
         {/* Mobile Menu Hamburger Toggle */}
         <button
           type="button"
@@ -385,20 +392,6 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* Responsive Inline CSS for desktop navigation display */}
-      <style>{`
-        @media (min-width: 900px) {
-          .desktop-nav {
-            display: flex !important;
-          }
-          .desktop-actions {
-            display: flex !important;
-          }
-          .mobile-toggle {
-            display: none !important;
-          }
-        }
-      `}</style>
     </header>
   );
 }
