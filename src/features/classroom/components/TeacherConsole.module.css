@@ -1,0 +1,46 @@
+.root { width: min(100%, 1020px); margin: 0 auto; padding: clamp(1.2rem, 4vw, 2.4rem); border: 1px solid var(--color-border-medium); border-radius: 24px; background: var(--color-canvas-card); box-shadow: var(--shadow-press); }
+.setupIntro { max-width: 650px; margin-bottom: 1.5rem; }
+.eyebrow { color: var(--color-saffron-600); font: 700 .67rem var(--font-family-mono); letter-spacing: .1em; }
+.setupIntro h2, .consoleHeader h2 { margin: .4rem 0 .45rem; font-size: clamp(1.55rem, 4vw, 2.25rem); }
+.setupIntro p, .consoleHeader p { margin: 0; color: var(--color-ink-secondary); line-height: 1.55; }
+.fieldLabel { display: block; margin-bottom: .45rem; font-size: .85rem; font-weight: 750; }
+.questSelect { width: min(100%, 580px); min-height: 48px; padding: .65rem .8rem; border: 1px solid var(--color-border-medium); border-radius: 10px; background: var(--color-canvas-primary); color: var(--color-ink-primary); font: inherit; }
+.questPreview { display: grid; gap: .45rem; max-width: 700px; margin: .75rem 0 1rem; padding: .85rem; border-radius: 12px; background: var(--color-canvas-secondary); color: var(--color-ink-secondary); font-size: .83rem; line-height: 1.5; }
+.questPreview span { color: var(--color-ink-muted); font-size: .74rem; }
+.consoleHeader { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.connectionBadge { flex: none; padding: .4rem .65rem; border-radius: 999px; background: #fff2e5; color: #8c5a18; font-size: .72rem; font-weight: 750; }
+.connectionBadge span { margin-right: .2rem; font-size: .6rem; }
+.connected { background: #e7f3e5; color: #286944; }
+.pinPanel { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: 1.35rem 0; padding: 1rem 1.2rem; border: 1px solid #ecd9b4; border-radius: 17px; background: #fff8e9; }
+.pinPanel > div { display: grid; gap: .2rem; }
+.pinLabel { color: #8b671f; font: 700 .62rem var(--font-family-mono); letter-spacing: .12em; }
+.pin { color: var(--color-ink-primary); font: 800 clamp(2rem, 8vw, 3.2rem) var(--font-family-mono); letter-spacing: .05em; }
+.pinHint { color: var(--color-ink-secondary); font-size: .78rem; }
+.copyButton { min-height: 42px; padding: .6rem .8rem; border: 1px solid #d8c49c; border-radius: 9px; background: #fff; color: var(--color-ink-primary); cursor: pointer; font-weight: 700; }
+.copyStatus { position: absolute; right: 1.2rem; bottom: -.45rem; color: var(--color-forest-500); font-size: .68rem; }
+.rosterHeader { display: flex; align-items: center; justify-content: space-between; gap: .8rem; }
+.rosterHeader h3 { margin: 0; font-size: 1rem; }
+.rosterHeader p { margin: .2rem 0 0; color: var(--color-ink-muted); font-size: .75rem; }
+.rosterHeader > strong { color: var(--color-ink-secondary); font: 700 .8rem var(--font-family-mono); }
+.roster { display: flex; flex-wrap: wrap; gap: .5rem; margin: .75rem 0; padding: 0; list-style: none; }
+.roster li { display: flex; align-items: center; gap: .4rem; padding: .4rem .6rem; border: 1px solid var(--color-border-subtle); border-radius: 999px; background: #fff; color: var(--color-ink-secondary); font-size: .75rem; }
+.roster li span { font-size: .95rem; }
+.emptyRoster { margin: .75rem 0; padding: .8rem; border-radius: 10px; background: var(--color-canvas-secondary); color: var(--color-ink-muted); font-size: .8rem; }
+.dilemmaPreview { display: grid; gap: .3rem; margin: 1rem 0; color: var(--color-ink-secondary); font-size: .85rem; line-height: 1.5; }
+.dilemmaPreview span { color: var(--color-saffron-600); font: 700 .63rem var(--font-family-mono); letter-spacing: .1em; }
+.error { min-height: 1.2em; margin: .4rem 0; color: #a63232; font-size: .78rem; }
+.resultBlock { display: grid; gap: 1rem; margin-top: 1rem; }
+.doneMessage { margin: 0; color: var(--color-ink-muted); font-size: .78rem; }
+.controls { display: flex; align-items: center; gap: .7rem; margin-top: 1rem; }
+.primaryButton { display: flex; width: min(100%, 560px); min-height: 48px; align-items: center; justify-content: space-between; gap: 1rem; padding: .8rem 1rem; border: 0; border-radius: 11px; background: var(--color-ink-primary); color: #fff; cursor: pointer; font-weight: 750; }
+.primaryButton:focus-visible, .copyButton:focus-visible, .leaveButton:focus-visible { outline: 3px solid var(--color-saffron-500); outline-offset: 3px; }
+.primaryButton:disabled { cursor: not-allowed; opacity: .48; }
+.leaveButton { min-height: 44px; padding: .6rem .8rem; border: 1px solid var(--color-border-medium); border-radius: 10px; background: transparent; color: var(--color-ink-secondary); cursor: pointer; font-size: .78rem; }
+
+@media (max-width: 620px) {
+  .consoleHeader { flex-direction: column; }
+  .pinPanel { align-items: flex-start; flex-direction: column; }
+  .copyStatus { right: 1rem; bottom: .45rem; }
+  .controls { align-items: stretch; flex-direction: column; }
+  .primaryButton { width: 100%; }
+}
