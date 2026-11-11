@@ -1,0 +1,29 @@
+import { spawn } from 'node:child_process';
+
+const processes = [
+  spawn(process.execPath, ['server/classroom-server.js'], { stdio: 'inherit', env: process.env }),
+  spawn(process.execPath, ['node_modules/vite/bin/vite.js', '--host', '0.0.0.0'], { stdio: 'inherit', env: process.env }),
+];
+
+let stopping = false;
+function stopAll(code = 0) {
+  if (stopping) return;
+  stopping = true;
+  for (const child of processes) {
+    if (child.exitCode === null) child.kill('SIGTERM');
+  }
+  setTimeout(() => process.exit(code), 250).unref();
+}
+
+for (const child of processes) {
+  child.on('error', (error) => {
+    console.error('Part 5 development process failed:', error.message);
+    stopAll(1);
+  });
+  child.on('exit', (code) => {
+    if (!stopping) stopAll(code || 0);
+  });
+}
+
+process.on('SIGINT', () => stopAll(0));
+process.on('SIGTERM', () => stopAll(0));

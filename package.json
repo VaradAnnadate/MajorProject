@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:classroom": "node scripts/dev-classroom.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "test": "node scripts/verify_foundation.mjs && node scripts/verify_part03.mjs && node scripts/verify_part04.mjs",
@@ -20,7 +21,8 @@
     "lucide-react": "^0.460.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.28.0"
+    "react-router-dom": "^6.28.0",
+    "ws": "^8.22.2"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
