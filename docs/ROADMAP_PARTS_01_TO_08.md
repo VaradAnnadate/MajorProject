@@ -63,6 +63,8 @@
   * **Cinematic 3D Sovereign Portal Tunnel & Gamified Level Milestones:**
     * Three.js procedural 3D engine (`SovereignPortalTunnel.js`) featuring the 24-spoke Golden Ashoka Chakra of Child Rights & Constitutional Justice, 4 cardinal rights medallions, 11 glowing warp tunnel rings, and 250 golden sparks.
     * Pinned sticky scroll choreography (`LandingScrollGateway.jsx`): camera POV glides through the open central aperture ($R = 0.85$), travels down the dimensional tunnel ($Z = 9.5 \to -31.8$), enters a pure white-light burst, and fades out cleanly into Scene 05 with zero empty space.
+    * Prologue Terminus Horizon (`.story-scene-terminus`): marks the end of Scene 04 so the introductory landing page appears to conclude right before the 3D Sovereign Seal.
+    * Realm Emergence Banner (`.realm-emergence-banner`): marks entry into Scene 05 (*"DIMENSIONAL PASSAGE COMPLETE · ARRIVED IN THE FIVE REALMS"*), presenting the map as an unlocked second world.
     * Web Audio API ambient chime synthesis (A4, C#5, E5, A5) triggered on threshold entry.
     * High-vibe gamified milestone celebration modals (`GamifiedMilestoneCelebration.jsx`) integrated into Journey Path and Scenario completions with particle fountains, XP surge animations, and constitutional crests.
     * 25 dedicated QA checks in `scripts/verify_transition.mjs` (430 total project assertions across 6 test suites).

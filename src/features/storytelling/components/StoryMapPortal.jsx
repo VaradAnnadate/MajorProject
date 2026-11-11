@@ -24,24 +24,33 @@ export default function StoryMapPortal() {
   return (
     <section className="story-scene" style={{ backgroundColor: 'var(--color-canvas-primary)', paddingBottom: 'var(--space-10)' }}>
       <div className="container">
-        <div style={{ maxWidth: '780px', marginBottom: 'var(--space-6)' }}>
+        {/* Emergence Marker — Crossing through the 3D Portal into the Living World */}
+        <div className="realm-emergence-banner">
+          <div className="emergence-pill">
+            <span className="emergence-sparkle">✦</span>
+            <span>DIMENSIONAL PASSAGE COMPLETE · ARRIVED IN THE FIVE REALMS</span>
+          </div>
+        </div>
+
+        <div style={{ maxWidth: '820px', marginBottom: 'var(--space-6)' }}>
           <span className="editorial-eyebrow">
-            Scene 05 · The Adventure Begins
+            Part II · The Living Story World
           </span>
           <h2 
             style={{
               fontFamily: 'var(--font-family-display)',
-              fontSize: 'clamp(2rem, 4vw, 3.2rem)',
+              fontSize: 'clamp(2.2rem, 4.2vw, 3.4rem)',
               lineHeight: 1.15,
               margin: 'var(--space-2) 0 var(--space-3) 0',
               color: 'var(--color-ink-primary)'
             }}
           >
-            The Explorable Map of Rights
+            The Five Constitutional Realms
           </h2>
           <p className="text-lead" style={{ color: 'var(--color-ink-secondary)', margin: 0 }}>
+            You have crossed through the Sovereign Portal into the living universe of every child.
             Hover or tap any realm crest to preview its story, inspect golden landmark sparks for hidden lore, 
-            or consult Mitra in the corner for companion tips.
+            or embark on branch-choice quests.
           </p>
         </div>
 

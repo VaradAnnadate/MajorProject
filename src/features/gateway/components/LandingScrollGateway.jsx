@@ -156,16 +156,28 @@ export function LandingScrollGateway() {
           aria-hidden="true"
         />
 
-        {/* Top Editorial Pill */}
-        <div className={styles.topHud}>
+        {/* Top Editorial Pill — Fades out when flying inside the seal */}
+        <div 
+          className={styles.topHud}
+          style={{
+            opacity: progress > 0.35 ? 0 : 1,
+            transition: 'opacity 0.4s ease'
+          }}
+        >
           <div className={styles.eyebrowPill}>
             <span className={styles.chakraIcon}>☸</span>
-            <span className={styles.pillText}>DIMENSIONAL BRIDGE · THE 5 CONSTITUTIONAL REALMS</span>
+            <span className={styles.pillText}>SOVEREIGN THRESHOLD · THE 5 CONSTITUTIONAL REALMS</span>
           </div>
         </div>
 
-        {/* Dynamic Flight Caption HUD */}
-        <div className={styles.captionHud}>
+        {/* Dynamic Flight Caption HUD — Fades out before white light takes over */}
+        <div 
+          className={styles.captionHud}
+          style={{
+            opacity: progress > 0.82 ? 0 : 1,
+            transition: 'opacity 0.3s ease'
+          }}
+        >
           <div className={styles.captionCard}>
             <div className={styles.progressBarWrapper}>
               <div

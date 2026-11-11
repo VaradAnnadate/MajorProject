@@ -107,6 +107,30 @@ export default function StoryMascotIntro() {
             </span>
           </div>
         </div>
+
+        {/* Editorial Terminus — End of the Introduction */}
+        <div className="story-scene-terminus">
+          <div className="terminus-divider">
+            <span className="terminus-line" />
+            <span className="terminus-gem">☸</span>
+            <span className="terminus-line" />
+          </div>
+          <div className="terminus-badge">
+            <span className="terminus-dot" />
+            <span>THE THRESHOLD OF SOVEREIGN RIGHTS · END OF PROLOGUE</span>
+          </div>
+          <h3 className="terminus-title">
+            The Introduction Ends Here. The Living Journey Awaits.
+          </h3>
+          <p className="terminus-desc">
+            You have discovered your rights and met your guardian companion. Ahead lies the living universe.
+            Travel through the golden Sovereign Seal below to cross into the 5 Constitutional Realms.
+          </p>
+          <div className="terminus-indicator">
+            <span className="terminus-arrow-text">SCROLL TO TRAVEL INSIDE THE 3D SOVEREIGN SEAL</span>
+            <span className="terminus-chevron">↓</span>
+          </div>
+        </div>
       </div>
     </section>
   );

@@ -491,6 +491,10 @@ Mounted on the landing page between Scene 04 (*Mitra the Companion*) and Scene 0
 * **White-Light Screen Burst:** Overlay opacity ramps from $0 \to 1.0$ ($t \in [0.82, 0.94]$), holds at $1.0$, and clears smoothly ($1.0 \to 0$) by $t = 1.0$, seamlessly revealing Scene 05 underneath with zero empty space.
 * **Harmonic Chime Synthesis:** Synthesizes an ambient four-note harmonic chord (A4, C#5, E5, A5) via native Web Audio API upon entering the white light core.
 
+### C. Prologue Terminus Horizon & Realm Emergence
+* **Prologue Terminus (`StoryMascotIntro.jsx` & `storytelling.css`):** At the end of Scene 04, an editorial terminus marks the apparent conclusion of the introductory landing page (*"The Introduction Ends Here. The Living Journey Awaits."*), giving the feeling that the page reaches an edge with only the 3D Sovereign Seal standing ahead.
+* **Dimensional Emergence (`StoryMapPortal.jsx`):** As the white light clears, Scene 05 is revealed with a glowing emergence badge (*"✦ DIMENSIONAL PASSAGE COMPLETE · ARRIVED IN THE FIVE REALMS"*), presenting the interactive map not as a simple continuation, but as an unlocked second world.
+
 ---
 
 ## 10. Gamified Milestone Celebration System
