@@ -1,0 +1,10 @@
+export { default as ClassroomPage } from './pages/ClassroomPage';
+export { default as ClassroomLobby } from './components/ClassroomLobby';
+export { default as StudentVotingView } from './components/StudentVotingView';
+export { default as TeacherConsole } from './components/TeacherConsole';
+export { default as ConsensusChart } from './components/ConsensusChart';
+export { default as DebateGuide } from './components/DebateGuide';
+export { CLASSROOM_QUESTS, getClassroomQuest } from './data/classroomQuests';
+export { ANIMAL_AVATARS, getAnimalAvatar } from './data/animalAvatars';
+export { useClassroomRoom } from './hooks/useClassroomRoom';
+export * from './engine/classroomTypes';

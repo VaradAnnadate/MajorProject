@@ -13,6 +13,7 @@ const AchievementsPage = lazy(() => import('../pages/AchievementsPage'));
 const GetHelpPage = lazy(() => import('../pages/GetHelpPage'));
 const AboutPage = lazy(() => import('../pages/AboutPage'));
 const ScenarioPage = lazy(() => import('../features/gameplay/pages/ScenarioPage'));
+const ClassroomPage = lazy(() => import('../features/classroom/pages/ClassroomPage'));
 
 // Refined Agency Suspense Fallback
 function PageFallback() {
@@ -148,6 +149,14 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<PageFallback />}>
             <ScenarioPage />
+          </Suspense>
+        )
+      },
+      {
+        path: 'classroom/:roomPin?',
+        element: (
+          <Suspense fallback={<PageFallback />}>
+            <ClassroomPage />
           </Suspense>
         )
       },

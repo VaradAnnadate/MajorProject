@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ANIMAL_AVATARS } from '../data/animalAvatars';
 import { isRoomPin, ROOM_PIN_PREFIX } from '../engine/classroomTypes';
 import styles from './ClassroomLobby.module.css';
 
-export default function ClassroomLobby({ onJoin, connectionStatus = 'idle', error = '' }) {
-  const [roomPin, setRoomPin] = useState('');
+export default function ClassroomLobby({ onJoin, connectionStatus = 'idle', error = '', initialRoomPin = '' }) {
+  const [roomPin, setRoomPin] = useState(initialRoomPin);
   const [avatarId, setAvatarId] = useState('tiger');
   const [showError, setShowError] = useState(false);
   const selectedAvatar = ANIMAL_AVATARS.find((avatar) => avatar.id === avatarId);
   const validPin = isRoomPin(roomPin);
   const busy = connectionStatus === 'connecting';
+
+  useEffect(() => {
+    if (isRoomPin(initialRoomPin)) setRoomPin(initialRoomPin.toUpperCase());
+  }, [initialRoomPin]);
 
   function handlePinChange(event) {
     const digits = event.target.value.replace(/\D/g, '').slice(0, 4);
