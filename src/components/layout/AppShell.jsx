@@ -14,13 +14,13 @@ export default function AppShell() {
 
   const isGameplay = location.pathname.startsWith('/play');
 
-  // Ensure clean minimal white background during scenario pages
+  // Set dark body background during full-screen story gameplay
   useEffect(() => {
     if (isGameplay) {
       const origBg = document.body.style.backgroundColor;
       const origHtmlBg = document.documentElement.style.backgroundColor;
-      document.body.style.backgroundColor = '#FFFFFF';
-      document.documentElement.style.backgroundColor = '#FFFFFF';
+      document.body.style.backgroundColor = '#0B0D14';
+      document.documentElement.style.backgroundColor = '#0B0D14';
       return () => {
         document.body.style.backgroundColor = origBg;
         document.documentElement.style.backgroundColor = origHtmlBg;
@@ -70,7 +70,7 @@ export default function AppShell() {
       style={{ 
         position: 'relative', 
         overflowX: 'hidden',
-        backgroundColor: isGameplay ? '#FFFFFF' : undefined 
+        backgroundColor: isGameplay ? '#0B0D14' : undefined 
       }}
     >
       {/* GOATED Minimalist Agency Story Intro */}
@@ -91,7 +91,7 @@ export default function AppShell() {
           filter: isRising ? 'brightness(0.9) blur(1px)' : undefined,
           transition: 'transform 0.92s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.85s ease-out, filter 0.85s ease',
           willChange: isRising ? 'transform, opacity, filter' : 'auto',
-          backgroundColor: isGameplay ? '#FFFFFF' : undefined,
+          backgroundColor: isGameplay ? '#0B0D14' : undefined,
           minHeight: isGameplay ? '100vh' : undefined
         }}
       >
