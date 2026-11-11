@@ -1,0 +1,21 @@
+.root { padding: 1.15rem; border: 1px solid var(--color-border-medium); border-radius: 16px; background: var(--color-canvas-card); }
+.heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.eyebrow { color: var(--color-saffron-600); font: 700 .65rem var(--font-family-mono); letter-spacing: .1em; }
+.heading h3 { margin: .3rem 0 0; font-size: 1.15rem; }
+.voteCount { flex: none; padding: .4rem .6rem; border-radius: 999px; background: var(--color-canvas-secondary); color: var(--color-ink-secondary); font-size: .72rem; font-weight: 750; }
+.waitingText { margin: 1rem 0 .15rem; color: var(--color-ink-secondary); font-size: .84rem; line-height: 1.55; }
+.results { display: grid; gap: .85rem; margin: 1.1rem 0; padding: 0; list-style: none; }
+.result { min-width: 0; }
+.labelRow { display: flex; justify-content: space-between; gap: .8rem; margin-bottom: .35rem; font-size: .8rem; line-height: 1.45; }
+.labelRow strong { flex: none; color: var(--color-forest-500); }
+.optionLabel { display: flex; align-items: flex-start; gap: .5rem; color: var(--color-ink-secondary); }
+.optionLetter { display: grid; width: 21px; height: 21px; flex: none; place-items: center; border-radius: 50%; background: var(--color-canvas-secondary); color: var(--color-ink-muted); font: 700 .65rem var(--font-family-mono); }
+.voteNumber { color: var(--color-ink-muted); font-size: .72rem; font-weight: 500; }
+.track { height: 8px; overflow: hidden; border-radius: 99px; background: var(--color-canvas-secondary); }
+.track span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--color-forest-500), #88af6f); transition: width 300ms ease; }
+.consensus, .divided { margin: 0; padding: .75rem .85rem; border-radius: 11px; color: var(--color-ink-secondary); font-size: .8rem; line-height: 1.5; }
+.consensus { border-left: 3px solid var(--color-forest-500); background: #edf4e9; }
+.divided { border-left: 3px solid var(--color-saffron-500); background: #fff7e9; }
+.compact { padding: 0; border: 0; background: transparent; }
+
+@media (prefers-reduced-motion: reduce) { .track span { transition: none; } }

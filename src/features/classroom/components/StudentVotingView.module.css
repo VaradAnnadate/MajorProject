@@ -25,11 +25,7 @@
 .waiting h3 { margin: .45rem 0; }
 .waiting p { margin: 0; color: var(--color-ink-secondary); }
 .results { margin-top: 1.5rem; padding-top: 1.4rem; border-top: 1px solid var(--color-border-medium); }
-.results ul { display: grid; gap: .9rem; margin: 1rem 0; padding: 0; list-style: none; }
-.resultLabel { display: flex; justify-content: space-between; gap: .8rem; margin-bottom: .35rem; font-size: .82rem; line-height: 1.4; }
-.resultLabel strong { flex: none; color: var(--color-forest-500); }
-.resultTrack { height: 8px; overflow: hidden; border-radius: 99px; background: var(--color-canvas-secondary); }
-.resultTrack span { display: block; height: 100%; border-radius: inherit; background: var(--color-forest-500); transition: width 280ms ease; }
+.resultsTitle { margin: 0 0 .75rem; font-size: 1.1rem; }
 .reflection, .discussionPrompt { margin: .8rem 0 0; padding: .8rem 1rem; border-radius: 12px; background: #f4f2e8; color: var(--color-ink-secondary); font-size: .85rem; line-height: 1.55; }
 .discussionPrompt { border-left: 3px solid var(--color-saffron-500); }
 .finished { margin: 1.2rem 0 0; color: var(--color-forest-500); font-weight: 700; }

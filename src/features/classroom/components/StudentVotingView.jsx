@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import ConsensusChart from './ConsensusChart';
 import styles from './StudentVotingView.module.css';
-
-function tallyForOption(room, optionId) {
-  return room?.tally?.find((entry) => entry.optionId === optionId)?.count || 0;
-}
 
 export default function StudentVotingView({ quest, room, onVote }) {
   const [selectedOptionId, setSelectedOptionId] = useState(room?.myVoteOptionId || '');
-  const revealed = Boolean(room?.tally);
+  const revealed = Array.isArray(room?.tally);
 
   useEffect(() => {
     if (room?.myVoteOptionId) setSelectedOptionId(room.myVoteOptionId);
@@ -87,22 +84,8 @@ export default function StudentVotingView({ quest, room, onVote }) {
 
       {revealed && (
         <div className={styles.results} aria-labelledby="class-vote-results">
-          <span className={styles.eyebrow}>OUR CLASS, OUR VOICES</span>
-          <h3 id="class-vote-results">Here’s how the class voted</h3>
-          <ul>
-            {quest.options.map((option) => {
-              const count = tallyForOption(room, option.id);
-              const percentage = room.voteCount ? Math.round((count / room.voteCount) * 100) : 0;
-              return (
-                <li key={option.id} className={styles.resultItem}>
-                  <div className={styles.resultLabel}><span>{option.label}</span><strong>{percentage}%</strong></div>
-                  <div className={styles.resultTrack} role="img" aria-label={`${percentage}% of class votes`}>
-                    <span style={{ width: `${percentage}%` }} />
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
+          <h3 id="class-vote-results" className={styles.resultsTitle}>Here’s how the class voted</h3>
+          <ConsensusChart quest={quest} room={room} compact />
           <p className={styles.reflection}>{quest.reflection}</p>
           {room.stage === 'DEBATE_GUIDE' && <p className={styles.discussionPrompt}>{quest.discussionPrompt}</p>}
         </div>
