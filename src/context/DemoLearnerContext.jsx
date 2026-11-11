@@ -40,6 +40,30 @@ export function DemoLearnerProvider({ children }) {
   // ── Living Progression State (Part 04 — XP, Badges, Streaks, Levels) ──────
   const [progression, setProgression] = useState(() => loadProgressionState());
 
+  // ── Active Role Gateway (Part 06 — Educator & Guardian System) ────────────
+  const [currentRole, setCurrentRoleState] = useState(() => {
+    try {
+      const stored = localStorage.getItem('rq_current_role');
+      if (stored && ['learner', 'educator', 'guardian'].includes(stored)) {
+        return stored;
+      }
+    } catch {
+      // Storage unavailable
+    }
+    return 'learner';
+  });
+
+  const setCurrentRole = useCallback((role) => {
+    if (['learner', 'educator', 'guardian'].includes(role)) {
+      setCurrentRoleState(role);
+      try {
+        localStorage.setItem('rq_current_role', role);
+      } catch {
+        // Storage write error handled gracefully
+      }
+    }
+  }, []);
+
   useEffect(() => {
     saveProgressionState(progression);
   }, [progression]);
@@ -260,6 +284,9 @@ export function DemoLearnerProvider({ children }) {
     recordHelplineAccess,
     dismissCelebration,
     resetProgression,
+    // Part 06 — educator & guardian role system
+    currentRole,
+    setCurrentRole,
   };
 
   return (

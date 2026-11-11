@@ -356,6 +356,25 @@ export default function Navbar() {
 
             <div style={{ height: '1px', backgroundColor: 'var(--color-border-subtle)', margin: 'var(--space-2) 0' }} />
 
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: 'var(--space-2)' }}>
+              <Link 
+                to="/educator" 
+                onClick={closeMenu}
+                className="btn btn-secondary"
+                style={{ justifyContent: 'center', fontSize: '0.82rem', padding: '0.5rem' }}
+              >
+                <span>🏛️ Educator</span>
+              </Link>
+              <Link 
+                to="/guardian" 
+                onClick={closeMenu}
+                className="btn btn-secondary"
+                style={{ justifyContent: 'center', fontSize: '0.82rem', padding: '0.5rem' }}
+              >
+                <span>🏡 Guardian</span>
+              </Link>
+            </div>
+
             <Link 
               to="/home" 
               onClick={closeMenu}
