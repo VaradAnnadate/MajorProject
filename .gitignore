@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
+# Local commit tracking & audit documents
+docs/COMMIT_HISTORY_AND_CHANGELOG.md
+

@@ -1,7 +1,7 @@
 # RightsQuest India — Architecture & Codebase Deep Dive
 
 > **Governing Framework:** Creative OS (`44_AGENCYLIKE_UI`, `01_DESIGN_OS`, `02_ART_DIRECTION`, `04_TYPOGRAPHY_SYSTEM`, `05_MOTION_SYSTEM`, `11_FRONTEND_ARCHITECTURE`, `12_CREATIVE_QA`)  
-> **Status:** Parts 01–06 Implemented & Verified · 5 dedicated test suites with 405/405 passing checks.
+> **Status:** Parts 01–06 + 3D Gateway & Milestones Implemented & Verified · 6 dedicated test suites with 430/430 passing checks.
 > **Core Mission:** An agency-grade, story-driven gamified children's rights learning platform designed for children aged 8–16 across India.
 
 ---
@@ -407,16 +407,19 @@ Part 04 introduces a deterministic, non-punitive, and cooperative progression ar
 
 ## 6. Automated Verification & QA Harness (`npm test`)
 
-The platform includes three automated test suites verifying **237 total assertions** across all layers of code:
+The platform includes six automated test suites verifying **430 total assertions** across all layers of code:
 
 ```bash
-# Run all 237 checks across Parts 01, 02, 03 & 04
+# Run all 430 checks across Parts 01–06 and 3D Gateway
 npm test
 
 # Run individual verification suites
 npm run test:foundation   # 120 checks (Parts 01 & 02)
 npm run test:part03       # 50 checks (Part 03 Scenario Engine)
 npm run test:part04       # 67 checks (Part 04 Progression System)
+npm run test:part05       # 64 checks (Part 05 Classroom System)
+npm run test:part06       # 104 checks (Part 06 Intelligence System)
+npm run test:transition   # 25 checks (3D Sovereign Portal Tunnel & Milestones)
 ```
 
 ### Audit Categories:
@@ -428,6 +431,9 @@ npm run test:part04       # 67 checks (Part 04 Progression System)
 6. **Age Bands & Verified Helplines (8 checks):** Verifies 3 age bands and Childline 1098 marked as primary.
 7. **Part 03 Scenario Engine Architecture (50 checks):** Verifies all 21 gameplay components, AST data fidelity for Missions A, B, and C, age adaptation hooks, GSAP typewriter animations, reduced-motion accessibility, route registration, `DemoLearnerContext` progress actions, and child data safety boundaries.
 8. **Part 04 Progression System Architecture (67 checks):** Verifies 33 progression files, deterministic XP processing, strict event idempotency, repeat replay policies, level threshold calculations, badge evaluations across 4 categories, non-punitive streak logic, cooperative quest contributions, route registrations (`/achievements` and `/progression`), and DPDP Act 2023 §9 child privacy invariants.
+9. **Part 05 Live Classroom Rooms Architecture (64 checks):** Verifies ephemeral WebSocket relay, PIN generation, animal codename selection, private secret voting, aggregate-only results reveal, Bal Sansad deliberation guides, and zero persistent storage of student votes.
+10. **Part 06 Educator & Guardian Intelligence Architecture (104 checks):** Verifies shared curriculum mappings for NCERT Grades 6–8 Civics and CBSE units, Socratic inquiry questions, offline classroom/dinner table activities, cohort-level aggregate metrics, and strict DPDP Act 2023 §9 anti-surveillance compliance.
+11. **3D Sovereign Portal Tunnel & Gamified Milestones (25 checks):** Verifies procedural Three.js 24-spoke Ashoka Chakra geometry, concentric glowing warp tunnel, luminous white-light threshold burst, harmonic Web Audio chime synthesis, sticky viewport pinning, and high-vibe milestone celebrations.
 
 ---
 
@@ -440,3 +446,59 @@ The Part 05 experience uses a browser-native WebSocket client and a small Node `
 * **Child privacy:** The join form collects no account details or free-text name. The relay holds only a random participant token, an animal codename, and the current vote for the lifetime of the room. Student snapshots receive only a participant count; the facilitator alone sees animal codenames. The relay writes no room data to disk.
 * **Disconnect handling:** If the teacher leaves, the relay closes the student connections and removes the room. Rooms expire after three hours; a relay restart clears all active rooms.
 * **Deployment boundary:** This is a single-process prototype with in-memory state. Production hosting must provide a persistent WebSocket process and configure `CLASSROOM_ALLOWED_ORIGINS`; multi-process scaling or room recovery is not implemented.
+
+---
+
+## 8. Part 06 — Educator Studio & Guardian Intelligence System
+
+Mounted at `/educator` and `/guardian`, Part 06 translates learner progress into actionable educational insight and familial dialogue without introducing child surveillance.
+
+### A. Non-Surveillance Role Gateway (`PermissionGateway.jsx` & `useIntelligence.js`)
+* Provides role switching between `learner`, `educator`, and `guardian`.
+* Operates on aggregate local transactions without collecting personal tracking tokens or cloud analytics.
+* Grounded in DPDP Act 2023 §9: no behavioral profiling, no tracking of minors, no individual surveillance.
+
+### B. Educator Studio (`EducatorPage.jsx`)
+* **ClassroomMetricsGrid:** Cohort-level aggregates for Wisdom XP, completed adventures, and deliberation sessions with zero individual scorecards.
+* **LiveSessionManager:** Synchronous classroom dilemma launcher with instant PIN generation (`RQ-####`) and blind-voting workflows.
+* **TopicExplorationChart:** Mappings of all 5 Constitutional Realms to middle-school NCERT Civics (Grades 6–8) and CBSE competencies, complete with offline classroom exercises.
+* **DiscussionToolkitView:** Socratic inquiry protocols, active bystander de-escalation, and fishbowl deliberation methods.
+* **RecentSessionsAudit:** Anonymized collaborative consensus audit trail preserving majority outcome percentages without student names.
+
+### C. Guardian Chronicle (`GuardianPage.jsx`)
+* **LearningHighlightsCard:** Warm parental window celebrating curiosity and empathy rather than screen time or competitive ranks.
+* **LearningTimelineView:** Editorial narrative timeline documenting inspected evidence and discovered constitutional seals.
+* **FamilyConversationStarters:** "At the Dinner Table" discussion prompts and screen-free household activities mapped to child rights.
+* **SupportivePillarsGrid:** Anti-addiction guarantees including zero streak penalties, no infinite feeds, and child privacy protection.
+* **GuardianResourcesAccordion:** Plain-language explainers on RTE Act, POCSO, Childline 1098, and digital privacy rights.
+
+---
+
+## 9. 3D Sovereign Portal Tunnel Transition Engine
+
+Mounted on the landing page between Scene 04 (*Mitra the Companion*) and Scene 05 (*The 5 Realms Map*), this feature transforms scrolling into an immersive 3D fly-through.
+
+### A. Procedural Three.js 3D Geometry (`SovereignPortalTunnel.js`)
+* **Front Sovereign Seal ($Z = 0$):** 24 golden Ashoka spokes, dual gold rims, 4 cardinal rights medallions (*Survival, Protection, Development, Participation*), and wide central aperture ($R = 0.85$).
+* **Dimensional Warp Tunnel ($Z = 0 \to -32$):** 11 concentric glowing golden rings, 8 longitudinal speed warp ribs, and 250 golden sparks.
+* **Luminous End Beacon ($Z = -32$):** Expanding white beacon sphere and golden halo corona.
+* **POV Camera Flight Path:** Driven continuously by user scroll progress ($t \in [0, 1]$), moving the camera from $(0, 0, 9.5)$ through the open seal hub down to $(0, 0, -31.8)$.
+* **Memory & WebGL Lifecycle Management:** Deep mesh and material traversal with geometry disposal on unmount, avoiding context leaks or `forceContextLoss()` exceptions.
+
+### B. Viewport Pinning & White-Light Threshold (`LandingScrollGateway.jsx`)
+* **Sticky Viewport:** Embedded in a `260vh` scroll track with `position: sticky; top: 0; height: 100vh; height: 100dvh;`.
+* **Zero Seam Canvas:** Rendered with `alpha: true` over `var(--color-canvas-primary, #FBF8F3)` background, completely eliminating dark boxes or color seams.
+* **White-Light Screen Burst:** Overlay opacity ramps from $0 \to 1.0$ ($t \in [0.82, 0.94]$), holds at $1.0$, and clears smoothly ($1.0 \to 0$) by $t = 1.0$, seamlessly revealing Scene 05 underneath with zero empty space.
+* **Harmonic Chime Synthesis:** Synthesizes an ambient four-note harmonic chord (A4, C#5, E5, A5) via native Web Audio API upon entering the white light core.
+
+---
+
+## 10. Gamified Milestone Celebration System
+
+Implemented in `GamifiedMilestoneCelebration.jsx`, this engine delivers high-vibe celebratory feedback for level advancement and quest completion.
+
+* **Modal Overlay:** Semi-transparent frosted backdrop with sovereign spring entrance.
+* **Animated Particle Fountains:** 32 radial celebration bursts with randomized golden trajectories and gravity decay.
+* **Animated XP Surge Counter:** Smooth numeric interpolation from previous XP to newly awarded XP.
+* **Constitutional Shield Crests:** Dynamic vector crests for the 5 Constitutional Realms.
+* **Triumph Audio Fanfare:** Synthesizes an arpeggiated brass-and-bell chime chord on reveal.

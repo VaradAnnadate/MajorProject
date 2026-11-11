@@ -12,7 +12,8 @@ flowchart TD
     Hero --> Parallax["02. Scene 02: The World Awakens<br/>(5 Connected Realms)"]
     Parallax --> Metaphor["03. Scene 03: Discover the Meaning<br/>(UNCRC 4 Pillars & Indian Statutes)"]
     Metaphor --> Companion["04. Scene 04: Meet Mitra<br/>(Sun-Fox Guardian & 9 States)"]
-    Companion --> MapPortal["05. Scene 05: The Adventure Begins<br/>(Interactive Vector Map Centerpiece)"]
+    Companion --> Gateway3D["★ 3D Sovereign Portal Tunnel<br/>(Golden 24-Spoke Ashoka Chakra • Warp Tunnel • White Light)"]
+    Gateway3D --> MapPortal["05. Scene 05: The Adventure Begins<br/>(Interactive Vector Map Centerpiece)"]
     MapPortal --> FinalCTA["06. Scene 06: Final Invitation<br/>(Age Selection & 1098 Helpline)"]
 
     MapPortal --> WorldPage["Fullscreen World Map (/world)"]
@@ -25,7 +26,11 @@ flowchart TD
     Choices --> Consequence["Non-Punitive Consequence Feedback (Empathetic vs Learning)"]
     Consequence --> ArticleStamp["Constitutional Article Reveal Stamp (Art. 21A, POCSO, RTE)"]
     ArticleStamp --> Progression["Part 04: Living Progression System (/achievements)<br/>(XP Engine • 12 Badges • Streaks • Cooperative Goals)"]
+    Progression --> Milestones["Gamified Milestone Celebrations<br/>(XP Surge • Web Audio Chimes • Shield Crests)"]
     Adventures --> Classroom["Part 05: Facilitator-led Classroom (/classroom)<br/>(Ephemeral Rooms • Private Voting • Bal Sansad Debate)"]
+    Progression --> Intelligence["Part 06: Educator & Guardian Intelligence System<br/>(NCERT/CBSE Mapping • Dinner Primers • Non-Surveillance)"]
+    Intelligence --> Educator["Educator Studio (/educator)"]
+    Intelligence --> Guardian["Guardian Chronicle (/guardian)"]
     
     subgraph Safeguards ["DPDP 2023 Child Privacy & Safety Layer"]
         Helpline["Childline 1098 Quickbar"]
@@ -43,20 +48,19 @@ flowchart TD
 * **Part 02 (Complete):** The Living Story World (*The World of Every Child*), Mitra the Sun-Fox Mascot (9 expressive states & child safeguard behavior), vector interactive adventure map, and 6-scene cinematic landing storytelling.
 * **Part 03 (Complete):** Branching scenario gameplay engine (`ScenarioRunner`), ethical decision trees (`ChoicePanel`), non-punitive consequence evaluation (`ConsequencePreview`), constitutional article reveal stamp (`ArticleRevealStamp`), evidence inspector (`EvidenceInspector`), three core demonstration missions + digital safety quest, age adaptation, persistent Childline 1098 modal, and 50-point QA suite.
 * **Part 04 (Complete):** Deterministic idempotent XP engine (`rewardEngine`), 7 recognition tiers (`levels`), collectible treasure cabinet (`AchievementCollection`) with 12 tactile medallions, non-punitive 14-day consistency tracker (`StreakCalendar`), cooperative community quests (`CooperativeProgress`), and 67-point QA suite.
-* **Part 05 (Complete):** A facilitator creates a PIN room, chooses one of three rights dilemmas, and guides the lobby, private ballot, aggregate reveal, and Bal Sansad discussion. Students join with animal codenames and no account details. The single-process relay keeps room state in memory, supports up to 40 students, and removes rooms when the facilitator leaves, the room expires, or the relay restarts. Start with `npm run dev:classroom`; the full [room flow and privacy boundary](./ROADMAP_PARTS_01_TO_08.md#part-05--live-classroom-mode-quiz-rooms--websocket-integration) and [relay architecture](./ARCHITECTURE_AND_CODE.md#7-part-05--live-classroom-rooms) are documented.
-* **Parts 06–08 (Planned):** Teacher/parent dashboards, multilingual localization, and offline PWA.
+* **Part 05 (Complete):** Facilitator creates PIN rooms (`RQ-####`), students join with animal codenames, and private ballots reveal aggregate consensus before guided Socratic discussion. In-memory WebSocket relay on port 8787. 64-point QA suite.
+* **Part 06 (Complete):** Educator Studio (`/educator`) with cohort-level aggregates, NCERT/CBSE curriculum alignments, Socratic toolkits, and anonymized deliberation logs. Guardian Chronicle (`/guardian`) with "At the Dinner Table" family primers and anti-addiction guarantees compliant with DPDP Act 2023 §9. 104-point QA suite.
+* **3D Sovereign Portal Tunnel & Gamified Milestones (Complete):** Pinned Three.js dimensional warp bridge through the 24-spoke Golden Ashoka Chakra of Child Rights into Scene 05, plus high-vibe gamified milestone celebration modals. 25-point QA suite.
+* **Parts 07–08 (Planned):** Multilingual localization, child safety emergency quick-exit, and offline PWA.
 
 ### 2. [Architecture & Codebase Deep Dive](./ARCHITECTURE_AND_CODE.md)
 * Comprehensive technical walkthrough of every directory, component, data model, state hook, and safeguard.
-* Complete breakdown of `src/features/world/`, `src/features/mascot/`, `src/features/storytelling/`, `src/features/gameplay/`, and `src/features/progression/`.
-* Explains how the interactive SVG vector terrain, branching dialogue AST engine, and idempotent reward engine operate with 60fps performance and zero data leakage.
-* Documents the existing QA suites (`scripts/verify_foundation.mjs`, `scripts/verify_part03.mjs`, and `scripts/verify_part04.mjs`) and the Part 05 WebSocket relay.
+* Complete breakdown of `src/features/world/`, `src/features/mascot/`, `src/features/storytelling/`, `src/features/gameplay/`, `src/features/progression/`, `src/features/classroom/`, `src/features/intelligence/`, `src/features/educator/`, `src/features/guardian/`, and `src/features/gateway/`.
+* Documents all 6 automated QA suites (430 total assertions).
 
 ### 3. [Visual Design System & Creative Motion Architecture](./VISUAL_DESIGN_SYSTEM.md)
 * Comprehensive agency-grade visual design specification following Creative OS principles (`44_AGENCYLIKE_UI`).
-* Design tokens: color palette (obsidian `#070A11`, parchment `#FBF8F3`, saffron `#DE7215`, peacock `#1B6D80`, terracotta `#D04F36`), typography scale (`Cormorant Garamond`, `Fraunces`, `Plus Jakarta Sans`, `Space Mono`).
-* Dynamic laser beam cards, photon top-border sweeps, and tactile dossier skeuomorphism.
-* Lenis inertia smooth scroll parameters and cubic-bezier easing tokens.
+* Design tokens, typography scales, dynamic laser-beam card perimeters, photon sweeps, and tactile dossier skeuomorphism.
 
 ---
 
@@ -72,13 +76,16 @@ npm run dev
 # Run the app and Part 05 classroom WebSocket relay together
 npm run dev:classroom
 
-# 3. Run all 237 automated QA, legal fidelity & child safety checks (Parts 01–04)
+# 3. Run all 430 automated QA, legal fidelity & child safety checks across 6 suites
 npm test
 
 # Run individual verification suites
 npm run test:foundation   # 120 checks (Parts 01 & 02)
 npm run test:part03       # 50 checks (Part 03 Scenario Engine)
 npm run test:part04       # 67 checks (Part 04 Progression System)
+npm run test:part05       # 64 checks (Part 05 Classroom System)
+npm run test:part06       # 104 checks (Part 06 Intelligence System)
+npm run test:transition   # 25 checks (3D Sovereign Portal Tunnel & Milestones)
 
 # 4. Build optimized production bundle with dynamic chunk splitting
 npm run build

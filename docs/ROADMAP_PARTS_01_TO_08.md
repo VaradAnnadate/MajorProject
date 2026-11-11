@@ -57,16 +57,16 @@
     * Scene 02: The World Awakens (Five connected realms)
     * Scene 03: Discover the Meaning (Constitutional & UNCRC metaphors)
     * Scene 04: The Companion (Interactive Mitra Showcase)
-    * Signature 3D Gateway Moment: Procedural Three.js dimensional portal fly-through with expanding white-light threshold
+    * Signature 3D Gateway Moment: Procedural Three.js 24-spoke Golden Ashoka Chakra fly-through with concentric warp tunnel and expanding white-light threshold
     * Scene 05: The Adventure Begins (Live embedded map)
     * Scene 06: Final Invitation (High-conviction closing CTA)
-  * **Cinematic 3D World Transitions & Level Gateways:**
-    * Three.js procedural 3D architectural engine with monumental world-specific structures (Torana Gateway, Banyan Arbor, Root Sanctuary, Ripple Colonnade, Sovereign Colonnade).
-    * 5-Act spatial camera flight: Act I (Emergence), Act II (3D Reveal & Gate Opening), Act III (Tunnel Passage), Act IV (White-Light Threshold), Act V (Destination World Arrival).
-    * Web Audio API harmonic chime on threshold crossing.
-    * Integrated across Landing Page, Journey Path milestones, scenario completions, and `/transition` studio.
-    * 60 dedicated QA checks in `scripts/verify_transition.mjs` (465 total project assertions).
-  * **Verification:** 120/120 foundation checks + 60/60 3D transition checks passing cleanly.
+  * **Cinematic 3D Sovereign Portal Tunnel & Gamified Level Milestones:**
+    * Three.js procedural 3D engine (`SovereignPortalTunnel.js`) featuring the 24-spoke Golden Ashoka Chakra of Child Rights & Constitutional Justice, 4 cardinal rights medallions, 11 glowing warp tunnel rings, and 250 golden sparks.
+    * Pinned sticky scroll choreography (`LandingScrollGateway.jsx`): camera POV glides through the open central aperture ($R = 0.85$), travels down the dimensional tunnel ($Z = 9.5 \to -31.8$), enters a pure white-light burst, and fades out cleanly into Scene 05 with zero empty space.
+    * Web Audio API ambient chime synthesis (A4, C#5, E5, A5) triggered on threshold entry.
+    * High-vibe gamified milestone celebration modals (`GamifiedMilestoneCelebration.jsx`) integrated into Journey Path and Scenario completions with particle fountains, XP surge animations, and constitutional crests.
+    * 25 dedicated QA checks in `scripts/verify_transition.mjs` (430 total project assertions across 6 test suites).
+  * **Verification:** 120/120 foundation checks + 25/25 3D gateway & milestone checks passing cleanly.
 
 ---
 

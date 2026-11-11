@@ -32,7 +32,8 @@ Children in India between 8 and 16 years old, with content and interaction patte
 - **Part 04 Complete:** Dignity XP and rights passport, non-punitive streaks, collectible badges, and shared community goals.
 - **Part 05 Complete:** Facilitators can host rights dilemmas in a PIN-protected classroom (`RQ-####`), students join with animal codenames, and private ballots reveal only aggregate consensus before a guided Socratic discussion. 64/64 automated test checks pass in `scripts/verify_part05.mjs`.
 - **Part 06 Complete:** The Educator & Guardian Intelligence System. Educator Studio (`/educator`) provides cohort-level literacy metrics, live session launcher, NCERT Civics & CBSE curriculum alignments, Socratic toolkits, and deliberation archives. Guardian Chronicle (`/guardian`) provides a calm, non-surveillance window with "At the Dinner Table" discussion primers and anti-addiction guarantees compliant with DPDP Act 2023 §9. 104/104 automated test checks pass in `scripts/verify_part06.mjs`.
-- **Gamified Progression & Realm Milestones Complete:** High-vibe, gamified celebration modal (`GamifiedMilestoneCelebration`) for level progression and mission completion. Features celebratory particle bursts, animated XP surge counter, constitutional shield crests, and harmonic triumph fanfare synthesized with Web Audio API. 23/23 checks pass in `scripts/verify_transition.mjs`.
+- **Cinematic 3D Sovereign Portal Tunnel Complete:** A signature 3D world-transition bridge connecting Scene 04 to Scene 05 on the landing page (`LandingScrollGateway.jsx`, `SovereignPortalTunnel.js`). Pinned scroll travel moves the camera straight into the 24-spoke Golden Ashoka Chakra of Child Rights, passes through a glowing dimensional warp tunnel, enters an expanding white-light burst, and seamlessly reveals Scene 05 underneath with zero empty space.
+- **Gamified Level Milestones Complete:** High-vibe celebration modal (`GamifiedMilestoneCelebration.jsx`) for level advancement and quest completions with animated XP counters, shield crests, and harmonic sound synthesis. 25/25 checks pass in `scripts/verify_transition.mjs`.
 - **Parts 07–08 Planned:** Multilingual localization, child safety emergency quick-exit, and offline PWA.
 
 ### Navigation layout
@@ -56,7 +57,7 @@ npm run dev
 # Start the app and the Part 05 WebSocket relay together
 npm run dev:classroom
 
-# Run all master automated QA, legal fidelity & child safety checks (Parts 01–06 + Gamified Milestones: 428 checks)
+# Run all master automated QA, legal fidelity & child safety checks (Parts 01–06 + 3D Gateway: 430 checks)
 npm test
 
 # Run individual verification suites
@@ -65,7 +66,7 @@ npm run test:part03       # 50 checks (Part 03 Scenario Engine)
 npm run test:part04       # 67 checks (Part 04 Progression System)
 npm run test:part05       # 64 checks (Part 05 Classroom System)
 npm run test:part06       # 104 checks (Part 06 Intelligence System)
-npm run test:transition   # 60 checks (Cinematic 3D World Transitions)
+npm run test:transition   # 25 checks (3D Sovereign Portal Tunnel & Milestones)
 
 # Build for production
 npm run build
