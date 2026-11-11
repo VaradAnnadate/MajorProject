@@ -33,6 +33,10 @@ Children in India between 8 and 16 years old, with content and interaction patte
 - **Part 05 Complete:** Teacher-led live classroom rooms with animal codenames, private voting, aggregate reveal, and a facilitator discussion guide.
 - **Parts 06–08 Planned:** Teacher/parent dashboards, multilingual localization, and offline PWA.
 
+### Navigation layout
+
+The navigation keeps the **Get Help (1098)** action visible at intermediate desktop widths, where the full link row would otherwise overflow. At those widths, the header shows the compact help action and menu toggle; the full desktop navigation appears at viewport widths of 2000px and above. On smaller screens, the existing menu toggle provides access to navigation links.
+
 ## Getting started
 
 ### Requirements
