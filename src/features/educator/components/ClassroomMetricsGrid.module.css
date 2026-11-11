@@ -1,0 +1,115 @@
+.section {
+  margin-bottom: 2.5rem;
+}
+
+.headerRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.sectionEyebrow {
+  font-family: var(--font-family-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-saffron-600, #ea580c);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.sectionTitle {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--color-ink-primary, #0f172a);
+  margin: 0;
+}
+
+.privacyNote {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  color: var(--color-forest-600, #15803d);
+  background: var(--color-forest-50, #f0fdf4);
+  border: 1px solid rgba(22, 163, 74, 0.2);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: var(--color-canvas-card, #ffffff);
+  border: 1px solid var(--color-border-medium, #e2e8f0);
+  border-radius: 14px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.cardIcon {
+  font-size: 1.25rem;
+}
+
+.cardLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-ink-secondary, #475569);
+}
+
+.cardValue {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-ink-primary, #0f172a);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+  font-feature-settings: 'tnum';
+}
+
+.cardDetail {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--color-ink-muted, #64748b);
+  line-height: 1.5;
+}
+
+/* Card tones */
+.saffron {
+  border-top: 3px solid var(--color-saffron-500, #f97316);
+}
+
+.navy {
+  border-top: 3px solid #2563eb;
+}
+
+.emerald {
+  border-top: 3px solid #10b981;
+}
+
+.purple {
+  border-top: 3px solid #8b5cf6;
+}
+

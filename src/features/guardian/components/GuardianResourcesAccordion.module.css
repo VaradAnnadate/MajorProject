@@ -1,0 +1,123 @@
+.section {
+  background: var(--color-canvas-card, #ffffff);
+  border: 1px solid var(--color-border-medium, #e2e8f0);
+  border-radius: 18px;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  margin-bottom: 2.5rem;
+}
+
+.header {
+  margin-bottom: 1.5rem;
+}
+
+.eyebrow {
+  font-family: var(--font-family-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-saffron-600, #ea580c);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--color-ink-primary, #0f172a);
+  margin: 0 0 0.5rem;
+}
+
+.subtitle {
+  font-size: 0.88rem;
+  color: var(--color-ink-secondary, #475569);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 720px;
+}
+
+.accordionList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.accordionItem {
+  border: 1px solid var(--color-border-subtle, #f1f5f9);
+  border-radius: 12px;
+  background: #f8fafc;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.accordionItem.open {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.triggerBtn {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.triggerText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.itemTitle {
+  font-size: 0.95rem;
+  font-weight: 750;
+  color: #0f172a;
+}
+
+.itemSummary {
+  font-size: 0.8rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.chevron {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-saffron-600, #ea580c);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #fff7ed;
+  flex-shrink: 0;
+}
+
+.contentBody {
+  padding: 0 1.25rem 1.25rem;
+  border-top: 1px solid #f1f5f9;
+  background: #ffffff;
+}
+
+.bulletList {
+  margin: 1rem 0 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bulletItem {
+  font-size: 0.84rem;
+  color: #334155;
+  line-height: 1.5;
+}
+

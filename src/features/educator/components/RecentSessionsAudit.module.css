@@ -1,0 +1,150 @@
+.section {
+  background: var(--color-canvas-card, #ffffff);
+  border: 1px solid var(--color-border-medium, #e2e8f0);
+  border-radius: 18px;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  margin-bottom: 2.5rem;
+}
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.eyebrow {
+  font-family: var(--font-family-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-saffron-600, #ea580c);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--color-ink-primary, #0f172a);
+  margin: 0;
+}
+
+.complianceTag {
+  font-size: 0.75rem;
+  color: #15803d;
+  background: #f0fdf4;
+  border: 1px solid rgba(22, 163, 74, 0.2);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.tableCard {
+  border: 1px solid var(--color-border-subtle, #f1f5f9);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.responsiveTableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.82rem;
+}
+
+.table th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1e293b;
+  vertical-align: middle;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table tr:hover {
+  background: #fcfcfd;
+}
+
+.dateCell {
+  white-space: nowrap;
+  color: #64748b;
+  font-size: 0.78rem;
+}
+
+.pinCode {
+  font-family: var(--font-family-mono, monospace);
+  background: #0f172a;
+  color: #fbbf24;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.questCell {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.participantCell {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+  color: #334155;
+}
+
+.avatarIcon {
+  font-size: 0.95rem;
+}
+
+.consensusBox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.consensusText {
+  color: #1e293b;
+}
+
+.consensusPct {
+  font-family: var(--font-family-mono, monospace);
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.notesCell {
+  color: #64748b;
+  font-size: 0.76rem;
+  line-height: 1.4;
+  max-width: 260px;
+}
+
