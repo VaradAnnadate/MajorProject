@@ -15,7 +15,7 @@
 | **03** | **Mission gameplay, scenarios, decisions, learning & rewards** | Stateful scenario dialogue engine, branching ethical decision trees, consequences preview, statutory article reveals, tactile evidence inspection. | State machine, Dialogue AST parser, GSAP & Framer Motion, 38-point QA suite. | **COMPLETE** |
 | **04** | **XP, badges, streaks & cooperative progression** | Non-competitive dignity XP, rights passport stamp unlocks, empathy milestones, anti-addiction streak shields, shared community goals. | LocalStorage/IndexedDB sync, Web Audio API sound sprites. | **COMPLETE** |
 | **05** | **Live classroom mode, quiz rooms & WebSocket integration** | Teacher-moderated multiplayer quiz rooms, collaborative consensus dilemmas, real-time live room state, zero PII child pseudonyms. | React WebSocket client, Node `ws` relay, in-memory ephemeral rooms. | **COMPLETE** |
-| **06** | **Teacher and parent dashboards** | Classroom legal literacy insights, discussion guides, curriculum mapping (NCERT / CBSE / State Boards), consent & safeguarding controls. | Analytical charts (accessible SVG), lesson plan export. | **PLANNED** |
+| **06** | **Educator & Guardian Intelligence System** | Educator Studio (`/educator`), Guardian Chronicle (`/guardian`), NCERT/CBSE curriculum mapping, Socratic discussion toolkit, "At the Dinner Table" family primers, DPDP Act 2023 §9 compliance, zero child surveillance. | React 18, Tokenized CSS Modules, Shared Intelligence Layer, 104-point QA suite. | **COMPLETE** |
 | **07** | **Child safety, help centre, legal resources & multilingual support** | Verified Childline 1098 routing, confidential incident reporting guide, POCSO e-Box info, localized language support (Hindi, Marathi, Tamil, Bengali). | i18n localization engine, emergency quick-dial bridges. | **PLANNED** |
 | **08** | **PWA, offline functionality, testing & final polish** | Service worker asset caching, offline mission playback for rural low-connectivity schools, cross-browser audits, final deployment gates. | PWA Manifest, Workbox / SW cache, Lighthouse CI (95+ score). | **PLANNED** |
 
@@ -116,13 +116,25 @@
 
 ---
 
-### Part 06 — Teacher & Parent Dashboards
-* **Objective:** Provide adults with tools, discussion primers, and learning insights to support children’s legal literacy without surveillance.
-* **Components to Build:**
-  * **Curriculum Alignment Matrix:** Mappings of RightsQuest adventures to CBSE, ICSE, NCERT, and State Board Social Science / Civics standards.
-  * **Printable Discussion Facilitation Cards:** PDF export of classroom debate prompts and roleplay exercises for offline school periods.
-  * **Aggregated Literacy Metrics:** High-level classroom comprehension summaries (e.g., "85% of students understood how to report cyber harassment") with zero individual student tracking.
-  * **Caregiver Safeguarding Guide:** Tips for parents on handling sensitive disclosures and recognizing distress signs.
+### Part 06 — Educator & Guardian Intelligence System (COMPLETED)
+* **Objective:** Provide educators and guardians with curriculum-mapped tools, Socratic discussion primers, and non-surveillance learning insights without tracking child behavior or introducing competitive ranking.
+* **Key Achievements:**
+  * **Shared Intelligence Data & Hooks (`useIntelligence.js`, `intelligenceData.js`):** Unified data layer computing cohort-level metrics, chronological narrative learning timelines, and family prompts from actual progression transactions.
+  * **Role-Aware Permission Gateway (`PermissionGateway.jsx`):** Non-punitive role boundaries between `learner` (default), `educator`, and `guardian` modes, with explicit DPDP Act 2023 §9 compliance guarantees.
+  * **Educator Studio (`/educator`):**
+    * *ClassroomMetricsGrid:* Cohort-level aggregates for Wisdom XP, completed adventures, unlocked constitutional seals, and facilitated deliberation sessions with zero individual scorecards.
+    * *LiveSessionManager:* Direct bridge to launch Part 05 synchronous classroom dilemmas with instant room PIN display (`RQ-####`) and blind-voting workflows.
+    * *TopicExplorationChart:* Deep mappings of the 5 Constitutional Realms to middle-school NCERT Civics (Grades 6–8) and CBSE learning competencies, complete with offline classroom exercises.
+    * *DiscussionToolkitView:* Socratic inquiry protocols, active bystander de-escalation, and fishbowl deliberation methods for teachers.
+    * *RecentSessionsAudit:* Anonymized collaborative consensus audit trail preserving majority outcome percentages without student names.
+    * *Educator Legal Compendium:* RTE 2009 Section 17, POCSO mandatory reporting protocols, Childline 1098 escalation, and NCERT civics indicators.
+  * **Guardian Chronicle (`/guardian`):**
+    * *LearningHighlightsCard:* Warm parental window celebrating curiosity and empathy rather than screen time or competitive ranks.
+    * *LearningTimelineView:* Editorial narrative timeline documenting tactile evidence inspected and constitutional articles discovered.
+    * *FamilyConversationStarters:* "At the Dinner Table" prompts and screen-free household activities mapped to child rights.
+    * *SupportivePillarsGrid:* Anti-addiction guarantees including zero streak penalties, no infinite feeds, and DPDP Act 2023 §9 protection.
+    * *GuardianResourcesAccordion:* Plain-language explainers on RTE Act, POCSO, Childline 1098, and digital privacy rights.
+  * **Automated QA Verification:** 104/104 dedicated automated Part 06 test assertions passing cleanly in `scripts/verify_part06.mjs` (405/405 total passing assertions across the master test harness).
 
 ---
 

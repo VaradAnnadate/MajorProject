@@ -30,8 +30,9 @@ Children in India between 8 and 16 years old, with content and interaction patte
 - **Part 02 Complete:** The Living Story World (*The World of Every Child*), 5 constitutional realms, Mitra the Sun-Fox Mascot (9 expressive states & child safeguard behavior), interactive 60fps SVG vector adventure map, and 6-scene cinematic landing storytelling.
 - **Part 03 Complete:** Stateful branching scenario dialogue engine (`ScenarioRunner`), ethical decision trees (`ChoicePanel`), non-punitive consequence evaluation (`ConsequencePreview`), constitutional article reveal stamps (`ArticleRevealStamp`), tactile evidence inspector (`EvidenceInspector`), and `/play/:scenarioId` mission routing.
 - **Part 04 Complete:** Dignity XP and rights passport, non-punitive streaks, collectible badges, and shared community goals.
-- **Part 05 Complete:** Facilitators can host one of three rights dilemmas in a PIN-protected classroom, students join with animal codenames, and private ballots reveal only aggregate results before a guided discussion. Start the app and WebSocket relay together with `npm run dev:classroom`; see [the Part 05 roadmap](docs/ROADMAP_PARTS_01_TO_08.md#part-05--live-classroom-mode-quiz-rooms--websocket-integration) for the room flow and privacy limits.
-- **Parts 06–08 Planned:** Teacher/parent dashboards, multilingual localization, and offline PWA.
+- **Part 05 Complete:** Facilitators can host rights dilemmas in a PIN-protected classroom (`RQ-####`), students join with animal codenames, and private ballots reveal only aggregate consensus before a guided Socratic discussion. 64/64 automated test checks pass in `scripts/verify_part05.mjs`.
+- **Part 06 Complete:** The Educator & Guardian Intelligence System. Educator Studio (`/educator`) provides cohort-level literacy metrics, live session launcher, NCERT Civics & CBSE curriculum alignments, Socratic toolkits, and deliberation archives. Guardian Chronicle (`/guardian`) provides a calm, non-surveillance window with "At the Dinner Table" discussion primers and anti-addiction guarantees compliant with DPDP Act 2023 §9. 104/104 automated test checks pass in `scripts/verify_part06.mjs`.
+- **Parts 07–08 Planned:** Multilingual localization, child safety emergency quick-exit, and offline PWA.
 
 ### Navigation layout
 
@@ -54,12 +55,15 @@ npm run dev
 # Start the app and the Part 05 WebSocket relay together
 npm run dev:classroom
 
-# Run the existing automated QA, legal fidelity & child safety checks (Parts 01–04)
+# Run all master automated QA, legal fidelity & child safety checks (Parts 01–06: 405 checks)
 npm test
 
 # Run individual verification suites
 npm run test:foundation   # 120 checks (Parts 01 & 02)
-npm run test:part03       # 38 checks (Part 03 Scenario Engine)
+npm run test:part03       # 50 checks (Part 03 Scenario Engine)
+npm run test:part04       # 67 checks (Part 04 Progression System)
+npm run test:part05       # 64 checks (Part 05 Classroom System)
+npm run test:part06       # 104 checks (Part 06 Intelligence System)
 
 # Build for production
 npm run build

@@ -1,7 +1,7 @@
 # RightsQuest India — Architecture & Codebase Deep Dive
 
 > **Governing Framework:** Creative OS (`44_AGENCYLIKE_UI`, `01_DESIGN_OS`, `02_ART_DIRECTION`, `04_TYPOGRAPHY_SYSTEM`, `05_MOTION_SYSTEM`, `11_FRONTEND_ARCHITECTURE`, `12_CREATIVE_QA`)  
-> **Status:** Parts 01–05 Implemented · Parts 01–04 have existing QA suites; Part 05 uses a live WebSocket relay.
+> **Status:** Parts 01–06 Implemented & Verified · 5 dedicated test suites with 405/405 passing checks.
 > **Core Mission:** An agency-grade, story-driven gamified children's rights learning platform designed for children aged 8–16 across India.
 
 ---
@@ -40,7 +40,9 @@ MajorProject/
 │   ├── dev-classroom.mjs                     # Starts Vite and the Part 05 room relay together
 │   ├── verify_foundation.mjs                 # 120-point automated QA suite (Parts 01 & 02)
 │   ├── verify_part03.mjs                     # 50-point automated QA suite (Part 03 Scenario Engine)
-│   └── verify_part04.mjs                     # 67-point automated QA suite (Part 04 Progression System)
+│   ├── verify_part04.mjs                     # 67-point automated QA suite (Part 04 Progression System)
+│   ├── verify_part05.mjs                     # 64-point automated QA suite (Part 05 Classroom System)
+│   └── verify_part06.mjs                     # 104-point automated QA suite (Part 06 Intelligence System)
 ├── server/
 │   └── classroom-server.js                    # Part 05 in-memory WebSocket room relay
 ├── public/                                   # Static public assets (favicons, manifest)
@@ -141,12 +143,36 @@ MajorProject/
     │       └── pages/
     │           ├── ProgressionPage.jsx       # Dedicated /achievements & /progression route view
     │           └── ProgressionPage.module.css # Rights Passport page styling & typography
-    │   └── classroom/                        # Part 05: Facilitator-led live civics rooms
-    │       ├── data/                          # Animal codenames and three discussion dilemmas
-    │       ├── engine/                        # WebSocket transport and room-state definitions
-    │       ├── hooks/useClassroomRoom.js      # Room connection, voting, and facilitator actions
-    │       ├── components/                    # Student lobby, ballot, results, guide, and console
-    │       └── pages/ClassroomPage.jsx        # /classroom and /classroom/:roomPin
+    │   ├── classroom/                        # Part 05: Facilitator-led live civics rooms
+    │   │   ├── data/                          # Animal codenames and three discussion dilemmas
+    │   │   ├── engine/                        # WebSocket transport and room-state definitions
+    │   │   ├── hooks/useClassroomRoom.js      # Room connection, voting, and facilitator actions
+    │   │   ├── components/                    # Student lobby, ballot, results, guide, and console
+    │   │   └── pages/ClassroomPage.jsx        # /classroom and /classroom/:roomPin
+    │   ├── intelligence/                     # Part 06: Shared Intelligence & Permission Gateway
+    │   │   ├── data/intelligenceData.js      # NCERT/CBSE alignments, dinner primers, session logs
+    │   │   ├── hooks/useIntelligence.js      # Aggregated metrics & narrative timeline hooks
+    │   │   └── components/
+    │   │       ├── PermissionGateway.jsx     # Non-surveillance role gateway & persona switcher
+    │   │       └── PermissionGateway.module.css
+    │   ├── educator/                         # Part 06: Educator & Facilitator Studio
+    │   │   ├── pages/EducatorPage.jsx        # /educator route workspace
+    │   │   ├── pages/EducatorPage.module.css
+    │   │   └── components/
+    │   │       ├── ClassroomMetricsGrid.jsx  # Cohort-level aggregate metrics (zero individual ranks)
+    │   │       ├── LiveSessionManager.jsx    # Bridge to launch Part 05 dilemmas with RQ-#### PIN
+    │   │       ├── TopicExplorationChart.jsx # NCERT Civics (Grades 6–8) & CBSE unit mappings
+    │   │       ├── DiscussionToolkitView.jsx # Socratic inquiry, bystander protocols & fishbowl guides
+    │   │       └── RecentSessionsAudit.jsx   # Consensus outcome percentages & deliberation records
+    │   └── guardian/                         # Part 06: Guardian Chronicle & Family Window
+    │       ├── pages/GuardianPage.jsx        # /guardian route workspace
+    │       ├── pages/GuardianPage.module.css
+    │       └── components/
+    │           ├── LearningHighlightsCard.jsx# Child recognition tier, wisdom XP & empathy focus
+    │           ├── LearningTimelineView.jsx  # Chronological narrative learning milestones
+    │           ├── FamilyConversationStarters.jsx # "At the Dinner Table" prompts & offline activities
+    │           ├── SupportivePillarsGrid.jsx # Zero streak penalties & anti-addiction commitments
+    │           └── GuardianResourcesAccordion.jsx # Plain-language RTE, POCSO & DPDP §9 guides
     ├── components/
     │   ├── common/
     │   │   ├── EmergencyQuickBar.jsx         # Persistent 1098 Childline emergency quickbar
