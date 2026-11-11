@@ -1,0 +1,43 @@
+.root { width: min(100%, 900px); margin: 0 auto; padding: clamp(1.2rem, 4vw, 2.4rem); border: 1px solid var(--color-border-medium); border-radius: 24px; background: var(--color-canvas-card); box-shadow: var(--shadow-press); }
+.header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.eyebrow { color: var(--color-saffron-600); font: 700 .68rem var(--font-family-mono); letter-spacing: .1em; }
+.header h2 { margin: .45rem 0 .35rem; font-size: clamp(1.55rem, 4vw, 2.25rem); }
+.header p { margin: 0; color: var(--color-ink-muted); font-size: .85rem; }
+.roomBadge { flex: none; padding: .45rem .65rem; border-radius: 999px; background: var(--color-canvas-secondary); color: var(--color-ink-secondary); font-size: .75rem; font-weight: 700; }
+.dilemma { display: flex; gap: .75rem; margin: 1.35rem 0 1.7rem; padding: 1rem 1.1rem; border-left: 3px solid var(--color-saffron-500); border-radius: 0 14px 14px 0; background: var(--color-canvas-secondary); color: var(--color-ink-primary); }
+.dilemma > span { font-size: 1.25rem; }
+.dilemma p { margin: 0; line-height: 1.6; }
+.ballot h3, .results h3 { margin: 0 0 .35rem; font-size: 1.25rem; }
+.privateHint { margin: 0 0 1rem; color: var(--color-ink-muted); font-size: .82rem; }
+.options { display: grid; gap: .65rem; }
+.option { display: grid; grid-template-columns: 36px 1fr 20px; align-items: center; gap: .65rem; min-height: 64px; padding: .7rem .85rem; border: 1px solid var(--color-border-medium); border-radius: 13px; background: var(--color-canvas-primary); color: var(--color-ink-primary); cursor: pointer; text-align: left; line-height: 1.45; }
+.option:hover { border-color: var(--color-saffron-500); }
+.option:focus-visible, .submitButton:focus-visible { outline: 3px solid var(--color-saffron-500); outline-offset: 3px; }
+.optionSelected { border: 2px solid var(--color-saffron-500); background: #fffaf0; }
+.optionLetter { display: grid; width: 32px; height: 32px; place-items: center; border-radius: 50%; background: var(--color-canvas-secondary); font: 700 .85rem var(--font-family-mono); }
+.selectedMark { color: var(--color-forest-500); font-weight: 900; }
+.submitRow { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1rem; }
+.submitStatus { color: var(--color-ink-muted); font-size: .75rem; line-height: 1.45; }
+.submitButton { min-height: 44px; padding: .7rem 1rem; border: 0; border-radius: 10px; background: var(--color-ink-primary); color: #fff; cursor: pointer; font-weight: 750; }
+.submitButton:disabled { cursor: default; opacity: .5; }
+.waiting { margin-top: 1.5rem; padding: 1.5rem; border-radius: 16px; background: var(--color-canvas-secondary); text-align: center; }
+.waitingIcon { font-size: 2rem; }
+.waiting h3 { margin: .45rem 0; }
+.waiting p { margin: 0; color: var(--color-ink-secondary); }
+.results { margin-top: 1.5rem; padding-top: 1.4rem; border-top: 1px solid var(--color-border-medium); }
+.results ul { display: grid; gap: .9rem; margin: 1rem 0; padding: 0; list-style: none; }
+.resultLabel { display: flex; justify-content: space-between; gap: .8rem; margin-bottom: .35rem; font-size: .82rem; line-height: 1.4; }
+.resultLabel strong { flex: none; color: var(--color-forest-500); }
+.resultTrack { height: 8px; overflow: hidden; border-radius: 99px; background: var(--color-canvas-secondary); }
+.resultTrack span { display: block; height: 100%; border-radius: inherit; background: var(--color-forest-500); transition: width 280ms ease; }
+.reflection, .discussionPrompt { margin: .8rem 0 0; padding: .8rem 1rem; border-radius: 12px; background: #f4f2e8; color: var(--color-ink-secondary); font-size: .85rem; line-height: 1.55; }
+.discussionPrompt { border-left: 3px solid var(--color-saffron-500); }
+.finished { margin: 1.2rem 0 0; color: var(--color-forest-500); font-weight: 700; }
+
+@media (max-width: 620px) {
+  .header { flex-direction: column; }
+  .submitRow { align-items: stretch; flex-direction: column; }
+  .submitButton { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) { .resultTrack span { transition: none; } }
