@@ -43,7 +43,7 @@ flowchart TD
 * **Part 02 (Complete):** The Living Story World (*The World of Every Child*), Mitra the Sun-Fox Mascot (9 expressive states & child safeguard behavior), vector interactive adventure map, and 6-scene cinematic landing storytelling.
 * **Part 03 (Complete):** Branching scenario gameplay engine (`ScenarioRunner`), ethical decision trees (`ChoicePanel`), non-punitive consequence evaluation (`ConsequencePreview`), constitutional article reveal stamp (`ArticleRevealStamp`), evidence inspector (`EvidenceInspector`), three core demonstration missions + digital safety quest, age adaptation, persistent Childline 1098 modal, and 50-point QA suite.
 * **Part 04 (Complete):** Deterministic idempotent XP engine (`rewardEngine`), 7 recognition tiers (`levels`), collectible treasure cabinet (`AchievementCollection`) with 12 tactile medallions, non-punitive 14-day consistency tracker (`StreakCalendar`), cooperative community quests (`CooperativeProgress`), and 67-point QA suite.
-* **Part 05 (Complete):** Ephemeral WebSocket classroom rooms, anonymous animal codenames, private student ballots, aggregate consensus reveal, facilitator controls, and Bal Sansad prompts.
+* **Part 05 (Complete):** A facilitator creates a PIN room, chooses one of three rights dilemmas, and guides the lobby, private ballot, aggregate reveal, and Bal Sansad discussion. Students join with animal codenames and no account details. The single-process relay keeps room state in memory, supports up to 40 students, and removes rooms when the facilitator leaves, the room expires, or the relay restarts. Start with `npm run dev:classroom`; the full [room flow and privacy boundary](./ROADMAP_PARTS_01_TO_08.md#part-05--live-classroom-mode-quiz-rooms--websocket-integration) and [relay architecture](./ARCHITECTURE_AND_CODE.md#7-part-05--live-classroom-rooms) are documented.
 * **Parts 06–08 (Planned):** Teacher/parent dashboards, multilingual localization, and offline PWA.
 
 ### 2. [Architecture & Codebase Deep Dive](./ARCHITECTURE_AND_CODE.md)
@@ -68,6 +68,9 @@ npm install
 
 # 2. Run local development server (Vite + React)
 npm run dev
+
+# Run the app and Part 05 classroom WebSocket relay together
+npm run dev:classroom
 
 # 3. Run all 237 automated QA, legal fidelity & child safety checks (Parts 01–04)
 npm test
