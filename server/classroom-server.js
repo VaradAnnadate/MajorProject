@@ -57,15 +57,17 @@ function buildRoomState(room, socket) {
     ROOM_STATES.DEBATE_GUIDE,
     ROOM_STATES.COMPLETED,
   ].includes(room.stage);
-  const participants = [...room.participants.values()]
-    .filter((participant) => participant.role === 'student')
-    .map(({ id, codename, avatarId }) => ({ id, codename, avatarId }));
+  const participants = socket.role === 'teacher'
+    ? [...room.participants.values()]
+      .filter((participant) => participant.role === 'student')
+      .map(({ codename, avatarId }) => ({ codename, avatarId }))
+    : [];
 
   return {
     roomPin: room.pin,
     questId: room.questId,
     stage: room.stage,
-    participantCount: participants.length,
+    participantCount: [...room.participants.values()].filter((participant) => participant.role === 'student').length,
     participants,
     voteCount: room.votes.size,
     tally: revealTally ? [...room.tally.entries()].map(([optionId, count]) => ({ optionId, count })) : null,

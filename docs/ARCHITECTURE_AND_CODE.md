@@ -1,7 +1,7 @@
 # RightsQuest India — Architecture & Codebase Deep Dive
 
 > **Governing Framework:** Creative OS (`44_AGENCYLIKE_UI`, `01_DESIGN_OS`, `02_ART_DIRECTION`, `04_TYPOGRAPHY_SYSTEM`, `05_MOTION_SYSTEM`, `11_FRONTEND_ARCHITECTURE`, `12_CREATIVE_QA`)  
-> **Status:** Parts 01, 02, 03 & 04 Implemented & Verified · 237/237 QA Tests Passing  
+> **Status:** Parts 01–05 Implemented · Parts 01–04 have existing QA suites; Part 05 uses a live WebSocket relay.
 > **Core Mission:** An agency-grade, story-driven gamified children's rights learning platform designed for children aged 8–16 across India.
 
 ---
@@ -23,6 +23,7 @@ RightsQuest India is built using **clean, standard React.js (JavaScript)** witho
 | **Lucide React** | `^0.460.0` | Vector interface iconography | Scalable, tree-shakeable SVG icons adhering to WCAG accessibility rules. |
 | **Custom Tokenized CSS** | Pure CSS | Design system & styling | Zero Tailwind or CSS-in-JS runtime overhead; tokenized HSL variables and fluid clamp equations. |
 | **@creative-os/core** | `^3.1.1` | Creative OS foundation tokens | Agency-grade sovereign easing curves, motion principles, and design system benchmarks. |
+| **ws** | `^8.22.2` | Node classroom WebSocket relay | Small server-side transport for ephemeral facilitator-led rooms; browser clients use the native WebSocket API. |
 
 ---
 
@@ -36,9 +37,12 @@ MajorProject/
 │   ├── ARCHITECTURE_AND_CODE.md              # This deep-dive codebase architecture guide
 │   └── VISUAL_DESIGN_SYSTEM.md               # Visual identity, typography & motion guide
 ├── scripts/
+│   ├── dev-classroom.mjs                     # Starts Vite and the Part 05 room relay together
 │   ├── verify_foundation.mjs                 # 120-point automated QA suite (Parts 01 & 02)
 │   ├── verify_part03.mjs                     # 50-point automated QA suite (Part 03 Scenario Engine)
 │   └── verify_part04.mjs                     # 67-point automated QA suite (Part 04 Progression System)
+├── server/
+│   └── classroom-server.js                    # Part 05 in-memory WebSocket room relay
 ├── public/                                   # Static public assets (favicons, manifest)
 ├── index.html                                # Accessible HTML5 document shell with font preconnects
 ├── vite.config.js                            # Manual chunk splitting (vendor, motion, icons, features)
@@ -108,7 +112,7 @@ MajorProject/
     │   │       ├── StoryMascotIntro.jsx      # Scene 04: The Companion Stage (Interactive emotions)
     │   │       ├── StoryMapPortal.jsx        # Scene 05: The Adventure Begins (Live embedded map)
     │   │       └── StoryFinalCta.jsx         # Scene 06: Final Invitation & emergency 1098 assurance
-    │   └── progression/                      # Part 04: Living Progression System & Rights Passport
+    │   ├── progression/                      # Part 04: Living Progression System & Rights Passport
     │       ├── index.js                      # Barrel export of progression hooks, components & engine
     │       ├── data/                         # Progression constants, tiers, achievements & levels
     │       │   ├── rewardConfig.js           # XP reward values, multipliers, repeat policies
@@ -137,6 +141,12 @@ MajorProject/
     │       └── pages/
     │           ├── ProgressionPage.jsx       # Dedicated /achievements & /progression route view
     │           └── ProgressionPage.module.css # Rights Passport page styling & typography
+    │   └── classroom/                        # Part 05: Facilitator-led live civics rooms
+    │       ├── data/                          # Animal codenames and three discussion dilemmas
+    │       ├── engine/                        # WebSocket transport and room-state definitions
+    │       ├── hooks/useClassroomRoom.js      # Room connection, voting, and facilitator actions
+    │       ├── components/                    # Student lobby, ballot, results, guide, and console
+    │       └── pages/ClassroomPage.jsx        # /classroom and /classroom/:roomPin
     ├── components/
     │   ├── common/
     │   │   ├── EmergencyQuickBar.jsx         # Persistent 1098 Childline emergency quickbar
@@ -386,9 +396,12 @@ npm run test:part04       # 67 checks (Part 04 Progression System)
 
 ---
 
-## 7. Handoff for Part 05 (Live Classroom Mode & WebSocket Rooms)
+## 7. Part 05 — Live Classroom Rooms
 
-With Parts 01–04 complete, the core single-player learning and progression architecture is fully hardened for **Part 05 — Live Classroom Mode, Quiz Rooms & WebSocket Integration**:
-* **Progression Pipeline Ready:** Room activities can directly dispatch `COOP_CONTRIBUTED` and `MISSION_COMPLETED` events into the deterministic XP engine.
-* **Anonymous Animal Personas:** Classroom student lobbies can instantiate dynamic non-identifying codenames (e.g. *Brave Tiger*, *Clever Falcon*) inheriting the existing `DemoLearnerContext` model.
-* **Collective Consensus Visualizations:** Real-time dilemma voting can leverage the existing `ChoicePanel` and `ConsequencePreview` design tokens.
+The Part 05 experience uses a browser-native WebSocket client and a small Node `ws` relay. Start both local processes with `npm run dev:classroom`; the room relay listens on port `8787` by default.
+
+* **Room lifecycle:** The teacher selects one of three curated dilemmas. The relay creates an `RQ-####` room, accepts up to 40 students during the lobby, and advances through voting, result reveal, discussion, and completion.
+* **Vote privacy:** The relay keeps each current vote in memory and sends only a vote count until the facilitator reveals results. After reveal, every client receives aggregate option counts. Individual vote-to-codename mappings are never included in room snapshots.
+* **Child privacy:** The join form collects no account details or free-text name. The relay holds only a random participant token, an animal codename, and the current vote for the lifetime of the room. Student snapshots receive only a participant count; the facilitator alone sees animal codenames. The relay writes no room data to disk.
+* **Disconnect handling:** If the teacher leaves, the relay closes the student connections and removes the room. Rooms expire after three hours; a relay restart clears all active rooms.
+* **Deployment boundary:** This is a single-process prototype with in-memory state. Production hosting must provide a persistent WebSocket process and configure `CLASSROOM_ALLOWED_ORIGINS`; multi-process scaling or room recovery is not implemented.

@@ -16,6 +16,7 @@
 .pinLabel { color: #8b671f; font: 700 .62rem var(--font-family-mono); letter-spacing: .12em; }
 .pin { color: var(--color-ink-primary); font: 800 clamp(2rem, 8vw, 3.2rem) var(--font-family-mono); letter-spacing: .05em; }
 .pinHint { color: var(--color-ink-secondary); font-size: .78rem; }
+.shareActions { display: flex; flex-wrap: wrap; gap: .45rem; }
 .copyButton { min-height: 42px; padding: .6rem .8rem; border: 1px solid #d8c49c; border-radius: 9px; background: #fff; color: var(--color-ink-primary); cursor: pointer; font-weight: 700; }
 .copyStatus { position: absolute; right: 1.2rem; bottom: -.45rem; color: var(--color-forest-500); font-size: .68rem; }
 .rosterHeader { display: flex; align-items: center; justify-content: space-between; gap: .8rem; }

@@ -14,7 +14,7 @@
 | **02** | **Story world, mascot, interactive mission map & age-based journeys** | Five living realms (*The World of Every Child*), Mitra the Sun-Fox Mascot (9 expressive states & safeguard behavior), SVG interactive adventure map with connecting trails, 6-scene cinematic landing storytelling, 120-point QA harness. | SVG Terrain, Dynamic Vector Rigging, Parallax Scenes, Lenis Scroll. | **COMPLETE** |
 | **03** | **Mission gameplay, scenarios, decisions, learning & rewards** | Stateful scenario dialogue engine, branching ethical decision trees, consequences preview, statutory article reveals, tactile evidence inspection. | State machine, Dialogue AST parser, GSAP & Framer Motion, 38-point QA suite. | **COMPLETE** |
 | **04** | **XP, badges, streaks & cooperative progression** | Non-competitive dignity XP, rights passport stamp unlocks, empathy milestones, anti-addiction streak shields, shared community goals. | LocalStorage/IndexedDB sync, Web Audio API sound sprites. | **COMPLETE** |
-| **05** | **Live classroom mode, quiz rooms & WebSocket integration** | Teacher-moderated multiplayer quiz rooms, collaborative consensus dilemmas, real-time live room state, zero PII child pseudonyms. | WebSockets / Socket.io client, ephemeral room channels. | **PLANNED** |
+| **05** | **Live classroom mode, quiz rooms & WebSocket integration** | Teacher-moderated multiplayer quiz rooms, collaborative consensus dilemmas, real-time live room state, zero PII child pseudonyms. | React WebSocket client, Node `ws` relay, in-memory ephemeral rooms. | **COMPLETE** |
 | **06** | **Teacher and parent dashboards** | Classroom legal literacy insights, discussion guides, curriculum mapping (NCERT / CBSE / State Boards), consent & safeguarding controls. | Analytical charts (accessible SVG), lesson plan export. | **PLANNED** |
 | **07** | **Child safety, help centre, legal resources & multilingual support** | Verified Childline 1098 routing, confidential incident reporting guide, POCSO e-Box info, localized language support (Hindi, Marathi, Tamil, Bengali). | i18n localization engine, emergency quick-dial bridges. | **PLANNED** |
 | **08** | **PWA, offline functionality, testing & final polish** | Service worker asset caching, offline mission playback for rural low-connectivity schools, cross-browser audits, final deployment gates. | PWA Manifest, Workbox / SW cache, Lighthouse CI (95+ score). | **PLANNED** |
@@ -104,12 +104,15 @@
 
 ### Part 05 — Live Classroom Mode, Quiz Rooms & WebSocket Integration
 * **Objective:** Enable teachers and workshop facilitators to host live interactive rights sessions in schools and community centers.
-* **Components to Build:**
-  * **Teacher Room Creator:** Facilitators can generate a 6-character room PIN (e.g., `RQ-7890`) and select a scenario quest.
-  * **Child Quick Join (No Account Required):** Students enter the PIN, choose a fun anonymous animal codename (e.g., *Brave Tiger*, *Clever Falcon*), and join the lobby.
-  * **Simultaneous Group Voting:** When a dilemma appears on the classroom projector, students vote on their individual mobile or tablet screens.
-  * **Classroom Consensus Graphs:** Real-time visualization of classroom choices triggering group debate on fairness, laws, and empathy.
-  * **WebSocket Infrastructure:** Lightweight real-time server using Socket.io or WebSockets with automatic room disconnection cleanups.
+* **Key Achievements:**
+  * **Teacher Room Creator (`TeacherConsole.jsx`):** Creates an `RQ-####` PIN, selects one of three civics dilemmas, shows connected animal codenames, and guides each room stage.
+  * **Child Quick Join (`ClassroomLobby.jsx`):** Students enter a PIN and choose one of eight animal codenames without providing a name, email, phone number, or account.
+  * **Private Group Voting (`StudentVotingView.jsx`):** Students can update a vote until the facilitator closes the ballot. Option totals stay hidden until the facilitator reveals them.
+  * **Consensus & Deliberation (`ConsensusChart.jsx`, `DebateGuide.jsx`):** Projector-ready aggregate results lead into a Bal Sansad listening guide with links to the Constitution of India and Right to Education Act.
+  * **Ephemeral WebSocket Relay (`server/classroom-server.js`):** Validates room messages, keeps room membership and votes in process memory, supports up to 40 students per room, and deletes a room when the teacher leaves or its three-hour lifetime expires.
+  * **Accessible Classroom Route:** `/classroom` hosts or joins a room, and `/classroom/:roomPin` opens the join screen with the PIN filled in. The responsive flow supports keyboard focus, reduced-motion preferences, and small screens.
+  * **Local Development:** `npm run dev:classroom` starts the Vite app and classroom relay together. Set `CLASSROOM_ALLOWED_ORIGINS` to the exact Vite origin when testing from another device on the local network.
+  * **Privacy boundary:** Room votes and codenames are temporary and are not written to a database. Student clients receive only the class count, while the facilitator sees animal codenames. The relay is a single-process prototype; restarting it clears active rooms. It is not a record of student attendance or individual learning outcomes.
 
 ---
 

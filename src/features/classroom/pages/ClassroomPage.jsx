@@ -28,7 +28,7 @@ export default function ClassroomPage() {
   }
 
   return (
-    <main className={styles.page}>
+    <div className={styles.page}>
       <div className={styles.container}>
         <Link className={styles.backLink} to="/adventures">← Back to Adventures</Link>
         <header className={styles.hero}>
@@ -114,6 +114,6 @@ export default function ClassroomPage() {
           <p><strong>Room privacy:</strong> classroom sessions use animal codenames and temporary room state. Do not share personal details in the activity.</p>
         </aside>
       </div>
-    </main>
+    </div>
   );
 }

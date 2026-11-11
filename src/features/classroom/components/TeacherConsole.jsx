@@ -48,6 +48,16 @@ export default function TeacherConsole({
     window.setTimeout(() => setCopyMessage(''), 2500);
   }
 
+  async function copyJoinLink() {
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/classroom/${room.roomPin}`);
+      setCopyMessage('Join link copied');
+    } catch {
+      setCopyMessage('Copy unavailable — share the room PIN instead');
+    }
+    window.setTimeout(() => setCopyMessage(''), 2500);
+  }
+
   if (!room) {
     return (
       <section className={styles.root} aria-labelledby="teacher-setup-title">
@@ -92,7 +102,10 @@ export default function TeacherConsole({
           <strong className={styles.pin}>{room.roomPin}</strong>
           <span className={styles.pinHint}>Share this code with your class.</span>
         </div>
-        <button className={styles.copyButton} onClick={copyPin} type="button">Copy PIN</button>
+        <div className={styles.shareActions}>
+          <button className={styles.copyButton} onClick={copyPin} type="button">Copy PIN</button>
+          <button className={styles.copyButton} onClick={copyJoinLink} type="button">Copy join link</button>
+        </div>
         {copyMessage && <span className={styles.copyStatus} role="status">{copyMessage}</span>}
       </div>
 
@@ -102,9 +115,9 @@ export default function TeacherConsole({
       </div>
       {participants.length > 0 ? (
         <ul className={styles.roster}>
-          {participants.map((participant) => {
+          {participants.map((participant, index) => {
             const avatar = getAnimalAvatar(participant.avatarId);
-            return <li key={participant.id}><span aria-hidden="true">{avatar?.emoji || '🦊'}</span>{participant.codename}</li>;
+            return <li key={`${participant.avatarId}-${index}`}><span aria-hidden="true">{avatar?.emoji || '🦊'}</span>{participant.codename}</li>;
           })}
         </ul>
       ) : (

@@ -25,6 +25,7 @@ flowchart TD
     Choices --> Consequence["Non-Punitive Consequence Feedback (Empathetic vs Learning)"]
     Consequence --> ArticleStamp["Constitutional Article Reveal Stamp (Art. 21A, POCSO, RTE)"]
     ArticleStamp --> Progression["Part 04: Living Progression System (/achievements)<br/>(XP Engine • 12 Badges • Streaks • Cooperative Goals)"]
+    Adventures --> Classroom["Part 05: Facilitator-led Classroom (/classroom)<br/>(Ephemeral Rooms • Private Voting • Bal Sansad Debate)"]
     
     subgraph Safeguards ["DPDP 2023 Child Privacy & Safety Layer"]
         Helpline["Childline 1098 Quickbar"]
@@ -42,13 +43,14 @@ flowchart TD
 * **Part 02 (Complete):** The Living Story World (*The World of Every Child*), Mitra the Sun-Fox Mascot (9 expressive states & child safeguard behavior), vector interactive adventure map, and 6-scene cinematic landing storytelling.
 * **Part 03 (Complete):** Branching scenario gameplay engine (`ScenarioRunner`), ethical decision trees (`ChoicePanel`), non-punitive consequence evaluation (`ConsequencePreview`), constitutional article reveal stamp (`ArticleRevealStamp`), evidence inspector (`EvidenceInspector`), three core demonstration missions + digital safety quest, age adaptation, persistent Childline 1098 modal, and 50-point QA suite.
 * **Part 04 (Complete):** Deterministic idempotent XP engine (`rewardEngine`), 7 recognition tiers (`levels`), collectible treasure cabinet (`AchievementCollection`) with 12 tactile medallions, non-punitive 14-day consistency tracker (`StreakCalendar`), cooperative community quests (`CooperativeProgress`), and 67-point QA suite.
-* **Parts 05–08 (Planned):** Live classroom quiz rooms, teacher/parent dashboards, multilingual localization, and offline PWA.
+* **Part 05 (Complete):** Ephemeral WebSocket classroom rooms, anonymous animal codenames, private student ballots, aggregate consensus reveal, facilitator controls, and Bal Sansad prompts.
+* **Parts 06–08 (Planned):** Teacher/parent dashboards, multilingual localization, and offline PWA.
 
 ### 2. [Architecture & Codebase Deep Dive](./ARCHITECTURE_AND_CODE.md)
 * Comprehensive technical walkthrough of every directory, component, data model, state hook, and safeguard.
 * Complete breakdown of `src/features/world/`, `src/features/mascot/`, `src/features/storytelling/`, `src/features/gameplay/`, and `src/features/progression/`.
 * Explains how the interactive SVG vector terrain, branching dialogue AST engine, and idempotent reward engine operate with 60fps performance and zero data leakage.
-* Documents the 237-point automated QA test suite (`scripts/verify_foundation.mjs`, `scripts/verify_part03.mjs`, and `scripts/verify_part04.mjs`).
+* Documents the existing QA suites (`scripts/verify_foundation.mjs`, `scripts/verify_part03.mjs`, and `scripts/verify_part04.mjs`) and the Part 05 WebSocket relay.
 
 ### 3. [Visual Design System & Creative Motion Architecture](./VISUAL_DESIGN_SYSTEM.md)
 * Comprehensive agency-grade visual design specification following Creative OS principles (`44_AGENCYLIKE_UI`).

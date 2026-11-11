@@ -29,7 +29,9 @@ Children in India between 8 and 16 years old, with content and interaction patte
 - **Part 01 Complete:** Application foundation, design system tokens, responsive application shell, Cormorant Garamond kinetic intro, Lenis smooth scroll, age selection prototype, learner home shell, and static catalog routes.
 - **Part 02 Complete:** The Living Story World (*The World of Every Child*), 5 constitutional realms, Mitra the Sun-Fox Mascot (9 expressive states & child safeguard behavior), interactive 60fps SVG vector adventure map, and 6-scene cinematic landing storytelling.
 - **Part 03 Complete:** Stateful branching scenario dialogue engine (`ScenarioRunner`), ethical decision trees (`ChoicePanel`), non-punitive consequence evaluation (`ConsequencePreview`), constitutional article reveal stamps (`ArticleRevealStamp`), tactile evidence inspector (`EvidenceInspector`), and `/play/:scenarioId` mission routing.
-- **Parts 04–08:** Dignity XP & rights passport, live classroom quiz rooms, teacher/parent dashboards, multilingual localization, and offline PWA.
+- **Part 04 Complete:** Dignity XP and rights passport, non-punitive streaks, collectible badges, and shared community goals.
+- **Part 05 Complete:** Teacher-led live classroom rooms with animal codenames, private voting, aggregate reveal, and a facilitator discussion guide.
+- **Parts 06–08 Planned:** Teacher/parent dashboards, multilingual localization, and offline PWA.
 
 ## Getting started
 
@@ -45,7 +47,10 @@ npm install
 # Start the development server
 npm run dev
 
-# Run all 158 automated QA, legal fidelity & child safety checks (Parts 01–03)
+# Start the app and the Part 05 WebSocket relay together
+npm run dev:classroom
+
+# Run the existing automated QA, legal fidelity & child safety checks (Parts 01–04)
 npm test
 
 # Run individual verification suites
@@ -56,6 +61,16 @@ npm run test:part03       # 38 checks (Part 03 Scenario Engine)
 npm run build
 ```
 
+### Classroom relay
+
+`npm run dev:classroom` starts the Vite app and a separate WebSocket relay on port `8787`. The browser connects to the same hostname as the app; set `VITE_CLASSROOM_WS_URL` at build time to use a different relay URL. For local-network devices, allow the exact Vite origin in the relay, for example:
+
+```bash
+CLASSROOM_ALLOWED_ORIGINS=http://192.168.1.40:5173 npm run dev:classroom
+```
+
+In production, run `node server/classroom-server.js` as a long-lived Node process, expose it through `wss://`, and set `CLASSROOM_ALLOWED_ORIGINS` to the app origin. Room state lives only in the relay process memory: there is no database, session history, or horizontal scaling support. A relay restart closes active rooms and clears their codenames and votes.
+
 ## Safety, privacy, and accessibility
 
 Because the intended users are children, safety and privacy need to shape the product from the start:
@@ -63,6 +78,7 @@ Because the intended users are children, safety and privacy need to shape the pr
 - Collect as little personal information as possible and explain data use in child-friendly language.
 - Avoid exposing children's identities, locations, or contact details to other users.
 - Design any social features with strong moderation, reporting, and safeguarding procedures; do not enable unsupervised contact by default.
+- Classroom sessions are facilitator-led: students cannot message one another. Room codenames and votes are kept only in relay memory and are removed when the room closes or expires.
 - Have child-rights content and support-service details reviewed by qualified, local experts and keep referrals current.
 - Make clear that educational content is not a substitute for advice from a qualified professional or help from a trusted adult.
 - Test with children only through an appropriate, safeguarded process, with informed consent and assent as applicable.
