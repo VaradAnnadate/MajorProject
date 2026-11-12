@@ -77,10 +77,6 @@ export function MitraChat() {
             </button>
           </header>
 
-          <div className={styles.privacyNote}>
-            Don’t share names, school details, contact information, or private stories. Chats aren’t saved by RightsQuest, but Groq processes the message to create a reply.
-          </div>
-
           <div className={styles.transcript} ref={transcriptRef} role="log" aria-live="polite" aria-relevant="additions text">
             {messages.length === 0 && (
               <p className={styles.welcome}>

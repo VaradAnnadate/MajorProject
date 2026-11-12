@@ -52,12 +52,11 @@
 .header { display: flex; align-items: center; justify-content: space-between; padding: 15px 16px 13px; background: #121927; color: white; }
 .identity { display: flex; align-items: center; gap: 10px; }
 .mascotIcon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.13); font-size: 24px; }
-.identity h2 { margin: 0; font: 700 1rem/1.2 var(--font-family-body, sans-serif); }
+.identity h2 { margin: 0; color: #fff; font: 700 1rem/1.2 var(--font-family-body, sans-serif); }
 .identity p { margin: 3px 0 0; color: #d9deea; font-size: .76rem; }
 .close { display: grid; place-items: center; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 50%; color: white; background: transparent; cursor: pointer; }
 .close:hover { background: rgba(255,255,255,.12); }
 
-.privacyNote { padding: 10px 14px; border-bottom: 1px solid #eadfce; color: #60461e; background: #fff5df; font-size: .73rem; line-height: 1.45; }
 .transcript { display: flex; flex: 1 1 0; min-height: 0; flex-direction: column; gap: 9px; overflow-y: auto; overscroll-behavior: contain; padding: 14px; }
 .welcome, .userMessage, .mitraMessage, .error { width: fit-content; max-width: 92%; margin: 0; padding: 10px 12px; border-radius: 14px; font-size: .88rem; line-height: 1.48; white-space: pre-wrap; overflow-wrap: anywhere; }
 .welcome, .mitraMessage { align-self: flex-start; color: #273044; background: #f1eee8; border-bottom-left-radius: 4px; }
