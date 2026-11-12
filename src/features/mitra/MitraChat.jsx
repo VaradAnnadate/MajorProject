@@ -77,7 +77,7 @@ export function MitraChat() {
             </button>
           </header>
 
-          <div className={styles.transcript} ref={transcriptRef} role="log" aria-live="polite" aria-relevant="additions text">
+          <div className={styles.transcript} ref={transcriptRef} data-lenis-prevent role="log" aria-live="polite" aria-relevant="additions text">
             {messages.length === 0 && (
               <p className={styles.welcome}>
                 Namaste! I’m Mitra. I can help explain children’s rights and explore classroom dilemmas. For urgent help, talk to a trusted adult or call 1098.

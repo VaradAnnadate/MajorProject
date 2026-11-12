@@ -30,10 +30,11 @@
 .launcher:focus-visible, .close:focus-visible, .composer button:focus-visible, .composer textarea:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
 
 .panel {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
   width: min(380px, calc(100vw - 28px));
   height: min(650px, calc(100dvh - 100px));
+  max-height: calc(100dvh - 100px);
   min-height: 0;
   overflow: hidden;
   border: 1px solid rgba(18, 25, 39, 0.12);
@@ -57,8 +58,8 @@
 .close { display: grid; place-items: center; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 50%; color: white; background: transparent; cursor: pointer; }
 .close:hover { background: rgba(255,255,255,.12); }
 
-.transcript { display: flex; flex: 1 1 0; min-height: 0; flex-direction: column; gap: 9px; overflow-y: auto; overscroll-behavior: contain; padding: 14px; }
-.welcome, .userMessage, .mitraMessage, .error { width: fit-content; max-width: 92%; margin: 0; padding: 10px 12px; border-radius: 14px; font-size: .88rem; line-height: 1.48; white-space: pre-wrap; overflow-wrap: anywhere; }
+.transcript { display: flex; min-width: 0; min-height: 0; flex-direction: column; gap: 9px; overflow-x: hidden; overflow-y: auto; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y; padding: 14px; }
+.welcome, .userMessage, .mitraMessage, .error { flex: 0 0 auto; width: fit-content; max-width: 92%; margin: 0; padding: 10px 12px; border-radius: 14px; font-size: .88rem; line-height: 1.48; white-space: pre-wrap; overflow-wrap: anywhere; }
 .welcome, .mitraMessage { align-self: flex-start; color: #273044; background: #f1eee8; border-bottom-left-radius: 4px; }
 .userMessage { align-self: flex-end; color: white; background: #d86c10; border-bottom-right-radius: 4px; }
 .error { align-self: flex-start; color: #8f261c; background: #fff0ed; }
@@ -71,6 +72,6 @@
 
 @media (max-width: 480px) {
   .widget { right: max(12px, env(safe-area-inset-right)); bottom: max(12px, env(safe-area-inset-bottom)); }
-  .panel { width: min(380px, calc(100vw - 24px)); height: calc(100dvh - 86px); }
+  .panel { width: min(380px, calc(100vw - 24px)); height: calc(100dvh - 86px); max-height: calc(100dvh - 86px); }
   .launcher { min-height: 46px; padding-inline: 15px; }
 }
