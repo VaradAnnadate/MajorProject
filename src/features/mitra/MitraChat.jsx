@@ -10,11 +10,10 @@ export function MitraChat() {
   const [messages, setMessages] = useState([]);
   const [draft, setDraft] = useState('');
   const [isSending, setIsSending] = useState(false);
-  const [understandsProvider, setUnderstandsProvider] = useState(false);
   const [error, setError] = useState('');
   const transcriptRef = useRef(null);
   const launcherRef = useRef(null);
-  const consentRef = useRef(null);
+  const textareaRef = useRef(null);
   const wasOpenRef = useRef(false);
 
   useEffect(() => {
@@ -31,7 +30,7 @@ export function MitraChat() {
     }
 
     wasOpenRef.current = true;
-    consentRef.current?.focus();
+    textareaRef.current?.focus();
     const closeOnEscape = (event) => {
       if (event.key === 'Escape') setIsOpen(false);
     };
@@ -97,18 +96,10 @@ export function MitraChat() {
             {error && <p className={styles.error} role="alert">{error}</p>}
           </div>
 
-          <label className={styles.providerConsent}>
-            <input
-              ref={consentRef}
-              type="checkbox"
-              checked={understandsProvider}
-              onChange={(event) => setUnderstandsProvider(event.target.checked)}
-            />
-            <span>I understand Mitra sends my message to Groq to make a reply.</span>
-          </label>
           <form className={styles.composer} onSubmit={submitMessage}>
             <label className={styles.srOnly} htmlFor="mitra-message">Message Mitra</label>
             <textarea
+              ref={textareaRef}
               id="mitra-message"
               value={draft}
               maxLength={800}
@@ -121,9 +112,9 @@ export function MitraChat() {
                   event.currentTarget.form?.requestSubmit();
                 }
               }}
-              disabled={isSending || !understandsProvider}
+              disabled={isSending}
             />
-            <button type="submit" aria-label="Send message to Mitra" disabled={!draft.trim() || isSending || !understandsProvider}>
+            <button type="submit" aria-label="Send message to Mitra" disabled={!draft.trim() || isSending}>
               <Send size={17} />
             </button>
           </form>
