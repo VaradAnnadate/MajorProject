@@ -16,6 +16,7 @@ export class SovereignPortalTunnel {
     this.camera = null;
     this.renderer = null;
     this.animationFrameId = null;
+    this.isActive = true;
     this.clock = new THREE.Clock();
 
     // Scene groups & elements
@@ -334,6 +335,7 @@ export class SovereignPortalTunnel {
   }
 
   render() {
+    if (!this.isActive) return;
     this.animationFrameId = requestAnimationFrame(this.render);
 
     const elapsed = this.clock.getElapsedTime();
@@ -349,6 +351,16 @@ export class SovereignPortalTunnel {
     }
 
     this.renderer.render(this.scene, this.camera);
+  }
+
+  setActive(active) {
+    this.isActive = Boolean(active);
+    if (this.isActive && !this.animationFrameId) {
+      this.render();
+    } else if (!this.isActive && this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
   }
 
   handleResize() {

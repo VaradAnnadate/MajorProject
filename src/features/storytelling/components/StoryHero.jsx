@@ -91,7 +91,7 @@ export default function StoryHero() {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <Shield size={14} color="var(--color-forest-500)" />
-                <span>Zero Child PII Collected</span>
+                <span>No Learner Identity Fields</span>
               </div>
               <div>•</div>
               <div>Constitution of India Grounded</div>

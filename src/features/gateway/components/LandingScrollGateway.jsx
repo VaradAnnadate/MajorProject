@@ -56,14 +56,26 @@ export function LandingScrollGateway() {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
   const tunnelRef = useRef(null);
+  const frameRef = useRef(null);
+  const crossedLightRef = useRef(false);
 
   const [progress, setProgress] = useState(0);
   const [whiteOverlayOpacity, setWhiteOverlayOpacity] = useState(0);
-  const [hasCrossedLight, setHasCrossedLight] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(() => (
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ));
+
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updatePreference = () => setPrefersReducedMotion(media.matches);
+    updatePreference();
+    media.addEventListener?.('change', updatePreference);
+    return () => media.removeEventListener?.('change', updatePreference);
+  }, []);
 
   // 1. Initialize 3D Tunnel Engine
   useEffect(() => {
-    if (!canvasRef.current) return;
+    if (!canvasRef.current || prefersReducedMotion) return;
 
     try {
       tunnelRef.current = new SovereignPortalTunnel(canvasRef.current);
@@ -77,13 +89,24 @@ export function LandingScrollGateway() {
         tunnelRef.current = null;
       }
     };
-  }, []);
+  }, [prefersReducedMotion]);
+
+  // Render the WebGL scene only while the gateway is on screen.
+  useEffect(() => {
+    if (!containerRef.current || !tunnelRef.current || prefersReducedMotion) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      tunnelRef.current?.setActive(entry.isIntersecting);
+    });
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, [prefersReducedMotion]);
 
   // 2. Scroll Listener - Syncs scroll progress to 3D POV travel through the seal
   useEffect(() => {
-    let animId = null;
+    if (prefersReducedMotion) return undefined;
 
-    const onScroll = () => {
+    const updateScrollProgress = () => {
+      frameRef.current = null;
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       const totalScrollable = rect.height - window.innerHeight;
@@ -92,7 +115,7 @@ export function LandingScrollGateway() {
       const scrolled = -rect.top;
       const t = Math.max(0, Math.min(1, scrolled / totalScrollable));
 
-      setProgress(t);
+      setProgress((current) => (Math.abs(current - t) >= 0.002 ? t : current));
 
       if (tunnelRef.current) {
         tunnelRef.current.setProgress(t);
@@ -111,30 +134,46 @@ export function LandingScrollGateway() {
       } else if (t > 0.97) {
         opacity = 1.0 - (t - 0.97) / 0.03;
       }
-      setWhiteOverlayOpacity(Math.max(0, Math.min(1, opacity)));
+      const nextOpacity = Math.round(Math.max(0, Math.min(1, opacity)) * 1000) / 1000;
+      setWhiteOverlayOpacity((current) => (Math.abs(current - nextOpacity) >= 0.002 ? nextOpacity : current));
 
       // Sound trigger upon entering the white light core
-      if (t >= 0.88 && !hasCrossedLight) {
+      if (t >= 0.88 && !crossedLightRef.current) {
         playThresholdChime();
-        setHasCrossedLight(true);
+        crossedLightRef.current = true;
       } else if (t < 0.6) {
-        setHasCrossedLight(false);
+        crossedLightRef.current = false;
       }
     };
 
-    const loop = () => {
-      onScroll();
-      animId = requestAnimationFrame(loop);
+    const onScroll = () => {
+      if (frameRef.current === null) {
+        frameRef.current = requestAnimationFrame(updateScrollProgress);
+      }
     };
-    animId = requestAnimationFrame(loop);
-
     window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    onScroll();
 
     return () => {
-      if (animId) cancelAnimationFrame(animId);
+      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
       window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
     };
-  }, [hasCrossedLight]);
+  }, [prefersReducedMotion]);
+
+  if (prefersReducedMotion) {
+    return (
+      <section className={styles.reducedMotion} aria-label="Enter the World of Every Child">
+        <div>
+          <span className={styles.captionTag}>THE SOVEREIGN SEAL OF CHILD RIGHTS</span>
+          <h2 className={styles.captionHeading}>The World of Every Child</h2>
+          <p className={styles.captionSub}>Continue scrolling to explore the five constitutional realms.</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section

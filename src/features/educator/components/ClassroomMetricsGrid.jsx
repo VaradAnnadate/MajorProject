@@ -34,7 +34,7 @@ export function ClassroomMetricsGrid() {
       id: 'sessions',
       label: 'Consensus Quests Facilitated',
       value: aggregateMetrics.activeSessionsCount,
-      detail: 'Live classroom debriefs with zero individual scorecards',
+      detail: 'Recent completed rooms meeting the five-vote summary threshold',
       icon: '🤝',
       tone: 'purple',
     },

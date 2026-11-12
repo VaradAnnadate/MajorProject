@@ -31,6 +31,7 @@ Children in India between 8 and 16 years old, with content and interaction patte
 - **Part 03 Complete:** Stateful branching scenario dialogue engine (`ScenarioRunner`), ethical decision trees (`ChoicePanel`), non-punitive consequence evaluation (`ConsequencePreview`), constitutional article reveal stamps (`ArticleRevealStamp`), tactile evidence inspector (`EvidenceInspector`), and `/play/:scenarioId` mission routing.
 - **Part 04 Complete:** Dignity XP and rights passport, non-punitive streaks, collectible badges, and shared community goals.
 - **Part 05 Complete:** Facilitators can host rights dilemmas in a PIN-protected classroom (`RQ-####`), students join with animal codenames, and private ballots reveal only aggregate consensus before a guided Socratic discussion. 64/64 automated test checks pass in `scripts/verify_part05.mjs`.
+- **Database & Mitra AI:** Optional Supabase storage for completed anonymous classroom summaries and a server-side Groq chat endpoint for Mitra. Learner profiles and AI chats are not saved to the database; see the [setup guide](docs/DATABASE_AND_MITRA_AI.md).
 - **Part 06 Complete:** The Educator & Guardian Intelligence System. Educator Studio (`/educator`) provides cohort-level literacy metrics, live session launcher, NCERT Civics & CBSE curriculum alignments, Socratic toolkits, and deliberation archives. Guardian Chronicle (`/guardian`) provides a calm, non-surveillance window with "At the Dinner Table" discussion primers and anti-addiction guarantees compliant with DPDP Act 2023 §9. 104/104 automated test checks pass in `scripts/verify_part06.mjs`.
 - **Cinematic 3D Sovereign Portal Tunnel Complete:** A signature 3D world-transition bridge connecting Scene 04 to Scene 05 on the landing page (`LandingScrollGateway.jsx`, `SovereignPortalTunnel.js`). Pinned scroll travel moves the camera straight into the 24-spoke Golden Ashoka Chakra of Child Rights, passes through a glowing dimensional warp tunnel, enters an expanding white-light burst, and seamlessly reveals Scene 05 underneath with zero empty space.
 - **Gamified Level Milestones Complete:** High-vibe celebration modal (`GamifiedMilestoneCelebration.jsx`) for level advancement and quest completions with animated XP counters, shield crests, and harmonic sound synthesis. 25/25 checks pass in `scripts/verify_transition.mjs`.
@@ -80,7 +81,11 @@ npm run build
 CLASSROOM_ALLOWED_ORIGINS=http://192.168.1.40:5173 npm run dev:classroom
 ```
 
-In production, run `node server/classroom-server.js` as a long-lived Node process, expose it through `wss://`, and set `CLASSROOM_ALLOWED_ORIGINS` to the app origin. Room state lives only in the relay process memory: there is no database, session history, or horizontal scaling support. A relay restart closes active rooms and clears their codenames and votes.
+In production, run `node server/classroom-server.js` as a long-lived Node process, expose WebSockets through `wss://`, and set `CLASSROOM_ALLOWED_ORIGINS` to the app origin. Live room state remains in relay memory, while eligible completed rooms can save anonymous aggregates to Supabase. A relay restart closes active rooms and clears their codenames and votes.
+
+### Supabase and Mitra AI
+
+Copy `.env.example` to `.env`, add the Supabase and Groq server credentials, run [`supabase/schema.sql`](supabase/schema.sql) in the Supabase SQL Editor, and start the frontend/backend with `npm run dev:classroom`. Mitra AI remains disabled until `MITRA_AI_ENABLED` and `VITE_MITRA_AI_ENABLED` are both set to `true`. Read the [database and Mitra setup guide](docs/DATABASE_AND_MITRA_AI.md) for the stored fields, privacy limits, and production configuration.
 
 ## Safety, privacy, and accessibility
 
@@ -89,7 +94,7 @@ Because the intended users are children, safety and privacy need to shape the pr
 - Collect as little personal information as possible and explain data use in child-friendly language.
 - Avoid exposing children's identities, locations, or contact details to other users.
 - Design any social features with strong moderation, reporting, and safeguarding procedures; do not enable unsupervised contact by default.
-- Classroom sessions are facilitator-led: students cannot message one another. Room codenames and votes are kept only in relay memory and are removed when the room closes or expires.
+- Classroom sessions are facilitator-led: students cannot message one another. Room codenames and individual votes are kept only in relay memory and removed when the room closes or expires; only completed sessions with at least five votes may save an aggregate summary.
 - Have child-rights content and support-service details reviewed by qualified, local experts and keep referrals current.
 - Make clear that educational content is not a substitute for advice from a qualified professional or help from a trusted adult.
 - Test with children only through an appropriate, safeguarded process, with informed consent and assent as applicable.

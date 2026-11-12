@@ -7,6 +7,7 @@ import Footer from './Footer';
 import EmergencyQuickBar from '../common/EmergencyQuickBar';
 import IntroPreloader from '../common/IntroPreloader';
 import { useDemoLearner } from '../../context/DemoLearnerContext';
+import MitraChat from '../../features/mitra/MitraChat';
 
 export default function AppShell() {
   const location = useLocation();
@@ -114,6 +115,7 @@ export default function AppShell() {
         {/* Master Editorial Footer */}
         {!isGameplay && <Footer />}
       </div>
+      {!isGameplay && <MitraChat />}
     </div>
   );
 }

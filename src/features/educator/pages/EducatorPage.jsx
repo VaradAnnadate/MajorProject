@@ -5,9 +5,11 @@ import { LiveSessionManager } from '../components/LiveSessionManager';
 import { TopicExplorationChart } from '../components/TopicExplorationChart';
 import { DiscussionToolkitView } from '../components/DiscussionToolkitView';
 import { RecentSessionsAudit } from '../components/RecentSessionsAudit';
+import { useIntelligence } from '../../intelligence/hooks/useIntelligence';
 import styles from './EducatorPage.module.css';
 
 export default function EducatorPage() {
+  const { historicalSessions, classroomSummaryStatus } = useIntelligence();
   return (
     <PermissionGateway
       requiredRole="educator"
@@ -45,7 +47,7 @@ export default function EducatorPage() {
           <DiscussionToolkitView />
 
           {/* Collaborative Classroom Audit Trail */}
-          <RecentSessionsAudit />
+          <RecentSessionsAudit sessions={historicalSessions} status={classroomSummaryStatus} />
 
           {/* Educator Legal & Facilitation Resources */}
           <section className={styles.resourcesSection} aria-labelledby="educator-resources-title">

@@ -5,6 +5,23 @@
   background: var(--color-canvas-primary, #FBF8F3);
 }
 
+.reducedMotion {
+  display: grid;
+  min-height: 240px;
+  place-items: center;
+  padding: 28px;
+  text-align: center;
+  background: var(--color-canvas-primary, #FBF8F3);
+}
+
+.reducedMotion > div {
+  width: min(600px, 100%);
+  padding: 26px;
+  border: 1px solid var(--color-border-subtle, rgba(0, 0, 0, 0.08));
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
 .stickyViewport {
   position: sticky;
   top: 0;

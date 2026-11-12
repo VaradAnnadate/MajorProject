@@ -30,7 +30,7 @@
   * **Lenis Smooth Scroll:** Integrated buttery inertia scrolling across all viewports.
   * **Laser Beam Card Effects:** Continuous rotating laser perimeter on the active quest dossier and hover sweeps across all cards and buttons.
   * **Code Splitting & Lazy Loading:** Core bundle dropped to **29.7 kB** with all 8 pages dynamically chunked via `React.lazy()`.
-  * **Child Privacy by Design:** Zero PII inputs; non-identifying demo profiles for 8–10, 11–13, and 14–16 age bands.
+  * **Child Privacy by Design:** No identity fields in learner profiles; non-identifying demo personas for 8–10, 11–13, and 14–16 age bands. The optional Mitra AI feature has its own external-processing notice and does not persist chat content in RightsQuest.
   * **Quality Assurance:** 66/66 automated tests passing in `scripts/verify_foundation.mjs`.
 
 ---
@@ -121,7 +121,8 @@
   * **Ephemeral WebSocket Relay (`server/classroom-server.js`):** Validates room messages, keeps room membership and votes in process memory, supports up to 40 students per room, and deletes a room when the teacher leaves or its three-hour lifetime expires.
   * **Accessible Classroom Route:** `/classroom` hosts or joins a room, and `/classroom/:roomPin` opens the join screen with the PIN filled in. The responsive flow supports keyboard focus, reduced-motion preferences, and small screens.
   * **Local Development:** `npm run dev:classroom` starts the Vite app and classroom relay together. Set `CLASSROOM_ALLOWED_ORIGINS` to the exact Vite origin when testing from another device on the local network.
-  * **Privacy boundary:** Room votes and codenames are temporary and are not written to a database. Student clients receive only the class count, while the facilitator sees animal codenames. The relay is a single-process prototype; restarting it clears active rooms. It is not a record of student attendance or individual learning outcomes.
+  * **Privacy boundary:** Individual votes and codenames are temporary and are not written to a database. After the facilitator completes a session with at least five submitted votes, Supabase stores only aggregate class size, vote count, winning option/count, rounded majority percentage, dilemma ID, and calendar date. Student clients receive only the class count, while the facilitator sees animal codenames during a live room. The relay is single-process; restarting it clears active rooms.
+  * **Storage and AI setup:** `supabase/schema.sql` creates the restricted summary table. The optional Groq-powered Mitra chat is disabled by default, and RightsQuest does not store its conversation content. See `docs/DATABASE_AND_MITRA_AI.md` for server environment setup and Groq data-handling limits.
 
 ---
 

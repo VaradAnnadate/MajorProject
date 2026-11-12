@@ -1,10 +1,13 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDemoLearner } from '../../../context/DemoLearnerContext';
-import { CURRICULUM_ALIGNMENTS, HISTORICAL_CLASSROOM_SESSIONS } from '../data/intelligenceData';
+import { CURRICULUM_ALIGNMENTS } from '../data/intelligenceData';
 import { CLASSROOM_QUESTS } from '../../classroom/data/classroomQuests';
+import { fetchClassroomSummaries } from '../../classroom/engine/classroomApi';
 import { WORLDS_DATA } from '../../world/data/worlds';
 
 export function useIntelligence() {
+  const [historicalSessions, setHistoricalSessions] = useState([]);
+  const [classroomSummaryStatus, setClassroomSummaryStatus] = useState('loading');
   const {
     activeAgeBand,
     activePersona,
@@ -13,6 +16,22 @@ export function useIntelligence() {
     currentRole = 'learner',
     setCurrentRole,
   } = useDemoLearner();
+
+  useEffect(() => {
+    let active = true;
+    fetchClassroomSummaries()
+      .then(({ sessions, enabled }) => {
+        if (!active) return;
+        setHistoricalSessions(sessions);
+        setClassroomSummaryStatus(enabled ? 'ready' : 'unconfigured');
+      })
+      .catch(() => {
+        if (!active) return;
+        setHistoricalSessions([]);
+        setClassroomSummaryStatus('unavailable');
+      });
+    return () => { active = false; };
+  }, []);
 
   // Aggregate stats derived from actual progression and mission state
   const aggregateMetrics = useMemo(() => {
@@ -38,10 +57,10 @@ export function useIntelligence() {
       currentStreak,
       totalTransactions,
       exploredTopics: [...exploredTopicsMap.entries()].map(([topic, count]) => ({ topic, count })),
-      activeSessionsCount: HISTORICAL_CLASSROOM_SESSIONS.length,
-      totalClassroomParticipants: HISTORICAL_CLASSROOM_SESSIONS.reduce((acc, s) => acc + s.participantsCount, 0),
+      activeSessionsCount: historicalSessions.length,
+      totalClassroomParticipants: historicalSessions.reduce((acc, session) => acc + session.participantsCount, 0),
     };
-  }, [progression]);
+  }, [progression, historicalSessions]);
 
   // Chronological learning timeline constructed from actual transactions
   const learningTimeline = useMemo(() => {
@@ -122,7 +141,8 @@ export function useIntelligence() {
     learningTimeline,
     conversationStarters,
     curriculumAlignments: CURRICULUM_ALIGNMENTS,
-    historicalSessions: HISTORICAL_CLASSROOM_SESSIONS,
+    historicalSessions,
+    classroomSummaryStatus,
     classroomQuests: CLASSROOM_QUESTS,
     worlds: WORLDS_DATA,
   };

@@ -8,7 +8,7 @@
 
 ## 1. Architectural Philosophy & Technology Stack
 
-RightsQuest India is built using **clean, standard React.js (JavaScript)** without heavy TypeScript compilation overhead, external database dependencies, or premature backend bloat. It prioritizes **aesthetic wonder, child psychology, legal fidelity, and 60fps performance**.
+RightsQuest India is built using **standard React.js (JavaScript)** with a small Node backend for classroom WebSockets, anonymous aggregate storage, and the optional Mitra AI proxy. Learner profiles and progression remain local to the browser. It prioritizes **aesthetic wonder, child psychology, legal fidelity, and privacy by design**.
 
 ### Technology Stack Decisions:
 
@@ -24,6 +24,8 @@ RightsQuest India is built using **clean, standard React.js (JavaScript)** witho
 | **Custom Tokenized CSS** | Pure CSS | Design system & styling | Zero Tailwind or CSS-in-JS runtime overhead; tokenized HSL variables and fluid clamp equations. |
 | **@creative-os/core** | `^3.1.1` | Creative OS foundation tokens | Agency-grade sovereign easing curves, motion principles, and design system benchmarks. |
 | **ws** | `^8.22.2` | Node classroom WebSocket relay | Small server-side transport for ephemeral facilitator-led rooms; browser clients use the native WebSocket API. |
+| **Node Fetch API** | Node 18+ | Supabase PostgREST requests from the backend | Uses a server-only secret key without raising the project's Node runtime requirement. |
+| **dotenv** | `^18.0.10` | Local Node environment loading | Loads backend credentials from `.env` without exposing server values to Vite. |
 
 ---
 
@@ -43,9 +45,12 @@ MajorProject/
 │   ├── verify_part04.mjs                     # 67-point automated QA suite (Part 04 Progression System)
 │   ├── verify_part05.mjs                     # 64-point automated QA suite (Part 05 Classroom System)
 │   ├── verify_part06.mjs                     # 104-point automated QA suite (Part 06 Intelligence System)
-│   └── verify_transition.mjs                 # 60-point automated QA suite (3D World Transitions)
+│   └── verify_transition.mjs                 # 25-point automated QA suite (3D World Transitions)
 ├── server/
 │   └── classroom-server.js                    # Part 05 in-memory WebSocket room relay
+├── supabase/
+│   └── schema.sql                             # Aggregate classroom summary table with RLS
+├── .env.example                               # Server and Vite configuration template
 ├── public/                                   # Static public assets (favicons, manifest)
 ├── index.html                                # Accessible HTML5 document shell with font preconnects
 ├── vite.config.js                            # Manual chunk splitting (vendor, motion, icons, features)
@@ -150,6 +155,8 @@ MajorProject/
     │   │   ├── hooks/useClassroomRoom.js      # Room connection, voting, and facilitator actions
     │   │   ├── components/                    # Student lobby, ballot, results, guide, and console
     │   │   └── pages/ClassroomPage.jsx        # /classroom and /classroom/:roomPin
+    │   ├── mitra/                             # Optional Groq-backed child-safe guide chat
+    │   │   └── MitraChat.jsx                  # Floating UI; messages stay in page memory
     │   ├── intelligence/                     # Part 06: Shared Intelligence & Permission Gateway
     │   │   ├── data/intelligenceData.js      # NCERT/CBSE alignments, dinner primers, session logs
     │   │   ├── hooks/useIntelligence.js      # Aggregated metrics & narrative timeline hooks
@@ -290,9 +297,11 @@ Governed by Creative OS `44_AGENCYLIKE_UI`, the landing page is orchestrated as 
 
 ### `src/context/DemoLearnerContext.jsx`
 
-To uphold **Section 9 of India's Digital Personal Data Protection (DPDP) Act 2023**, RightsQuest collects **zero personal data**:
-* No phone numbers, no email addresses, no passwords, and no real names.
-* Learner data is stored strictly in browser `localStorage` under `rightsquest_demo_state_v1`.
+The learner prototype avoids identity fields and keeps the learner profile local to the browser:
+* No phone numbers, email addresses, passwords, or real-name fields are part of the learner profile.
+* Learner demo profiles and progression remain in browser `localStorage` under `rightsquest_demo_state_v1`.
+* Completed classroom sessions are stored in Supabase only as anonymous cohort summaries after at least five votes; no room PINs, participant identifiers, codenames, or individual ballots are persisted.
+* Mitra chat content is sent from the Node backend to Groq only when enabled and is not stored by RightsQuest. Groq's retention controls are external and documented in `docs/DATABASE_AND_MITRA_AI.md`.
 
 ```javascript
 // State structure in DemoLearnerContext
@@ -439,13 +448,13 @@ npm run test:transition   # 25 checks (3D Sovereign Portal Tunnel & Milestones)
 
 ## 7. Part 05 — Live Classroom Rooms
 
-The Part 05 experience uses a browser-native WebSocket client and a small Node `ws` relay. Start both local processes with `npm run dev:classroom`; the room relay listens on port `8787` by default.
+The Part 05 experience uses a browser-native WebSocket client and a small Node `ws` relay. Start both local processes with `npm run dev:classroom`; the room relay listens on port `8787` by default. When Supabase credentials are configured, the backend writes a cohort summary at facilitator completion only when at least five votes were submitted.
 
 * **Room lifecycle:** The teacher selects one of three curated dilemmas. The relay creates an `RQ-####` room, accepts up to 40 students during the lobby, and advances through voting, result reveal, discussion, and completion.
 * **Vote privacy:** The relay keeps each current vote in memory and sends only a vote count until the facilitator reveals results. After reveal, every client receives aggregate option counts. Individual vote-to-codename mappings are never included in room snapshots.
-* **Child privacy:** The join form collects no account details or free-text name. The relay holds only a random participant token, an animal codename, and the current vote for the lifetime of the room. Student snapshots receive only a participant count; the facilitator alone sees animal codenames. The relay writes no room data to disk.
+* **Child privacy:** The join form collects no account details or free-text name. The relay holds only a random participant token, an animal codename, and the current vote for the lifetime of the room. Student snapshots receive only a participant count; the facilitator alone sees animal codenames. Supabase receives only the dilemma ID, class size, vote count, winning option and count, rounded percentage, and calendar date. It receives no room PIN, codenames, participant IDs, individual ballots, or free text.
 * **Disconnect handling:** If the teacher leaves, the relay closes the student connections and removes the room. Rooms expire after three hours; a relay restart clears all active rooms.
-* **Deployment boundary:** This is a single-process prototype with in-memory state. Production hosting must provide a persistent WebSocket process and configure `CLASSROOM_ALLOWED_ORIGINS`; multi-process scaling or room recovery is not implemented.
+* **Deployment boundary:** Live room state is still in a single process. Supabase persists anonymous aggregate summaries, but does not provide room recovery or multi-process WebSocket scaling. The educator summary endpoint is globally accessible and aggregate-only because educator login and institution-specific RLS are not implemented yet. Configure `CLASSROOM_ALLOWED_ORIGINS` and keep Supabase/Groq secret keys server-side.
 
 ---
 
@@ -463,7 +472,7 @@ Mounted at `/educator` and `/guardian`, Part 06 translates learner progress into
 * **LiveSessionManager:** Synchronous classroom dilemma launcher with instant PIN generation (`RQ-####`) and blind-voting workflows.
 * **TopicExplorationChart:** Mappings of all 5 Constitutional Realms to middle-school NCERT Civics (Grades 6–8) and CBSE competencies, complete with offline classroom exercises.
 * **DiscussionToolkitView:** Socratic inquiry protocols, active bystander de-escalation, and fishbowl deliberation methods.
-* **RecentSessionsAudit:** Anonymized collaborative consensus audit trail preserving majority outcome percentages without student names.
+* **RecentSessionsAudit:** Displays anonymous summaries read from Supabase for completed rooms with at least five submitted votes; records contain no PINs, names, codenames, or individual ballots.
 
 ### C. Guardian Chronicle (`GuardianPage.jsx`)
 * **LearningHighlightsCard:** Warm parental window celebrating curiosity and empathy rather than screen time or competitive ranks.

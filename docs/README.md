@@ -28,13 +28,16 @@ flowchart TD
     ArticleStamp --> Progression["Part 04: Living Progression System (/achievements)<br/>(XP Engine • 12 Badges • Streaks • Cooperative Goals)"]
     Progression --> Milestones["Gamified Milestone Celebrations<br/>(XP Surge • Web Audio Chimes • Shield Crests)"]
     Adventures --> Classroom["Part 05: Facilitator-led Classroom (/classroom)<br/>(Ephemeral Rooms • Private Voting • Bal Sansad Debate)"]
+    Classroom --> ClassroomBackend["Node backend<br/>(WebSocket • Summary API • Mitra API)"]
+    ClassroomBackend --> Supabase["Supabase<br/>(Aggregate session summaries only)"]
+    ClassroomBackend --> Groq["Groq API<br/>(Mitra replies; chat not stored by RightsQuest)"]
     Progression --> Intelligence["Part 06: Educator & Guardian Intelligence System<br/>(NCERT/CBSE Mapping • Dinner Primers • Non-Surveillance)"]
     Intelligence --> Educator["Educator Studio (/educator)"]
     Intelligence --> Guardian["Guardian Chronicle (/guardian)"]
     
     subgraph Safeguards ["DPDP 2023 Child Privacy & Safety Layer"]
         Helpline["Childline 1098 Quickbar"]
-        ZeroPII["Zero Child PII Storage"]
+        ZeroPII["No stored learner identifiers or individual votes"]
         MascotSafeguard["Mitra Concerned State (Safe Touch / Abuse)"]
     end
 ```
@@ -53,12 +56,16 @@ flowchart TD
 * **3D Sovereign Portal Tunnel & Gamified Milestones (Complete):** Pinned Three.js dimensional warp bridge through the 24-spoke Golden Ashoka Chakra of Child Rights into Scene 05, plus high-vibe gamified milestone celebration modals. 25-point QA suite.
 * **Parts 07–08 (Planned):** Multilingual localization, child safety emergency quick-exit, and offline PWA.
 
-### 2. [Architecture & Codebase Deep Dive](./ARCHITECTURE_AND_CODE.md)
+### 2. [Supabase Database & Mitra AI Setup](./DATABASE_AND_MITRA_AI.md)
+* Run the classroom summary schema in Supabase, configure server-only `.env` credentials, and start the frontend with the Node backend.
+* Documents the anonymous summary threshold, Groq-backed Mitra API, external AI data handling, and current authentication boundary.
+
+### 3. [Architecture & Codebase Deep Dive](./ARCHITECTURE_AND_CODE.md)
 * Comprehensive technical walkthrough of every directory, component, data model, state hook, and safeguard.
 * Complete breakdown of `src/features/world/`, `src/features/mascot/`, `src/features/storytelling/`, `src/features/gameplay/`, `src/features/progression/`, `src/features/classroom/`, `src/features/intelligence/`, `src/features/educator/`, `src/features/guardian/`, and `src/features/gateway/`.
-* Documents all 6 automated QA suites (430 total assertions).
+* Documents all 6 automated QA suites (430 total assertions), the Supabase aggregate-summary integration, and the Groq-powered Mitra backend.
 
-### 3. [Visual Design System & Creative Motion Architecture](./VISUAL_DESIGN_SYSTEM.md)
+### 4. [Visual Design System & Creative Motion Architecture](./VISUAL_DESIGN_SYSTEM.md)
 * Comprehensive agency-grade visual design specification following Creative OS principles (`44_AGENCYLIKE_UI`).
 * Design tokens, typography scales, dynamic laser-beam card perimeters, photon sweeps, and tactile dossier skeuomorphism.
 
@@ -69,6 +76,8 @@ flowchart TD
 ```bash
 # 1. Install project dependencies
 npm install
+
+# Copy .env.example to .env and fill in server credentials
 
 # 2. Run local development server (Vite + React)
 npm run dev
@@ -102,6 +111,6 @@ RightsQuest India strictly translates real Indian jurisprudence into intuitive c
 | **Right to Free & Compulsory Education** | **Article 21A & RTE Act 2009** | *The Gardens of Growth* (Free schooling, midday meal cauldron, prohibition of corporal punishment). |
 | **Child Labour Prohibition** | **Article 24 & Child Labour Act 2016** | *The Haven of Dignity* (Quenched glass kilns, prohibition of hazardous work under 18). |
 | **Child Sexual Abuse Protection** | **POCSO Act 2012 & Safe Touch** | *The Forest of Safety* (Body boundaries, trusted adults, non-punitive confidential disclosures). |
-| **Child Data Protection** | **DPDP Act 2023 Section 9** | Zero child PII collected; non-identifying local demo avatars, zero tracking, zero advertising. |
+| **Child Data Protection** | **DPDP Act 2023 Section 9** | Learner profiles use non-identifying local demo personas; classroom summaries omit individual identifiers; optional Mitra messages go to Groq only when enabled and are not stored by RightsQuest. |
 | **Freedom of Expression & Participation** | **UNCRC Article 12 & Article 19(1)(a)** | *The River of Voices* (Bal Sansad children's parliaments, respectful democratic debate). |
 | **Emergency Child Helpline** | **Childline 1098 (24/7 Toll-Free)** | Persistent Emergency QuickBar, 1098 Crystal Beacon, and Mitra protective companion guidance. |

@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
 import { WebSocket, WebSocketServer } from 'ws';
@@ -15,7 +16,14 @@ import { getAvatarByCodename } from '../src/features/classroom/data/animalAvatar
 const PORT = Number(process.env.CLASSROOM_PORT || 8787);
 const HOST = process.env.CLASSROOM_HOST || '0.0.0.0';
 const ROOM_TTL_MS = 3 * 60 * 60 * 1000;
+const MITRA_AI_ENABLED = process.env.MITRA_AI_ENABLED === 'true';
+const GROQ_MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-20b';
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const MAX_CHAT_BODY_BYTES = 12_000;
+const CHAT_RATE_WINDOW_MS = 60_000;
+const CHAT_RATE_LIMIT = 10;
 const questIds = new Set(CLASSROOM_QUESTS.map((quest) => quest.id));
+const questById = new Map(CLASSROOM_QUESTS.map((quest) => [quest.id, quest]));
 const allowedOrigins = new Set(
   (process.env.CLASSROOM_ALLOWED_ORIGINS || 'http://localhost:5173,http://127.0.0.1:5173')
     .split(',')
@@ -23,11 +31,232 @@ const allowedOrigins = new Set(
     .filter(Boolean)
 );
 const rooms = new Map();
+const chatRequestsByIp = new Map();
+const supabaseUrl = (process.env.SUPABASE_URL || '').replace(/\/$/, '');
+const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY;
+const supabaseEnabled = Boolean(supabaseUrl && supabaseSecretKey);
+
+function supabaseRequest(path, { method = 'GET', body, prefer } = {}) {
+  const headers = {
+    apikey: supabaseSecretKey,
+    authorization: `Bearer ${supabaseSecretKey}`,
+    accept: 'application/json',
+  };
+  if (body) headers['content-type'] = 'application/json';
+  if (prefer) headers.prefer = prefer;
+  return fetch(`${supabaseUrl}/rest/v1/${path}`, {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : undefined,
+  });
+}
+
+function sendJson(response, status, payload, origin) {
+  const headers = { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' };
+  if (origin && allowedOrigins.has(origin)) {
+    headers['access-control-allow-origin'] = origin;
+    headers.vary = 'Origin';
+  }
+  response.writeHead(status, headers);
+  response.end(JSON.stringify(payload));
+}
+
+function isAllowedApiOrigin(request, response, { allowMissingOrigin = false } = {}) {
+  const origin = request.headers.origin;
+  if (!origin && allowMissingOrigin) return true;
+  if (!origin || !allowedOrigins.has(origin)) {
+    sendJson(response, 403, { error: 'This request origin is not allowed.' });
+    return false;
+  }
+  return true;
+}
+
+async function readJsonBody(request, maxBytes = MAX_CHAT_BODY_BYTES) {
+  let size = 0;
+  const chunks = [];
+  for await (const chunk of request) {
+    size += chunk.length;
+    if (size > maxBytes) throw Object.assign(new Error('Request body is too large.'), { status: 413 });
+    chunks.push(chunk);
+  }
+  try {
+    return JSON.parse(Buffer.concat(chunks).toString('utf8'));
+  } catch {
+    throw Object.assign(new Error('Request body must be valid JSON.'), { status: 400 });
+  }
+}
+
+function allowMitraRequest(request) {
+  const now = Date.now();
+  const key = request.socket.remoteAddress || 'unknown';
+  if (chatRequestsByIp.size > 5_000) {
+    for (const [ip, record] of chatRequestsByIp) {
+      if (now - record.startedAt >= CHAT_RATE_WINDOW_MS) chatRequestsByIp.delete(ip);
+    }
+  }
+  if (!chatRequestsByIp.has(key) && chatRequestsByIp.size >= 5_000) return false;
+  const current = chatRequestsByIp.get(key);
+  if (!current || now - current.startedAt >= CHAT_RATE_WINDOW_MS) {
+    chatRequestsByIp.set(key, { startedAt: now, count: 1 });
+    return true;
+  }
+  current.count += 1;
+  return current.count <= CHAT_RATE_LIMIT;
+}
+
+function validateMitraMessages(messages) {
+  if (!Array.isArray(messages) || messages.length < 1 || messages.length > 8) return null;
+  const valid = messages.map((item) => {
+    if (!item || !['user', 'assistant'].includes(item.role) || typeof item.content !== 'string') return null;
+    const content = item.content.trim();
+    if (!content || content.length > 800) return null;
+    return { role: item.role, content };
+  });
+  if (valid.some((item) => !item) || valid.at(-1)?.role !== 'user') return null;
+  return valid;
+}
+
+async function handleMitraChat(request, response) {
+  const origin = request.headers.origin;
+  if (!isAllowedApiOrigin(request, response)) return;
+  if (!MITRA_AI_ENABLED || !process.env.GROQ_API_KEY) {
+    sendJson(response, 503, { error: 'Mitra AI is not configured yet.' }, origin);
+    return;
+  }
+  if (!allowMitraRequest(request)) {
+    sendJson(response, 429, { error: 'Mitra needs a short rest. Please try again in a minute.' }, origin);
+    return;
+  }
+
+  try {
+    const body = await readJsonBody(request);
+    const messages = validateMitraMessages(body?.messages);
+    if (!messages) {
+      sendJson(response, 400, { error: 'Send up to eight short chat messages, ending with your question.' }, origin);
+      return;
+    }
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 20_000);
+    let groqResponse;
+    try {
+      groqResponse = await fetch(GROQ_API_URL, {
+        method: 'POST',
+        signal: controller.signal,
+        headers: {
+          authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: GROQ_MODEL,
+          max_completion_tokens: 280,
+          temperature: 0.4,
+          messages: [
+            {
+              role: 'system',
+              content: [
+                'You are Mitra, a kind learning companion for children aged 8–16 in India.',
+                'Use short, clear, age-appropriate language. Help children explore fairness, dignity, safety, participation, and constitutional rights without pretending to be a lawyer, therapist, doctor, or emergency service.',
+                'Never ask for or repeat a child’s identifying details, location, school, or ways to contact them. If a child shares such details, do not repeat them; gently remind them not to share private details online.',
+                'If a child describes abuse, exploitation, immediate danger, or feeling unsafe, respond calmly, do not ask for details or promise secrecy, encourage telling a trusted adult now, and mention Childline 1098 or emergency 112 in India.',
+                'Do not provide explicit sexual content, instructions for self-harm, or instructions to harm others. Do not shame or blame a child. When unsure, say so and suggest asking a trusted adult.',
+                'Answer in the language the child used when possible. Do not claim that you contacted anyone or saved anything.',
+              ].join(' '),
+            },
+            ...messages,
+          ],
+        }),
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+
+    if (!groqResponse.ok) {
+      sendJson(response, 502, { error: 'Mitra could not answer right now. Please try again later.' }, origin);
+      return;
+    }
+    const result = await groqResponse.json();
+    const answer = result?.choices?.[0]?.message?.content;
+    if (typeof answer !== 'string' || !answer.trim()) {
+      sendJson(response, 502, { error: 'Mitra could not answer right now. Please try again later.' }, origin);
+      return;
+    }
+    sendJson(response, 200, { answer: answer.trim() }, origin);
+  } catch (error) {
+    const status = error.status || (error.name === 'AbortError' ? 504 : 400);
+    sendJson(response, status, {
+      error: status === 504 ? 'Mitra took too long to answer. Please try again.' : error.message,
+    }, origin);
+  }
+}
+
+async function listClassroomSummaries(request, response) {
+  const origin = request.headers.origin;
+  if (!isAllowedApiOrigin(request, response, { allowMissingOrigin: true })) return;
+  if (!supabaseEnabled) {
+    sendJson(response, 200, { enabled: false, sessions: [] }, origin);
+    return;
+  }
+  const query = new URLSearchParams({
+    select: 'quest_id,participant_count,vote_count,winning_option_id,winning_vote_count,majority_percentage,session_date',
+    order: 'session_date.desc',
+    limit: '50',
+  });
+  const databaseResponse = await supabaseRequest(`classroom_session_summaries?${query}`);
+  if (!databaseResponse.ok) {
+    sendJson(response, 503, { error: 'Classroom summaries are temporarily unavailable.' }, origin);
+    return;
+  }
+  const data = await databaseResponse.json();
+  sendJson(response, 200, {
+    enabled: true,
+    sessions: data.map((session) => ({
+      questId: session.quest_id,
+      questTitle: questById.get(session.quest_id)?.title || 'Classroom dilemma',
+      winningOptionId: session.winning_option_id,
+      winningOption: questById.get(session.quest_id)?.options.find((option) => option.id === session.winning_option_id)?.label || 'Class consensus recorded',
+      participantsCount: session.participant_count,
+      voteCount: session.vote_count,
+      majorityPercentage: session.majority_percentage,
+      date: session.session_date,
+    })),
+  }, origin);
+}
 
 const httpServer = createServer((request, response) => {
   if (request.url === '/health') {
     response.writeHead(200, { 'content-type': 'application/json' });
     response.end(JSON.stringify({ ok: true, service: 'rightsquest-classroom' }));
+    return;
+  }
+
+  if (request.method === 'OPTIONS' && request.url?.startsWith('/api/')) {
+    const origin = request.headers.origin;
+    if (!origin || !allowedOrigins.has(origin)) {
+      response.writeHead(403);
+      response.end();
+      return;
+    }
+    response.writeHead(204, {
+      'access-control-allow-origin': origin,
+      'access-control-allow-methods': 'GET, POST, OPTIONS',
+      'access-control-allow-headers': 'content-type',
+      'access-control-max-age': '600',
+      vary: 'Origin',
+    });
+    response.end();
+    return;
+  }
+
+  if (request.method === 'POST' && request.url === '/api/mitra/chat') {
+    handleMitraChat(request, response);
+    return;
+  }
+
+  if (request.method === 'GET' && request.url === '/api/classroom/summaries') {
+    listClassroomSummaries(request, response).catch(() => {
+      sendJson(response, 503, { error: 'Classroom summaries are temporarily unavailable.' }, request.headers.origin);
+    });
     return;
   }
 
@@ -197,7 +426,43 @@ function applyTeacherAction(socket, message) {
 
   room.stage = nextStage[1];
   room.updatedAt = Date.now();
+  if (message.action === 'finish-room') {
+    persistClassroomSummary(room).catch(() => {
+      console.error('Could not save the anonymous classroom summary.');
+    });
+  }
   broadcastRoom(room);
+}
+
+async function persistClassroomSummary(room) {
+  if (!supabaseEnabled || room.summarySaved) return;
+  const participantCount = [...room.participants.values()].filter((participant) => participant.role === 'student').length;
+  const voteCount = room.votes.size;
+  if (voteCount < 5 || participantCount < 5) return;
+
+  const winningEntry = [...room.tally.entries()].sort((a, b) => b[1] - a[1])[0];
+  if (!winningEntry) return;
+  const [winningOptionId, winningVoteCount] = winningEntry;
+  room.summarySaved = true;
+  const databaseResponse = await supabaseRequest('classroom_session_summaries', {
+    method: 'POST',
+    prefer: 'return=minimal',
+    body: {
+      quest_id: room.questId,
+      participant_count: participantCount,
+      vote_count: voteCount,
+      winning_option_id: winningOptionId,
+      winning_vote_count: winningVoteCount,
+      majority_percentage: Math.round((winningVoteCount / voteCount) * 100),
+      session_date: new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit',
+      }).format(new Date()),
+    },
+  });
+  if (!databaseResponse.ok) {
+    room.summarySaved = false;
+    throw new Error('Supabase rejected the aggregate classroom summary.');
+  }
 }
 
 function castVote(socket, message) {
