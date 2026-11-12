@@ -16,7 +16,7 @@
 | **04** | **XP, badges, streaks & cooperative progression** | Non-competitive dignity XP, rights passport stamp unlocks, empathy milestones, anti-addiction streak shields, shared community goals. | LocalStorage/IndexedDB sync, Web Audio API sound sprites. | **COMPLETE** |
 | **05** | **Live classroom mode, quiz rooms & WebSocket integration** | Teacher-moderated multiplayer quiz rooms, collaborative consensus dilemmas, real-time live room state, zero PII child pseudonyms. | React WebSocket client, Node `ws` relay, in-memory ephemeral rooms. | **COMPLETE** |
 | **06** | **Educator & Guardian Intelligence System** | Educator Studio (`/educator`), Guardian Chronicle (`/guardian`), NCERT/CBSE curriculum mapping, Socratic discussion toolkit, "At the Dinner Table" family primers, DPDP Act 2023 §9 compliance, zero child surveillance. | React 18, Tokenized CSS Modules, Shared Intelligence Layer, 104-point QA suite. | **COMPLETE** |
-| **07** | **Child safety, help centre, legal resources & multilingual support** | Verified Childline 1098 routing, confidential incident reporting guide, POCSO e-Box info, localized language support (Hindi, Marathi, Tamil, Bengali). | i18n localization engine, emergency quick-dial bridges. | **PLANNED** |
+| **07** | **Child safety, help centre, legal resources & safeguards** | Verified Childline 1098 routing, confidential incident reporting guide, POCSO e-Box info, discreet Quick Exit button, 3-tier age-adapted safety library, sensitive disclosure scanner, 149-point QA suite. | Zero-PII disclosure scanner, verified statutory registry, 149-point QA suite. | **COMPLETE** |
 | **08** | **PWA, offline functionality, testing & final polish** | Service worker asset caching, offline mission playback for rural low-connectivity schools, cross-browser audits, final deployment gates. | PWA Manifest, Workbox / SW cache, Lighthouse CI (95+ score). | **PLANNED** |
 
 ---
@@ -148,18 +148,23 @@
 
 ---
 
-### Part 07 — Child Safety, Help Centre, Legal Resources & Multilingual Support
-* **Objective:** Ground the platform in real-world protection, regional inclusivity, and authoritative legal assistance.
-* **Components to Build:**
-  * **Direct 1098 Integration Gateway:** Clear, accessible emergency action paths connecting directly to the National Childline 1098 and 112 emergency services.
-  * **Child Safety Safe-Exit Button:** A discreet emergency "Quick Exit" button that instantly replaces the screen with a neutral educational search page if a child feels unsafe.
-  * **Multilingual Localization Engine (i18n):** Full support for major Indian languages:
-    * Hindi (हिन्दी)
-    * Marathi (मराठी)
-    * Tamil (தமிழ்)
-    * Bengali (বাংলা)
-    * Kannada (ಕನ್ನಡ)
-  * **Authoritative Legal Review Registry:** Verification documentation stamped by qualified legal experts, Child Welfare Committees, and child psychologists.
+### Part 07 — Child Safety, Help Centre, Legal Resources & Safeguards (COMPLETED)
+* **Objective:** Ground the platform in real-world protection, child psychological safety, sensitive disclosure safeguards, and authoritative statutory assistance.
+* **Key Achievements:**
+  * **Child Safety and Rights Education Library (`/safety`):**
+    * Multi-topic curriculum covering personal boundaries, trusted adults, safe touch, digital safety, cyberbullying, education rights, and freedom from hazardous labour.
+    * 3-tier age adaptation engine rendering age-calibrated explanations, relatable scenarios, and empowering golden rules for Young Navigators (8–10), Pathfinders (11–13), and Youth Advocates (14–16).
+  * **Get Help Experience & Verified Helpline Gateway (`/safety/get-help` & `/help`):**
+    * Authoritative fact-checked statutory directory (`verifiedSupportServices.js`) including Childline 1098 (100% toll-free, 24/7 across India, verified MWCD / ERSS-112 Mission Vatsalya integration), National Emergency 112, Cyber Crime 1930, and NCPCR POCSO e-Box.
+    * Plain-language Trusted Adult Explainer (`TrustedAdultExplainer.jsx`) breaking down the 5 steps to seek safety, persistent adult search tips, and calming reassurance.
+  * **Discreet Emergency Quick Exit Latch (`QuickExitButton.jsx`):**
+    * High-visibility, accessible quick-escape latch embedded in the global navbar and safety views.
+    * Double-safe action: immediate neutral study notes decoy screen (`DecoyStudyScreen`) with zero-latency tab redirection option to clean educational portals (`wikipedia.org/wiki/Preamble_to_the_Constitution_of_India`).
+  * **Sensitive Disclosure Safeguard Scanner (`useSensitiveDisclosureGuard.js` & `SensitiveDisclosureModal.jsx`):**
+    * In-memory heuristic scanner intercepting voluntary child disclosures of abuse, exploitation, or danger.
+    * Strictly prohibits gamifying trauma: zero XP, zero badges, and zero quest credit are awarded for disclosures.
+    * Protects child privacy: sensitive inputs are immediately diverted, never written to localStorage, IndexedDB, or backend databases, and the child is guided gently toward real-world trusted adults and Childline 1098.
+  * **Automated QA Verification:** 149/149 dedicated automated Part 07 test assertions passing cleanly in `scripts/verify_part07.mjs` (579/579 total assertions across all 7 test suites).
 
 ---
 

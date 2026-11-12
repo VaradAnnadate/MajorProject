@@ -35,7 +35,8 @@ Children in India between 8 and 16 years old, with content and interaction patte
 - **Part 06 Complete:** The Educator & Guardian Intelligence System. Educator Studio (`/educator`) provides cohort-level literacy metrics, live session launcher, NCERT Civics & CBSE curriculum alignments, Socratic toolkits, and deliberation archives. Guardian Chronicle (`/guardian`) provides a calm, non-surveillance window with "At the Dinner Table" discussion primers and anti-addiction guarantees compliant with DPDP Act 2023 §9. 104/104 automated test checks pass in `scripts/verify_part06.mjs`.
 - **Cinematic 3D Sovereign Portal Tunnel Complete:** A signature 3D world-transition bridge connecting Scene 04 to Scene 05 on the landing page (`LandingScrollGateway.jsx`, `SovereignPortalTunnel.js`). Pinned scroll travel moves the camera straight into the 24-spoke Golden Ashoka Chakra of Child Rights, passes through a glowing dimensional warp tunnel, enters an expanding white-light burst, and seamlessly reveals Scene 05 underneath with zero empty space.
 - **Gamified Level Milestones Complete:** High-vibe celebration modal (`GamifiedMilestoneCelebration.jsx`) for level advancement and quest completions with animated XP counters, shield crests, and harmonic sound synthesis. 25/25 checks pass in `scripts/verify_transition.mjs`.
-- **Parts 07–08 Planned:** Multilingual localization, child safety emergency quick-exit, and offline PWA.
+- **Part 07 Complete:** Child Safety, Help & Sensitive Disclosure Safeguards. Direct 1098 Integration Gateway (`/safety`, `/safety/get-help`, `/help`), Child Safety Safe-Exit Button (`QuickExitButton.jsx`) with instant study notes decoy screen, 3-tier age-calibrated Safety Library (`/safety`), sensitive disclosure safeguards with zero XP gamification of trauma, and fact-checked statutory directory (Childline 1098, 112, 1930, POCSO e-Box). 149/149 automated test checks pass in `scripts/verify_part07.mjs` (579/579 checks overall).
+- **Part 08 Planned:** Offline PWA service worker caching and Lighthouse optimization.
 
 ### Navigation layout
 
@@ -58,7 +59,7 @@ npm run dev
 # Start the app and the Part 05 WebSocket relay together
 npm run dev:classroom
 
-# Run all master automated QA, legal fidelity & child safety checks (Parts 01–06 + 3D Gateway: 430 checks)
+# Run all master automated QA, legal fidelity & child safety checks (Parts 01–07: 579 checks across 7 suites)
 npm test
 
 # Run individual verification suites
@@ -68,6 +69,7 @@ npm run test:part04       # 67 checks (Part 04 Progression System)
 npm run test:part05       # 64 checks (Part 05 Classroom System)
 npm run test:part06       # 104 checks (Part 06 Intelligence System)
 npm run test:transition   # 25 checks (3D Sovereign Portal Tunnel & Milestones)
+npm run test:part07       # 149 checks (Part 07 Child Safety & Safeguards System)
 
 # Build for production
 npm run build

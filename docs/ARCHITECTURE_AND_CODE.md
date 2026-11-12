@@ -1,7 +1,7 @@
 # RightsQuest India — Architecture & Codebase Deep Dive
 
 > **Governing Framework:** Creative OS (`44_AGENCYLIKE_UI`, `01_DESIGN_OS`, `02_ART_DIRECTION`, `04_TYPOGRAPHY_SYSTEM`, `05_MOTION_SYSTEM`, `11_FRONTEND_ARCHITECTURE`, `12_CREATIVE_QA`)  
-> **Status:** Parts 01–06 + 3D Gateway & Milestones Implemented & Verified · 6 dedicated test suites with 430/430 passing checks.
+> **Status:** Parts 01–07 Implemented & Verified · 7 dedicated test suites with 579/579 passing checks.
 > **Core Mission:** An agency-grade, story-driven gamified children's rights learning platform designed for children aged 8–16 across India.
 
 ---
@@ -45,7 +45,8 @@ MajorProject/
 │   ├── verify_part04.mjs                     # 67-point automated QA suite (Part 04 Progression System)
 │   ├── verify_part05.mjs                     # 64-point automated QA suite (Part 05 Classroom System)
 │   ├── verify_part06.mjs                     # 104-point automated QA suite (Part 06 Intelligence System)
-│   └── verify_transition.mjs                 # 25-point automated QA suite (3D World Transitions)
+│   ├── verify_transition.mjs                 # 25-point automated QA suite (3D World Transitions)
+│   └── verify_part07.mjs                     # 149-point automated QA suite (Part 07 Child Safety & Safeguards)
 ├── server/
 │   └── classroom-server.js                    # Part 05 in-memory WebSocket room relay
 ├── supabase/
@@ -60,7 +61,7 @@ MajorProject/
     ├── main.jsx                              # Application entrypoint with React.StrictMode
     ├── app/
     │   ├── App.jsx                           # Root component wrapping DemoLearnerProvider & Router
-    │   └── router.jsx                        # React Router v6 definitions with dynamic lazy loading & /play/:scenarioId
+    │   └── router.jsx                        # React Router v6 definitions with dynamic lazy loading
     ├── context/
     │   └── DemoLearnerContext.jsx            # DPDP-compliant local state manager (profiles, intro, missionProgress)
     ├── data/
@@ -69,6 +70,11 @@ MajorProject/
     │   ├── adventuresCatalog.js              # Curated everyday scenario quests
     │   └── navigation.js                     # Header navigation items & footer sitemap
     ├── features/                             # Modular feature domains
+    │   ├── safety/                           # Part 07: Child Safety, Help & Sensitive Disclosure Safeguards
+    │   │   ├── components/                   # QuickExitButton, SafetyTopicCard, AgeBandSafetyView, VerifiedHelplineDirectory
+    │   │   ├── hooks/                        # useSensitiveDisclosureGuard (non-gamified safety scanner)
+    │   │   ├── data/                         # safetyTopics (3-tier age adaptation), verifiedSupportServices
+    │   │   └── pages/                        # SafetyLibraryPage (/safety), GetHelpExperiencePage (/safety/get-help)
     │   ├── gameplay/                         # Part 03: Branching Scenario Engine & Decision Trees
     │   │   ├── index.js                      # Barrel export of gameplay components
     │   │   ├── data/
@@ -515,3 +521,39 @@ Implemented in `GamifiedMilestoneCelebration.jsx`, this engine delivers high-vib
 * **Animated XP Surge Counter:** Smooth numeric interpolation from previous XP to newly awarded XP.
 * **Constitutional Shield Crests:** Dynamic vector crests for the 5 Constitutional Realms.
 * **Triumph Audio Fanfare:** Synthesizes an arpeggiated brass-and-bell chime chord on reveal.
+
+---
+
+## 11. Part 07 — Child Safety, Help & Sensitive Disclosure Safeguards
+
+Mounted at `/safety` and `/safety/get-help`, Part 07 anchors RightsQuest India in statutory protection, child psychological safety, sensitive disclosure safeguards, and emergency reassurance.
+
+### A. Child Safety & Rights Education Library (`SafetyLibraryPage.jsx` & `safetyTopics.js`)
+* **Curriculum Coverage:** 6 comprehensive topics including *Personal Boundaries & Safe Touch*, *The Trusted Adult Network*, *Digital Safety & Privacy*, *Bullying & Digital Exclusion*, *The Right to Education*, and *Protection from Exploitative Labour*.
+* **Three-Tier Age Adaptation Engine (`AgeBandSafetyView.jsx`):**
+  * *Ages 8–10 (The Young Navigators):* Gentle, concrete definitions, physical world scenarios, and clear 3-step action rules.
+  * *Ages 11–13 (The Pathfinders):* Nuanced peer dynamics, school and social-media scenarios, and active bystander strategies.
+  * *Ages 14–16 (The Youth Advocates):* Statutory grounding under POCSO Act 2012, IT Act §67B, and Article 21A, legal rights of minors, and institutional accountability.
+
+### B. Get Help Experience & Verified Statutory Directory (`GetHelpExperiencePage.jsx` & `verifiedSupportServices.js`)
+* **Fact-Checked Helpline Registry:**
+  * **Childline 1098:** Officially verified as 100% toll-free, 24/7 national service, operated by the Ministry of Women and Child Development (MWCD) under Mission Vatsalya, seamlessly integrated with ERSS-112.
+  * **National Emergency Helpline 112:** Unified all-India emergency response.
+  * **National Cyber Crime Reporting Helpline 1930:** Digital financial fraud and child sexual exploitation reporting.
+  * **NCPCR POCSO e-Box:** Official direct digital complaint latch for child protection.
+* **Trusted Adult Explainer (`TrustedAdultExplainer.jsx`):** A step-by-step guidance system teaching children who qualifies as a trusted adult, how to initiate conversation, and what to do if the first adult does not listen.
+
+### C. Discreet Emergency Quick Exit Latch (`QuickExitButton.jsx`)
+* **Immediate Privacy Shield:** Present on the global navbar and safety pages to allow a child to leave instantly if someone approaches their device.
+* **Decoy Study Screen (`DecoyStudyScreen`):** Shows an authentic, neutral educational page (*"NCERT Class 7 Science — Chapter 11: Transportation in Animals and Plants"*) with realistic study notes and review questions.
+* **Resume Capability:** Allows learners to cleanly resume their lesson with one click once in a safe space.
+
+### D. Sensitive Disclosure Safeguard Scanner (`useSensitiveDisclosureGuard.js` & `SensitiveDisclosureModal.jsx`)
+* **Non-Gamified Protective Scanner:** In-memory heuristic scanner that intercepts potential disclosures of abuse, violence, or distress.
+* **Zero XP & Non-Exploitation Guarantee:** Strictly prohibits awarding XP, streaks, or badges for personal trauma disclosures.
+* **Zero Persistence:** Disclosed text is never stored in localStorage, IndexedDB, or transmitted to any analytics endpoint or remote server.
+* **Calm Reassurance:** Immediately interrupts gameplay or conversation to display gentle, non-judgmental guidance and direct contact bridges to Childline 1098 and trusted adults.
+
+### E. Automated Verification Harness (`scripts/verify_part07.mjs`)
+* 149 automated checks covering component mounting, age band calibration, statutory metadata, scanner heuristics, and Quick Exit latching.
+* Total platform test baseline: **7 test suites with 579/579 passing assertions**.
