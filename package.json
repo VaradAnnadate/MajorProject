@@ -8,13 +8,14 @@
     "dev:classroom": "node scripts/dev-classroom.mjs",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node scripts/verify_foundation.mjs && node scripts/verify_part03.mjs && node scripts/verify_part04.mjs && node scripts/verify_part05.mjs && node scripts/verify_part06.mjs && node scripts/verify_transition.mjs",
+    "test": "node scripts/verify_foundation.mjs && node scripts/verify_part03.mjs && node scripts/verify_part04.mjs && node scripts/verify_part05.mjs && node scripts/verify_part06.mjs && node scripts/verify_transition.mjs && node scripts/verify_part07.mjs",
     "test:foundation": "node scripts/verify_foundation.mjs",
     "test:part03": "node scripts/verify_part03.mjs",
     "test:part04": "node scripts/verify_part04.mjs",
     "test:part05": "node scripts/verify_part05.mjs",
     "test:part06": "node scripts/verify_part06.mjs",
-    "test:transition": "node scripts/verify_transition.mjs"
+    "test:transition": "node scripts/verify_transition.mjs",
+    "test:part07": "node scripts/verify_part07.mjs"
   },
   "dependencies": {
     "@creative-os/core": "^3.1.1",
