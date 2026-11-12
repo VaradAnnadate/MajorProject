@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { NAV_LINKS } from '../../data/navigation';
 import { useDemoLearner } from '../../context/DemoLearnerContext';
+import { QuickExitButton } from '../../features/safety/components/QuickExitButton';
 import './Navbar.css';
 
 export default function Navbar() {
@@ -253,13 +254,19 @@ export default function Navbar() {
             <ShieldAlert size={15} />
             <span>Get Help (1098)</span>
           </Link>
+
+          {/* Quick Exit Safety Latch */}
+          <QuickExitButton />
         </div>
 
         {/* Compact desktop help action while the full navigation is collapsed */}
-        <Link to="/help" className="btn btn-help compact-help">
-          <ShieldAlert size={15} />
-          <span>Get Help (1098)</span>
-        </Link>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+          <Link to="/help" className="btn btn-help compact-help">
+            <ShieldAlert size={15} />
+            <span>Get Help (1098)</span>
+          </Link>
+          <QuickExitButton />
+        </div>
 
         {/* Mobile Menu Hamburger Toggle */}
         <button
