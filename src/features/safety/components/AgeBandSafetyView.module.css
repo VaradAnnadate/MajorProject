@@ -1,0 +1,73 @@
+.container {
+  margin-bottom: var(--space-8);
+}
+
+.selectorBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
+}
+
+.agePill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1.5px solid var(--color-border-medium, rgba(0, 0, 0, 0.12));
+  background: var(--color-canvas-primary, #FBF8F3);
+  font-family: var(--font-family-mono, monospace);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-ink-secondary, #3B4354);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.agePill:hover {
+  border-color: var(--color-saffron-500, #DE7215);
+  transform: translateY(-1px);
+}
+
+.agePillActive {
+  background: var(--color-canvas-dark, #070A11);
+  color: #FFFFFF;
+  border-color: var(--color-canvas-dark, #070A11);
+  box-shadow: 0 4px 14px rgba(7, 10, 17, 0.18);
+}
+
+.agePillActive span:first-child {
+  color: var(--color-saffron-500, #DE7215);
+}
+
+.stageBanner {
+  background: rgba(222, 114, 21, 0.06);
+  border: 1px solid rgba(222, 114, 21, 0.2);
+  border-radius: var(--radius-lg, 16px);
+  padding: 16px 22px;
+  max-width: 780px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.stageEyebrow {
+  font-family: var(--font-family-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--color-saffron-700, #B85808);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.stageText {
+  font-size: 0.94rem;
+  color: var(--color-ink-primary, #070A11);
+  line-height: 1.5;
+  margin: 0;
+}
+

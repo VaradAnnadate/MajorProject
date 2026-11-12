@@ -10,6 +10,7 @@ export const NAV_LINKS = [
   { path: '/', label: 'Home', isAction: false },
   { path: '/world', label: 'World Map', isAction: false, badge: '5 Realms' },
   { path: '/rights', label: 'Explore Rights', isAction: false },
+  { path: '/safety', label: 'Child Safety', isAction: false, badge: 'Safety' },
   { path: '/adventures', label: 'Adventures', isAction: false },
   { path: '/classroom', label: 'Classroom', isAction: false, badge: 'Live' },
   { path: '/educator', label: 'Educator', isAction: false, badge: 'Studio' },
@@ -23,6 +24,7 @@ export const FOOTER_LINKS = {
   learning: [
     { path: '/world', label: 'The Living World Map (5 Realms)' },
     { path: '/rights', label: 'The 4 Pillars of Child Rights' },
+    { path: '/safety', label: 'Child Safety & Rights Education' },
     { path: '/adventures', label: 'Quest Directory' },
     { path: '/classroom', label: 'Live Classroom Deliberation' },
     { path: '/educator', label: 'Educator Intelligence Studio' },
@@ -30,10 +32,11 @@ export const FOOTER_LINKS = {
     { path: '/enter', label: 'Age-Tailored Modes' }
   ],
   legalAndSafety: [
-    { path: '/help', label: 'Child Helpline 1098' },
+    { path: '/safety/get-help', label: 'Childline 1098 & ERSS 112 Help' },
+    { path: '/safety', label: 'Personal Boundaries & Safety Library' },
     { path: '/about', label: 'DPDP 2023 Child Privacy Mandate' },
     { path: '/about', label: 'Constitutional Articles & RTE Act' },
-    { path: '/help', label: 'Safety Rules for Children' }
+    { path: '/help', label: 'Safety Rules & Trusted Adults' }
   ],
   foundation: [
     { path: '/about', label: 'Mission & Pedagogy' },

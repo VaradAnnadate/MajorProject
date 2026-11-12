@@ -1,0 +1,104 @@
+.page {
+  padding-top: clamp(2rem, 4vw, 3.5rem);
+  padding-bottom: clamp(4rem, 8vw, 6rem);
+}
+
+.heroHeader {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto var(--space-6) auto;
+  position: relative;
+}
+
+.topBarRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-family-mono, monospace);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--color-terracotta-600, #B03A22);
+  text-transform: uppercase;
+}
+
+.heroTitle {
+  font-family: var(--font-family-display, serif);
+  font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+  color: var(--color-ink-primary, #070A11);
+  line-height: 1.15;
+  margin: 0 0 var(--space-3) 0;
+}
+
+.heroLead {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--color-ink-secondary, #3B4354);
+  max-width: 660px;
+  margin: 0 auto;
+}
+
+.topicsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.helpCtaBanner {
+  background: var(--color-canvas-dark, #070A11);
+  color: #FFFFFF;
+  border-radius: var(--radius-xl, 24px);
+  padding: clamp(2rem, 5vw, 3.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+  box-shadow: 0 20px 50px rgba(7, 10, 17, 0.25);
+}
+
+.helpCtaContent h3 {
+  font-family: var(--font-family-display, serif);
+  font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+  margin: 0 0 8px 0;
+  color: #FFFFFF;
+}
+
+.helpCtaContent p {
+  color: #D1D5DB;
+  font-size: 0.95rem;
+  max-width: 560px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.btnGetHelp {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-terracotta-500, #D04F36);
+  color: #FFFFFF;
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.92rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btnGetHelp:hover {
+  background: var(--color-terracotta-600, #B03A22);
+  transform: translateY(-2px);
+}
+

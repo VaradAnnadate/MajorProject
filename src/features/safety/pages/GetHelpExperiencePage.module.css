@@ -1,0 +1,205 @@
+.page {
+  padding-top: clamp(2rem, 4vw, 3.5rem);
+  padding-bottom: clamp(4rem, 8vw, 6rem);
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-family-mono, monospace);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--color-terracotta-600, #B03A22);
+  text-transform: uppercase;
+}
+
+.header {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto var(--space-7) auto;
+}
+
+.title {
+  font-family: var(--font-family-display, serif);
+  font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+  color: var(--color-ink-primary, #070A11);
+  line-height: 1.15;
+  margin: 0 0 var(--space-3) 0;
+}
+
+.lead {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--color-ink-secondary, #3B4354);
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.noticeBox {
+  background: #FFF8E7;
+  border: 1px solid rgba(222, 114, 21, 0.35);
+  border-radius: var(--radius-lg, 16px);
+  padding: 14px 20px;
+  margin-bottom: var(--space-7);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: #7A3B04;
+}
+
+.heroSpotlight {
+  background: var(--color-canvas-dark, #070A11);
+  color: #FFFFFF;
+  border: 2px solid var(--color-terracotta-500, #D04F36);
+  border-radius: var(--radius-xl, 24px);
+  padding: clamp(1.75rem, 4vw, 3rem);
+  margin-bottom: var(--space-8);
+  box-shadow: 0 20px 60px rgba(7, 10, 17, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+.heroSpotlight::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -20%;
+  width: 70%;
+  height: 160%;
+  background: radial-gradient(circle, rgba(208, 79, 54, 0.22) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.spotlightHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-terracotta-500, #D04F36);
+  font-family: var(--font-family-mono, monospace);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-3);
+}
+
+.spotlightDigitsRow {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.spotlightDigits {
+  font-family: var(--font-family-display, serif);
+  font-size: clamp(3.5rem, 8vw, 5.5rem);
+  font-weight: 800;
+  color: #F8B5A7;
+  line-height: 1;
+}
+
+.spotlightSub {
+  font-size: 1.1rem;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.spotlightDesc {
+  color: #D1D5DB;
+  font-size: 0.98rem;
+  line-height: 1.6;
+  max-width: 680px;
+  margin-bottom: var(--space-5);
+}
+
+.spotlightActionRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btnDial {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-terracotta-500, #D04F36);
+  color: #FFFFFF;
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.96rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btnDial:hover {
+  background: var(--color-terracotta-600, #B03A22);
+}
+
+.scriptsSection {
+  background: var(--color-canvas-secondary, #F3EDE2);
+  border-radius: var(--radius-xl, 20px);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  margin-bottom: var(--space-8);
+}
+
+.scriptsHeader h3 {
+  font-family: var(--font-family-display, serif);
+  font-size: 1.6rem;
+  color: var(--color-ink-primary);
+  margin: 0 0 6px 0;
+}
+
+.scriptsHeader p {
+  font-size: 0.94rem;
+  color: var(--color-ink-secondary);
+  margin: 0 0 var(--space-4) 0;
+}
+
+.scriptsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-4);
+}
+
+.scriptCard {
+  background: #FFFFFF;
+  border: 1px solid var(--color-border-subtle, rgba(0, 0, 0, 0.08));
+  border-radius: var(--radius-md, 12px);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.scriptTag {
+  font-family: var(--font-family-mono, monospace);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--color-saffron-700, #B85808);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.scriptQuote {
+  font-style: italic;
+  font-size: 0.92rem;
+  color: var(--color-ink-primary);
+  line-height: 1.5;
+  margin: 0;
+}
+

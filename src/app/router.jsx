@@ -11,6 +11,8 @@ const AdventuresPage = lazy(() => import('../pages/AdventuresPage'));
 const WorldMapPage = lazy(() => import('../features/world/pages/WorldMapPage'));
 const AchievementsPage = lazy(() => import('../pages/AchievementsPage'));
 const GetHelpPage = lazy(() => import('../pages/GetHelpPage'));
+const SafetyLibraryPage = lazy(() => import('../features/safety/pages/SafetyLibraryPage'));
+const GetHelpExperiencePage = lazy(() => import('../features/safety/pages/GetHelpExperiencePage'));
 const AboutPage = lazy(() => import('../pages/AboutPage'));
 const ScenarioPage = lazy(() => import('../features/gameplay/pages/ScenarioPage'));
 const ClassroomPage = lazy(() => import('../features/classroom/pages/ClassroomPage'));
@@ -131,10 +133,26 @@ export const router = createBrowserRouter([
         )
       },
       {
+        path: 'safety',
+        element: (
+          <Suspense fallback={<PageFallback />}>
+            <SafetyLibraryPage />
+          </Suspense>
+        )
+      },
+      {
+        path: 'safety/get-help',
+        element: (
+          <Suspense fallback={<PageFallback />}>
+            <GetHelpExperiencePage />
+          </Suspense>
+        )
+      },
+      {
         path: 'help',
         element: (
           <Suspense fallback={<PageFallback />}>
-            <GetHelpPage />
+            <GetHelpExperiencePage />
           </Suspense>
         )
       },
