@@ -104,7 +104,7 @@ export default function AgeSelectionPage() {
             </span>
           </div>
 
-          <div className="grid-3-col">
+          <div className="grid-3-col" style={{ paddingTop: '10px' }}>
             {AGE_BANDS.map((band) => {
               const isSelected = band.id === state.selectedAgeBand;
 
@@ -127,8 +127,10 @@ export default function AgeSelectionPage() {
                     border: isSelected ? `2.5px solid ${band.accentColor}` : '1.5px solid var(--color-border-medium)',
                     borderRadius: 'var(--radius-lg)',
                     padding: 'var(--space-5)',
+                    paddingTop: isSelected ? 'calc(var(--space-5) + 4px)' : 'var(--space-5)',
                     cursor: 'pointer',
                     position: 'relative',
+                    overflow: 'visible',
                     boxShadow: isSelected ? 'var(--shadow-story-card)' : 'var(--shadow-press)'
                   }}
                 >
@@ -137,21 +139,25 @@ export default function AgeSelectionPage() {
                     <div 
                       style={{
                         position: 'absolute',
-                        top: '-10px',
-                        right: '14px',
+                        top: '-13px',
+                        right: '12px',
                         backgroundColor: band.accentColor,
                         color: '#FFFFFF',
                         borderRadius: 'var(--radius-pill)',
-                        padding: '2px 10px',
-                        fontSize: '0.7rem',
+                        padding: '3px 12px 3px 10px',
+                        fontSize: '0.68rem',
                         fontFamily: 'var(--font-family-mono)',
                         fontWeight: 800,
+                        letterSpacing: '0.07em',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '4px'
+                        gap: '5px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.18)',
+                        whiteSpace: 'nowrap',
+                        zIndex: 2
                       }}
                     >
-                      <Check size={12} strokeWidth={3} />
+                      <Check size={11} strokeWidth={3} />
                       <span>SELECTED</span>
                     </div>
                   )}
