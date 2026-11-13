@@ -23,6 +23,8 @@ const GuardianPage = lazy(() => import('../features/guardian/pages/GuardianPage'
 function PageFallback() {
   return (
     <div 
+      role="status"
+      aria-live="polite"
       style={{
         minHeight: '60vh',
         display: 'flex',
@@ -33,6 +35,7 @@ function PageFallback() {
       }}
     >
       <div 
+        aria-hidden="true"
         style={{
           width: '36px',
           height: '36px',

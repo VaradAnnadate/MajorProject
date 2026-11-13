@@ -13,11 +13,15 @@ export default defineConfig(({ mode }) => {
       },
     },
     build: {
+      manifest: true,
       rollupOptions: {
         output: {
           manualChunks(id) {
-            if (id.includes('node_modules/framer-motion') || id.includes('node_modules/lenis')) {
-              return 'motion-chunk';
+            if (id.includes('node_modules/framer-motion')) {
+              return 'framer-motion-chunk';
+            }
+            if (id.includes('node_modules/lenis')) {
+              return 'lenis-chunk';
             }
             if (id.includes('node_modules/lucide-react')) {
               return 'icons-chunk';

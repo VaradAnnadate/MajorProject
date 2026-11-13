@@ -35,8 +35,8 @@ Children in India between 8 and 16 years old, with content and interaction patte
 - **Part 06 Complete:** The Educator & Guardian Intelligence System. Educator Studio (`/educator`) provides cohort-level literacy metrics, live session launcher, NCERT Civics & CBSE curriculum alignments, Socratic toolkits, and deliberation archives. Guardian Chronicle (`/guardian`) provides a calm, non-surveillance window with "At the Dinner Table" discussion primers and anti-addiction guarantees compliant with DPDP Act 2023 §9. 104/104 automated test checks pass in `scripts/verify_part06.mjs`.
 - **Cinematic 3D Sovereign Portal Tunnel Complete:** A signature 3D world-transition bridge connecting Scene 04 to Scene 05 on the landing page (`LandingScrollGateway.jsx`, `SovereignPortalTunnel.js`). Pinned scroll travel moves the camera straight into the 24-spoke Golden Ashoka Chakra of Child Rights, passes through a glowing dimensional warp tunnel, enters an expanding white-light burst, and seamlessly reveals Scene 05 underneath with zero empty space.
 - **Gamified Level Milestones Complete:** High-vibe celebration modal (`GamifiedMilestoneCelebration.jsx`) for level advancement and quest completions with animated XP counters, shield crests, and harmonic sound synthesis. 25/25 checks pass in `scripts/verify_transition.mjs`.
-- **Part 07 Complete:** Child Safety, Help & Sensitive Disclosure Safeguards. Direct 1098 Integration Gateway (`/safety`, `/safety/get-help`, `/help`), Child Safety Safe-Exit Button (`QuickExitButton.jsx`) with instant study notes decoy screen, 3-tier age-calibrated Safety Library (`/safety`), sensitive disclosure safeguards with zero XP gamification of trauma, and fact-checked statutory directory (Childline 1098, 112, 1930, POCSO e-Box). 149/149 automated test checks pass in `scripts/verify_part07.mjs` (579/579 checks overall).
-- **Part 08 Planned:** Offline PWA service worker caching and Lighthouse optimization.
+- **Part 07 Complete:** Child Safety, Help & Sensitive Disclosure Safeguards. Direct 1098 Integration Gateway (`/safety`, `/safety/get-help`, `/help`), Child Safety Safe-Exit Button (`QuickExitButton.jsx`) with instant study notes decoy screen, 3-tier age-calibrated Safety Library (`/safety`), sensitive disclosure safeguards with zero XP gamification of trauma, and fact-checked statutory directory (Childline 1098, 112, 1930, POCSO e-Box). 149/149 automated test checks pass in `scripts/verify_part07.mjs`.
+- **Part 08 Implemented:** Installable PWA manifest and 192/512px icons, generated service-worker precache for app routes, IndexedDB quest saves, offline and install controls, keyboard/reduced-motion checks, and a 150 KiB gzip budget for the initial shell and landing route (currently 129.7 KiB). The optional Three.js engine loads near its section and is excluded from install-time caching. Run `npm run test:part08`; device-level Lighthouse and assistive-technology audits remain to be completed before claiming field performance or full WCAG conformance.
 
 ### Navigation layout
 
@@ -59,7 +59,7 @@ npm run dev
 # Start the app and the Part 05 WebSocket relay together
 npm run dev:classroom
 
-# Run all master automated QA, legal fidelity & child safety checks (Parts 01–07: 579 checks across 7 suites)
+# Run all master automated QA, legal fidelity & child safety checks (Parts 01–08: 595 checks across 8 suites)
 npm test
 
 # Run individual verification suites
@@ -70,6 +70,7 @@ npm run test:part05       # 64 checks (Part 05 Classroom System)
 npm run test:part06       # 104 checks (Part 06 Intelligence System)
 npm run test:transition   # 25 checks (3D Sovereign Portal Tunnel & Milestones)
 npm run test:part07       # 149 checks (Part 07 Child Safety & Safeguards System)
+npm run test:part08       # 16 checks (Part 08 PWA & Accessibility)
 
 # Build for production
 npm run build

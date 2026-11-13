@@ -67,7 +67,7 @@
     * Realm Emergence Banner (`.realm-emergence-banner`): marks entry into Scene 05 (*"DIMENSIONAL PASSAGE COMPLETE · ARRIVED IN THE FIVE REALMS"*), presenting the map as an unlocked second world.
     * Web Audio API ambient chime synthesis (A4, C#5, E5, A5) triggered on threshold entry.
     * High-vibe gamified milestone celebration modals (`GamifiedMilestoneCelebration.jsx`) integrated into Journey Path and Scenario completions with particle fountains, XP surge animations, and constitutional crests.
-    * 25 dedicated QA checks in `scripts/verify_transition.mjs` (430 total project assertions across 6 test suites).
+    * 25 dedicated QA checks in `scripts/verify_transition.mjs` (430 total project assertions across 6 test suites at that milestone).
   * **Verification:** 120/120 foundation checks + 25/25 3D gateway & milestone checks passing cleanly.
 
 ---
@@ -164,15 +164,15 @@
     * In-memory heuristic scanner intercepting voluntary child disclosures of abuse, exploitation, or danger.
     * Strictly prohibits gamifying trauma: zero XP, zero badges, and zero quest credit are awarded for disclosures.
     * Protects child privacy: sensitive inputs are immediately diverted, never written to localStorage, IndexedDB, or backend databases, and the child is guided gently toward real-world trusted adults and Childline 1098.
-  * **Automated QA Verification:** 149/149 dedicated automated Part 07 test assertions passing cleanly in `scripts/verify_part07.mjs` (579/579 total assertions across all 7 test suites).
+  * **Automated QA Verification:** 149/149 dedicated automated Part 07 test assertions passing cleanly in `scripts/verify_part07.mjs`.
 
 ---
 
-### Part 08 — PWA, Offline Functionality, Testing & Final Polish
-* **Objective:** Deliver a resilient, production-ready Progressive Web App accessible on low-end hardware and spotty internet across rural India.
-* **Components to Build:**
-  * **Progressive Web App (PWA):** Web manifest, responsive app icons, standalone launch mode, and service worker caching.
-  * **Full Offline Quest Playback:** IndexedDB caching allowing children in remote schools without active Wi-Fi to play adventures offline.
-  * **Accessibility & Screen Reader Audit:** WCAG 2.1 AA compliance verification, full screen-reader keyboard tab navigation, and high-contrast color validation.
-  * **Performance & Bundle Optimization:** Under 150 kB core bundle, sub-second First Contentful Paint (<0.8s) on 4G mobile devices.
-  * **Awwwards / Creative OS Final Sign-Off:** Verification against the Creative OS 25-point pre-release gate.
+### Part 08 — PWA, Offline Functionality, Testing & Final Polish (IMPLEMENTED)
+* **Installable PWA:** `public/manifest.webmanifest`, scalable SVG branding, 192px and 512px PNG install icons, standalone launch mode, and home-screen shortcuts.
+* **Offline app shell and quests:** `public/sw.js` is generated with a content-versioned precache of built app and route chunks. Navigation falls back to the cached shell; static assets are cache-first; `/api` and non-GET requests bypass the worker. The optional Three.js engine is excluded from install-time caching and loads near its section.
+* **IndexedDB quest cache:** The Adventures page can save all bundled story scripts on-device; `/play/:scenarioId` reads the saved script while offline and maintains the existing local progress flow. No learner identity or chat data is written to this cache.
+* **Install and connection UX:** The shell shows offline status and offers the browser install prompt where supported; adventure controls expose save status through an accessible live region.
+* **Accessibility checks:** Loading and offline states are announced, controls use native keyboard semantics, visible focus and reduced-motion styles are retained, and the dedicated Part 08 suite verifies these source-level contracts (16 checks).
+* **Performance budget:** A build-time gzip analysis follows the initial app shell and landing-route imports, enforcing a 150 KiB JS/CSS budget. The current production build measures **129.7 KiB gzipped**. The Three.js engine is deferred and split from the initial route.
+* **Release validation still needed:** The `<0.8s` FCP target, Lighthouse results on a representative 4G device, screen-reader behavior in target browsers, and the Creative OS 25-point human review have not been measured here; static checks do not certify WCAG conformance.

@@ -13,6 +13,18 @@
   "categories": ["education", "learning"],
   "icons": [
     {
+      "src": "/icons/rightsquest-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/rightsquest-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
       "src": "/icons/rightsquest.svg",
       "sizes": "any",
       "type": "image/svg+xml",
@@ -24,13 +36,13 @@
       "name": "Explore quests",
       "short_name": "Quests",
       "url": "/adventures",
-      "icons": [{ "src": "/icons/rightsquest.svg", "sizes": "any", "type": "image/svg+xml" }]
+      "icons": [{ "src": "/icons/rightsquest-192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
       "name": "Get help",
       "short_name": "Get help",
       "url": "/safety/get-help",
-      "icons": [{ "src": "/icons/rightsquest.svg", "sizes": "any", "type": "image/svg+xml" }]
+      "icons": [{ "src": "/icons/rightsquest-192.png", "sizes": "192x192", "type": "image/png" }]
     }
   ]
 }

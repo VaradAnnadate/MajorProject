@@ -2,7 +2,7 @@ const CACHE_PREFIX = 'rightsquest-static-';
 const CACHE_NAME = `${CACHE_PREFIX}__RQ_CACHE_VERSION__`;
 const PRECACHE_URLS = __RQ_PRECACHE_URLS__;
 const APP_SHELL_URL = '/index.html';
-const STATIC_ASSET_PATTERN = /\.(?:css|js|json|svg|png|jpe?g|webp|woff2?)$/i;
+const STATIC_ASSET_PATTERN = /\.(?:css|js|json|webmanifest|svg|png|jpe?g|webp|woff2?)$/i;
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

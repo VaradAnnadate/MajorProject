@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { SovereignPortalTunnel } from '../engine/SovereignPortalTunnel';
 import styles from './LandingScrollGateway.module.css';
 
 /**
@@ -57,10 +56,12 @@ export function LandingScrollGateway() {
   const canvasRef = useRef(null);
   const tunnelRef = useRef(null);
   const frameRef = useRef(null);
+  const progressRef = useRef(0);
   const crossedLightRef = useRef(false);
 
   const [progress, setProgress] = useState(0);
   const [whiteOverlayOpacity, setWhiteOverlayOpacity] = useState(0);
+  const [is3dUnavailable, setIs3dUnavailable] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(() => (
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
   ));
@@ -73,32 +74,52 @@ export function LandingScrollGateway() {
     return () => media.removeEventListener?.('change', updatePreference);
   }, []);
 
-  // 1. Initialize 3D Tunnel Engine
+  // Load the optional WebGL engine only as the gateway approaches the viewport.
   useEffect(() => {
     if (!canvasRef.current || prefersReducedMotion) return;
 
-    try {
-      tunnelRef.current = new SovereignPortalTunnel(canvasRef.current);
-    } catch (err) {
-      console.warn('SovereignPortalTunnel WebGL fallback:', err);
+    let isCancelled = false;
+    let isVisible = false;
+    let loadStarted = false;
+
+    const loadTunnel = async () => {
+      if (loadStarted) return;
+      loadStarted = true;
+      try {
+        const { SovereignPortalTunnel } = await import('../engine/SovereignPortalTunnel');
+        if (isCancelled || !canvasRef.current) return;
+        const tunnel = new SovereignPortalTunnel(canvasRef.current);
+        tunnel.setProgress(progressRef.current);
+        tunnel.setActive(isVisible);
+        tunnelRef.current = tunnel;
+      } catch (error) {
+        console.warn('SovereignPortalTunnel WebGL fallback:', error);
+        if (!isCancelled) setIs3dUnavailable(true);
+      }
+    };
+
+    const observer = typeof IntersectionObserver === 'undefined'
+      ? null
+      : new IntersectionObserver(([entry]) => {
+        isVisible = entry.isIntersecting;
+        tunnelRef.current?.setActive(isVisible);
+        if (isVisible) loadTunnel();
+      }, { rootMargin: '320px 0px' });
+
+    if (observer) observer.observe(containerRef.current);
+    else {
+      isVisible = true;
+      loadTunnel();
     }
 
     return () => {
+      isCancelled = true;
+      observer?.disconnect();
       if (tunnelRef.current) {
         tunnelRef.current.destroy();
         tunnelRef.current = null;
       }
     };
-  }, [prefersReducedMotion]);
-
-  // Render the WebGL scene only while the gateway is on screen.
-  useEffect(() => {
-    if (!containerRef.current || !tunnelRef.current || prefersReducedMotion) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      tunnelRef.current?.setActive(entry.isIntersecting);
-    });
-    observer.observe(containerRef.current);
-    return () => observer.disconnect();
   }, [prefersReducedMotion]);
 
   // 2. Scroll Listener - Syncs scroll progress to 3D POV travel through the seal
@@ -114,6 +135,7 @@ export function LandingScrollGateway() {
 
       const scrolled = -rect.top;
       const t = Math.max(0, Math.min(1, scrolled / totalScrollable));
+      progressRef.current = t;
 
       setProgress((current) => (Math.abs(current - t) >= 0.002 ? t : current));
 
@@ -183,7 +205,11 @@ export function LandingScrollGateway() {
     >
       <div className={styles.stickyViewport}>
         {/* Fullscreen 3D WebGL Canvas */}
-        <canvas ref={canvasRef} className={styles.webglCanvas} />
+        <canvas
+          ref={canvasRef}
+          className={`${styles.webglCanvas} ${is3dUnavailable ? styles.webglUnavailable : ''}`}
+          aria-hidden="true"
+        />
 
         {/* Pure White-Light Screen Burst Overlay */}
         <div

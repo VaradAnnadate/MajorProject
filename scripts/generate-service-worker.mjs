@@ -24,6 +24,7 @@ async function listFiles(directory, relativeDirectory = '') {
 
 const files = (await listFiles(outputDirectory))
   .filter((file) => file !== 'sw.js' && cacheableExtensions.has(path.extname(file).toLowerCase()))
+  .filter((file) => !file.startsWith('.vite/'))
   // The cinematic WebGL bundle is optional for quest playback and would make first-install caching much heavier.
   .filter((file) => !path.basename(file).startsWith('three-chunk-'))
   .sort();

@@ -1,7 +1,7 @@
 # RightsQuest India — Architecture & Codebase Deep Dive
 
 > **Governing Framework:** Creative OS (`44_AGENCYLIKE_UI`, `01_DESIGN_OS`, `02_ART_DIRECTION`, `04_TYPOGRAPHY_SYSTEM`, `05_MOTION_SYSTEM`, `11_FRONTEND_ARCHITECTURE`, `12_CREATIVE_QA`)  
-> **Status:** Parts 01–07 Implemented & Verified · 7 dedicated test suites with 579/579 passing checks.
+> **Status:** Parts 01–08 implemented · 8 dedicated test suites with 595/595 passing checks; field performance and assistive-technology audits remain pending.
 > **Core Mission:** An agency-grade, story-driven gamified children's rights learning platform designed for children aged 8–16 across India.
 
 ---
@@ -46,15 +46,18 @@ MajorProject/
 │   ├── verify_part05.mjs                     # 64-point automated QA suite (Part 05 Classroom System)
 │   ├── verify_part06.mjs                     # 104-point automated QA suite (Part 06 Intelligence System)
 │   ├── verify_transition.mjs                 # 25-point automated QA suite (3D World Transitions)
-│   └── verify_part07.mjs                     # 149-point automated QA suite (Part 07 Child Safety & Safeguards)
+│   ├── verify_part07.mjs                     # 149-point automated QA suite (Part 07 Child Safety & Safeguards)
+│   ├── verify_part08.mjs                     # 14-point automated QA suite (PWA & accessibility contracts)
+│   ├── generate-service-worker.mjs            # Injects production precache assets and cache version
+│   └── check-initial-bundle.mjs               # Enforces the initial route gzip budget
 ├── server/
 │   └── classroom-server.js                    # Part 05 in-memory WebSocket room relay
 ├── supabase/
 │   └── schema.sql                             # Aggregate classroom summary table with RLS
 ├── .env.example                               # Server and Vite configuration template
-├── public/                                   # Static public assets (favicons, manifest)
+├── public/                                   # Static app icons, web manifest, and service-worker template
 ├── index.html                                # Accessible HTML5 document shell with font preconnects
-├── vite.config.js                            # Manual chunk splitting (vendor, motion, icons, features)
+├── vite.config.js                            # Build manifest and manual vendor/feature chunk splitting
 ├── package.json                              # Project manifest, scripts & dependencies
 ├── .gitignore                                # Strict exclusion of node_modules, dist, and local caches
 └── src/
@@ -62,6 +65,7 @@ MajorProject/
     ├── app/
     │   ├── App.jsx                           # Root component wrapping DemoLearnerProvider & Router
     │   └── router.jsx                        # React Router v6 definitions with dynamic lazy loading
+    ├── pwa/                                  # Part 08 registration, install/offline UI, IndexedDB quest store
     ├── context/
     │   └── DemoLearnerContext.jsx            # DPDP-compliant local state manager (profiles, intro, missionProgress)
     ├── data/
@@ -422,10 +426,10 @@ Part 04 introduces a deterministic, non-punitive, and cooperative progression ar
 
 ## 6. Automated Verification & QA Harness (`npm test`)
 
-The platform includes six automated test suites verifying **430 total assertions** across all layers of code:
+The platform includes eight automated test suites verifying **595 total assertions** across all layers of code:
 
 ```bash
-# Run all 430 checks across Parts 01–06 and 3D Gateway
+# Run all 595 checks across Parts 01–08 and 3D Gateway
 npm test
 
 # Run individual verification suites
@@ -435,6 +439,8 @@ npm run test:part04       # 67 checks (Part 04 Progression System)
 npm run test:part05       # 64 checks (Part 05 Classroom System)
 npm run test:part06       # 104 checks (Part 06 Intelligence System)
 npm run test:transition   # 25 checks (3D Sovereign Portal Tunnel & Milestones)
+npm run test:part07       # 149 checks (Part 07 Child Safety & Safeguards)
+npm run test:part08       # 16 checks (Part 08 PWA & Accessibility)
 ```
 
 ### Audit Categories:
@@ -449,6 +455,7 @@ npm run test:transition   # 25 checks (3D Sovereign Portal Tunnel & Milestones)
 9. **Part 05 Live Classroom Rooms Architecture (64 checks):** Verifies ephemeral WebSocket relay, PIN generation, animal codename selection, private secret voting, aggregate-only results reveal, Bal Sansad deliberation guides, and zero persistent storage of student votes.
 10. **Part 06 Educator & Guardian Intelligence Architecture (104 checks):** Verifies shared curriculum mappings for NCERT Grades 6–8 Civics and CBSE units, Socratic inquiry questions, offline classroom/dinner table activities, cohort-level aggregate metrics, and strict DPDP Act 2023 §9 anti-surveillance compliance.
 11. **3D Sovereign Portal Tunnel & Gamified Milestones (25 checks):** Verifies procedural Three.js 24-spoke Ashoka Chakra geometry, concentric glowing warp tunnel, luminous white-light threshold burst, harmonic Web Audio chime synthesis, sticky viewport pinning, and high-vibe milestone celebrations.
+12. **Part 08 PWA & Accessibility Contracts (16 checks):** Verifies standalone manifest and install icons, app-shell offline fallback, network-only API behavior, IndexedDB quest caching, install/offline announcements, keyboard focus, and reduced-motion styles.
 
 ---
 
@@ -556,4 +563,24 @@ Mounted at `/safety` and `/safety/get-help`, Part 07 anchors RightsQuest India i
 
 ### E. Automated Verification Harness (`scripts/verify_part07.mjs`)
 * 149 automated checks covering component mounting, age band calibration, statutory metadata, scanner heuristics, and Quick Exit latching.
-* Total platform test baseline: **7 test suites with 579/579 passing assertions**.
+* Total platform test baseline: **8 test suites with 595/595 passing assertions**.
+
+---
+
+## 12. Part 08 — Installable PWA, Offline Quests & Performance
+
+### A. PWA shell and cache generation
+* `public/manifest.webmanifest` declares the standalone app, shortcuts, SVG brand mark, and 192px/512px PNG icons.
+* `src/pwa/registerServiceWorker.js` registers the root-scoped worker in production only.
+* `scripts/generate-service-worker.mjs` builds a content-versioned precache from Vite output. The worker returns the cached HTML shell for offline SPA navigation, serves first-party static assets from cache, and bypasses `/api` and non-GET requests.
+* The large Three.js vendor chunk is omitted from install-time precaching; its module is requested when the landing page's 3D section approaches the viewport and has a CSS fallback.
+
+### B. Offline quest storage and learner controls
+* `src/pwa/offlineQuestStore.js` stores fictional quest scripts in IndexedDB; it does not store learner profiles, progress, or chat transcripts.
+* `AdventuresPage.jsx` provides a save action and status, and `ScenarioPage.jsx` reads the saved quest when offline.
+* `PwaStatus.jsx` announces offline state and provides the native browser install prompt when that event is supported.
+
+### C. Accessibility and performance verification
+* `scripts/verify_part08.mjs` checks 16 source-level manifest, cache, IndexedDB, keyboard, and reduced-motion contracts.
+* `scripts/check-initial-bundle.mjs` measures the gzip size of the initial shell plus landing route and fails production builds above 150 KiB; the current build is **129.7 KiB**.
+* FCP on a 4G device, browser Lighthouse results, full screen-reader compatibility, and the Creative OS human sign-off still require manual release validation.

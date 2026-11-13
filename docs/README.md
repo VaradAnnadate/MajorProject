@@ -60,7 +60,7 @@ flowchart TD
 * **Part 06 (Complete):** Educator Studio (`/educator`) with cohort-level aggregates, NCERT/CBSE curriculum alignments, Socratic toolkits, and anonymized deliberation logs. Guardian Chronicle (`/guardian`) with "At the Dinner Table" family primers and anti-addiction guarantees compliant with DPDP Act 2023 §9. 104-point QA suite.
 * **3D Sovereign Portal Tunnel & Gamified Milestones (Complete):** Pinned Three.js dimensional warp bridge through the 24-spoke Golden Ashoka Chakra of Child Rights into Scene 05, plus high-vibe gamified milestone celebration modals. 25-point QA suite.
 * **Part 07 (Complete):** Child safety and rights education library (`/safety`), 3-tier age adaptation (8–10, 11–13, 14–16), verified statutory directory (MWCD Childline 1098, 112, 1930, POCSO e-Box), Get Help experience (`/safety/get-help`), discreet Quick Exit safety latch with neutral study decoy screen, and sensitive disclosure safeguard scanner (zero XP gamification for trauma disclosures). 149-point QA suite.
-* **Part 08 (Planned):** PWA offline caching for rural low-connectivity schools, service worker asset manifests, and Lighthouse CI optimization.
+* **Part 08 (Implemented):** Installable PWA with scalable, platform-sized icons; a build-generated service worker caches app routes for offline use while keeping `/api` requests network-only; IndexedDB saves quest scripts locally; an install/offline status control; and a 150 KiB gzipped initial-route budget (current build: 129.7 KiB). The optional 3D engine is deferred until its section approaches. Run `npm run test:part08` and `npm run build`; physical-device Lighthouse and screen-reader audits remain release validation work.
 
 ### 2. [Supabase Database & Mitra AI Setup](./DATABASE_AND_MITRA_AI.md)
 * Run the classroom summary schema in Supabase, configure server-only `.env` credentials, and start the frontend with the Node backend.
@@ -68,8 +68,8 @@ flowchart TD
 
 ### 3. [Architecture & Codebase Deep Dive](./ARCHITECTURE_AND_CODE.md)
 * Comprehensive technical walkthrough of every directory, component, data model, state hook, and safeguard.
-* Complete breakdown of `src/features/world/`, `src/features/mascot/`, `src/features/storytelling/`, `src/features/gameplay/`, `src/features/progression/`, `src/features/classroom/`, `src/features/intelligence/`, `src/features/educator/`, `src/features/guardian/`, `src/features/gateway/`, and `src/features/safety/`.
-* Documents all 7 automated QA suites (579 total assertions), the Supabase aggregate-summary integration, and the Groq-powered Mitra backend.
+* Complete breakdown of `src/features/world/`, `src/features/mascot/`, `src/features/storytelling/`, `src/features/gameplay/`, `src/features/progression/`, `src/features/classroom/`, `src/features/intelligence/`, `src/features/educator/`, `src/features/guardian/`, `src/features/gateway/`, `src/features/safety/`, and `src/pwa/`.
+* Documents all 8 automated QA suites (595 total assertions), the PWA cache, Supabase aggregate-summary integration, and Groq-powered Mitra backend.
 
 ### 4. [Visual Design System & Creative Motion Architecture](./VISUAL_DESIGN_SYSTEM.md)
 * Comprehensive agency-grade visual design specification following Creative OS principles (`44_AGENCYLIKE_UI`).
@@ -91,7 +91,7 @@ npm run dev
 # Run the app and Part 05 classroom WebSocket relay together
 npm run dev:classroom
 
-# 3. Run all 579 automated QA, legal fidelity & child safety checks across 7 suites
+# 3. Run all 595 automated QA, legal fidelity & child safety checks across 8 suites
 npm test
 
 # Run individual verification suites
@@ -102,6 +102,7 @@ npm run test:part05       # 64 checks (Part 05 Classroom System)
 npm run test:part06       # 104 checks (Part 06 Intelligence System)
 npm run test:transition   # 25 checks (3D Sovereign Portal Tunnel & Milestones)
 npm run test:part07       # 149 checks (Part 07 Child Safety & Safeguards System)
+npm run test:part08       # 16 checks (Part 08 PWA & Accessibility)
 
 # 4. Build optimized production bundle with dynamic chunk splitting
 npm run build
