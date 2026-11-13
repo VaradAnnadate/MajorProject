@@ -1,0 +1,36 @@
+{
+  "id": "/",
+  "name": "RightsQuest India — Children's Rights Adventure",
+  "short_name": "RightsQuest",
+  "description": "A story-driven adventure that helps children in India learn about their rights and safety.",
+  "lang": "en-IN",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fbf8f3",
+  "theme_color": "#131b2e",
+  "categories": ["education", "learning"],
+  "icons": [
+    {
+      "src": "/icons/rightsquest.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Explore quests",
+      "short_name": "Quests",
+      "url": "/adventures",
+      "icons": [{ "src": "/icons/rightsquest.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Get help",
+      "short_name": "Get help",
+      "url": "/safety/get-help",
+      "icons": [{ "src": "/icons/rightsquest.svg", "sizes": "any", "type": "image/svg+xml" }]
+    }
+  ]
+}
