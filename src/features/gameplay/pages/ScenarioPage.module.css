@@ -340,6 +340,17 @@
 }
 
 /* Not found state */
+.loading {
+  min-height: 50vh;
+  display: grid;
+  place-items: center;
+  padding: var(--space-6);
+  background: #0B0D14;
+  color: rgba(255, 255, 255, 0.82);
+  font-family: var(--font-family-mono);
+  text-align: center;
+}
+
 .notFound {
   min-height: 100vh;
   display: flex;

@@ -2,11 +2,12 @@
  * ScenarioPage — Route page for /play/:scenarioId
  * Pre-mission briefing → ScenarioRunner → Return to Adventures
  */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getScenarioById } from '../data/scenarioScripts';
 import ScenarioRunner from '../components/ScenarioRunner';
 import { useDemoLearner } from '../../../context/DemoLearnerContext';
+import { cacheOfflineQuests, getOfflineQuest } from '../../../pwa/offlineQuestStore';
 import styles from './ScenarioPage.module.css';
 
 // Pillar → icon map
@@ -23,7 +24,35 @@ export default function ScenarioPage() {
   const { saveMissionProgress, completeMission } = useDemoLearner();
   const [phase, setPhase] = useState('briefing'); // 'briefing' | 'playing' | 'done'
 
-  const scenario = getScenarioById(scenarioId);
+  const bundledScenario = getScenarioById(scenarioId);
+  const [scenario, setScenario] = useState(() => (
+    typeof navigator === 'undefined' || navigator.onLine ? bundledScenario : null
+  ));
+  const [isLoadingOfflineQuest, setIsLoadingOfflineQuest] = useState(() => (
+    typeof navigator !== 'undefined' && !navigator.onLine
+  ));
+
+  useEffect(() => {
+    let isCurrent = true;
+
+    async function prepareScenario() {
+      if (typeof navigator !== 'undefined' && !navigator.onLine) {
+        try {
+          const savedScenario = await getOfflineQuest(scenarioId);
+          if (isCurrent) setScenario(savedScenario || bundledScenario);
+        } catch {
+          if (isCurrent) setScenario(bundledScenario);
+        }
+      } else {
+        setScenario(bundledScenario);
+        if (bundledScenario) cacheOfflineQuests([bundledScenario]).catch(() => {});
+      }
+      if (isCurrent) setIsLoadingOfflineQuest(false);
+    }
+
+    prepareScenario();
+    return () => { isCurrent = false; };
+  }, [scenarioId, bundledScenario]);
 
   const handleComplete = (totalXp, choicesMade) => {
     if (completeMission) {
@@ -45,6 +74,10 @@ export default function ScenarioPage() {
   };
 
   // Unknown scenario
+  if (isLoadingOfflineQuest && !scenario) {
+    return <div className={styles.loading} role="status">Opening your saved quest…</div>;
+  }
+
   if (!scenario) {
     return (
       <div className={styles.notFound} role="main">
