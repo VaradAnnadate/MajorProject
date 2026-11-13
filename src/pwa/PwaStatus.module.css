@@ -1,0 +1,41 @@
+.notice {
+  position: fixed;
+  z-index: 1100;
+  left: max(16px, env(safe-area-inset-left));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  display: flex;
+  max-width: min(340px, calc(100vw - 32px));
+  align-items: center;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid rgba(18, 25, 39, 0.14);
+  border-radius: 999px;
+  background: #fffdfa;
+  box-shadow: 0 8px 28px rgba(18, 25, 39, 0.15);
+}
+
+.message,
+.installButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: #26344d;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.message svg { flex: 0 0 auto; color: #b03a22; }
+
+.installButton {
+  min-height: 36px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.installButton:focus-visible { outline: 3px solid #de7215; outline-offset: 3px; border-radius: 6px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .notice { scroll-behavior: auto; }
+}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { 
   Compass, 
@@ -9,11 +9,14 @@ import {
   Play, 
   CheckCircle2, 
   Lock, 
-  Sparkles 
+  Sparkles,
+  Download
 } from 'lucide-react';
 import { ADVENTURES_CATALOG } from '../data/adventuresCatalog';
 import { AGE_BANDS } from '../data/demoProfiles';
 import { useDemoLearner } from '../context/DemoLearnerContext';
+import { SCENARIO_REGISTRY } from '../features/gameplay/data/scenarioScripts';
+import { cacheOfflineQuests, getOfflineQuestCount } from '../pwa/offlineQuestStore';
 
 const ADVENTURE_SCENARIO_MAP = {
   'adv-01-schoolbag': 'scenario-01-bench',
@@ -33,6 +36,27 @@ export default function AdventuresPage() {
   const highlightId = searchParams.get('highlight');
   const { activeAgeBand } = useDemoLearner();
   const [filterAgeBand, setFilterAgeBand] = useState('all');
+  const [offlineQuestStatus, setOfflineQuestStatus] = useState('');
+  const [isSavingOffline, setIsSavingOffline] = useState(false);
+
+  useEffect(() => {
+    getOfflineQuestCount()
+      .then((count) => setOfflineQuestStatus(count ? `${count} quests saved on this device.` : 'No quests saved for offline play yet.'))
+      .catch(() => setOfflineQuestStatus('Offline storage is unavailable in this browser.'));
+  }, []);
+
+  async function saveQuestsForOfflinePlay() {
+    setIsSavingOffline(true);
+    setOfflineQuestStatus('Saving story quests on this device…');
+    try {
+      const count = await cacheOfflineQuests(Object.values(SCENARIO_REGISTRY));
+      setOfflineQuestStatus(count ? `${count} story quests saved on this device for offline play.` : 'Offline storage is unavailable in this browser.');
+    } catch {
+      setOfflineQuestStatus('Could not save quests on this device. Check available browser storage and try again.');
+    } finally {
+      setIsSavingOffline(false);
+    }
+  }
 
   const filteredAdventures = ADVENTURES_CATALOG.filter(adv => {
     return filterAgeBand === 'all' || adv.ageBandId === filterAgeBand;
@@ -76,6 +100,36 @@ export default function AdventuresPage() {
             <ArrowRight size={14} />
           </a>
         </div>
+
+        <section
+          aria-labelledby="offline-quests-heading"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 'var(--space-4)',
+            marginBottom: 'var(--space-7)',
+            padding: 'var(--space-4) var(--space-5)',
+            border: '1px solid var(--color-border-subtle)',
+            borderRadius: 'var(--radius-lg)',
+            background: 'var(--color-canvas-secondary)'
+          }}
+        >
+          <div>
+            <h2 id="offline-quests-heading" style={{ margin: '0 0 0.35rem', fontSize: '1.05rem' }}>Prepare quests for offline play</h2>
+            <p style={{ margin: 0, color: 'var(--color-ink-secondary)', fontSize: '0.86rem', lineHeight: 1.5 }}>
+              Save the story scripts on this device before visiting a low-connectivity classroom.
+            </p>
+            <p role="status" aria-live="polite" style={{ margin: '0.45rem 0 0', color: 'var(--color-ink-muted)', fontSize: '0.78rem' }}>
+              {offlineQuestStatus}
+            </p>
+          </div>
+          <button type="button" className="btn btn-secondary" onClick={saveQuestsForOfflinePlay} disabled={isSavingOffline}>
+            <Download size={16} aria-hidden="true" />
+            <span>{isSavingOffline ? 'Saving quests…' : 'Save quests offline'}</span>
+          </button>
+        </section>
 
         {/* Age Band Filter Bar */}
         <div 

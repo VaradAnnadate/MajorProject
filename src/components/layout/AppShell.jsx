@@ -8,6 +8,7 @@ import EmergencyQuickBar from '../common/EmergencyQuickBar';
 import IntroPreloader from '../common/IntroPreloader';
 import { useDemoLearner } from '../../context/DemoLearnerContext';
 import MitraChat from '../../features/mitra/MitraChat';
+import PwaStatus from '../../pwa/PwaStatus';
 
 export default function AppShell() {
   const location = useLocation();
@@ -116,6 +117,7 @@ export default function AppShell() {
         {!isGameplay && <Footer />}
       </div>
       {!isGameplay && <MitraChat />}
+      {!isGameplay && <PwaStatus />}
     </div>
   );
 }
