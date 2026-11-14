@@ -79,3 +79,58 @@ export async function getOfflineQuestCount() {
     database.close();
   }
 }
+
+export async function listOfflineQuests() {
+  const database = await openQuestDatabase();
+  if (!database) return [];
+
+  try {
+    return await new Promise((resolve, reject) => {
+      const transaction = database.transaction(QUEST_STORE, 'readonly');
+      const request = transaction.objectStore(QUEST_STORE).getAll();
+      request.onsuccess = () => {
+        const records = Array.isArray(request.result) ? request.result : [];
+        resolve(records.map((r) => ({
+          id: r.id,
+          title: r.title,
+          cachedAt: r.cachedAt,
+        })));
+      };
+      request.onerror = () => reject(request.error || new Error('Could not list saved quests.'));
+    });
+  } finally {
+    database.close();
+  }
+}
+
+export async function removeOfflineQuest(scenarioId) {
+  const database = await openQuestDatabase();
+  if (!database) return false;
+
+  try {
+    return await new Promise((resolve, reject) => {
+      const transaction = database.transaction(QUEST_STORE, 'readwrite');
+      const request = transaction.objectStore(QUEST_STORE).delete(scenarioId);
+      request.onsuccess = () => resolve(true);
+      request.onerror = () => reject(request.error || new Error('Could not remove the saved quest.'));
+    });
+  } finally {
+    database.close();
+  }
+}
+
+export async function clearOfflineQuests() {
+  const database = await openQuestDatabase();
+  if (!database) return false;
+
+  try {
+    return await new Promise((resolve, reject) => {
+      const transaction = database.transaction(QUEST_STORE, 'readwrite');
+      const request = transaction.objectStore(QUEST_STORE).clear();
+      request.onsuccess = () => resolve(true);
+      request.onerror = () => reject(request.error || new Error('Could not clear saved quests.'));
+    });
+  } finally {
+    database.close();
+  }
+}

@@ -16,7 +16,7 @@ import { ADVENTURES_CATALOG } from '../data/adventuresCatalog';
 import { AGE_BANDS } from '../data/demoProfiles';
 import { useDemoLearner } from '../context/DemoLearnerContext';
 import { SCENARIO_REGISTRY } from '../features/gameplay/data/scenarioScripts';
-import { cacheOfflineQuests, getOfflineQuestCount } from '../pwa/offlineQuestStore';
+import { cacheOfflineQuests, getOfflineQuestCount, clearOfflineQuests } from '../pwa/offlineQuestStore';
 
 const ADVENTURE_SCENARIO_MAP = {
   'adv-01-schoolbag': 'scenario-01-bench',
@@ -37,11 +37,15 @@ export default function AdventuresPage() {
   const { activeAgeBand } = useDemoLearner();
   const [filterAgeBand, setFilterAgeBand] = useState('all');
   const [offlineQuestStatus, setOfflineQuestStatus] = useState('');
+  const [offlineCount, setOfflineCount] = useState(0);
   const [isSavingOffline, setIsSavingOffline] = useState(false);
 
   useEffect(() => {
     getOfflineQuestCount()
-      .then((count) => setOfflineQuestStatus(count ? `${count} quests saved on this device.` : 'No quests saved for offline play yet.'))
+      .then((count) => {
+        setOfflineCount(count);
+        setOfflineQuestStatus(count ? `${count} quests saved on this device.` : 'No quests saved for offline play yet.');
+      })
       .catch(() => setOfflineQuestStatus('Offline storage is unavailable in this browser.'));
   }, []);
 
@@ -50,11 +54,22 @@ export default function AdventuresPage() {
     setOfflineQuestStatus('Saving story quests on this device…');
     try {
       const count = await cacheOfflineQuests(Object.values(SCENARIO_REGISTRY));
+      setOfflineCount(count);
       setOfflineQuestStatus(count ? `${count} story quests saved on this device for offline play.` : 'Offline storage is unavailable in this browser.');
     } catch {
       setOfflineQuestStatus('Could not save quests on this device. Check available browser storage and try again.');
     } finally {
       setIsSavingOffline(false);
+    }
+  }
+
+  async function clearSavedOfflineQuests() {
+    try {
+      await clearOfflineQuests();
+      setOfflineCount(0);
+      setOfflineQuestStatus('Offline quests cleared from this device.');
+    } catch {
+      setOfflineQuestStatus('Could not clear offline quests.');
     }
   }
 
@@ -125,10 +140,23 @@ export default function AdventuresPage() {
               {offlineQuestStatus}
             </p>
           </div>
-          <button type="button" className="btn btn-secondary" onClick={saveQuestsForOfflinePlay} disabled={isSavingOffline}>
-            <Download size={16} aria-hidden="true" />
-            <span>{isSavingOffline ? 'Saving quests…' : 'Save quests offline'}</span>
-          </button>
+          <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+            <button type="button" className="btn btn-secondary" onClick={saveQuestsForOfflinePlay} disabled={isSavingOffline}>
+              <Download size={16} aria-hidden="true" />
+              <span>{isSavingOffline ? 'Saving quests…' : 'Save quests offline'}</span>
+            </button>
+            {offlineCount > 0 && (
+              <button 
+                type="button" 
+                className="btn btn-secondary" 
+                onClick={clearSavedOfflineQuests}
+                style={{ borderColor: 'var(--color-border-medium)', color: 'var(--color-ink-muted)' }}
+                aria-label="Remove saved offline quests from this device to free storage"
+              >
+                Clear Offline Cache
+              </button>
+            )}
+          </div>
         </section>
 
         {/* Age Band Filter Bar */}
