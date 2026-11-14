@@ -37,6 +37,7 @@ export default function AboutPage() {
 
         {/* Section 1: The Product Vision */}
         <section 
+          id="pedagogy"
           className="card-story"
           style={{
             backgroundColor: 'var(--color-canvas-card)',
@@ -57,6 +58,7 @@ export default function AboutPage() {
 
         {/* Section 2: Statutory and Constitutional Alignment */}
         <section 
+          id="legal"
           className="card-story"
           style={{
             backgroundColor: 'var(--color-canvas-elevated)',
@@ -116,6 +118,7 @@ export default function AboutPage() {
 
         {/* Section 3: Digital Personal Data Protection Act 2023 Compliance */}
         <section 
+          id="privacy"
           className="card-story"
           style={{
             backgroundColor: 'var(--color-canvas-card)',
@@ -144,6 +147,7 @@ export default function AboutPage() {
 
         {/* Section 4: Creative OS Architecture */}
         <section 
+          id="architecture"
           className="card-story"
           style={{
             backgroundColor: 'var(--color-canvas-elevated)',

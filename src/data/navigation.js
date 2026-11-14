@@ -34,14 +34,14 @@ export const FOOTER_LINKS = {
   legalAndSafety: [
     { path: '/safety/get-help', label: 'Childline 1098 & ERSS 112 Help' },
     { path: '/safety', label: 'Personal Boundaries & Safety Library' },
-    { path: '/about', label: 'DPDP 2023 Child Privacy Mandate' },
-    { path: '/about', label: 'Constitutional Articles & RTE Act' },
+    { path: '/about#privacy', label: 'DPDP 2023 Child Privacy Mandate' },
+    { path: '/about#legal', label: 'Constitutional Articles & RTE Act' },
     { path: '/help', label: 'Safety Rules & Trusted Adults' }
   ],
   foundation: [
-    { path: '/about', label: 'Mission & Pedagogy' },
-    { path: '/about', label: 'Creative OS Design System' },
-    { path: '/about', label: 'Expert Validation Framework' }
+    { path: '/about#pedagogy', label: 'Mission & Pedagogy' },
+    { path: '/about#architecture', label: 'Creative OS Design System' },
+    { path: '/about#legal', label: 'Expert Validation Framework' }
   ]
 };
 
