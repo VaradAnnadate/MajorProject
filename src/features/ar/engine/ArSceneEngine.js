@@ -2,13 +2,15 @@ import * as THREE from 'three';
 
 /**
  * ArSceneEngine
- * Unified Three.js Engine powering both:
- * 1. WebXR Augmented Reality Mode (immersive-ar session on compatible mobile hardware)
- * 2. Interactive 3D Inspection Mode (accessible desktop & non-WebXR fallback)
+ * Premium Spatial Three.js Engine for RightsQuest India.
  *
- * Child Safeguarding & Privacy Guarantees:
- * - Camera feeds are processed strictly in-browser by WebXR; ZERO frames are captured or saved.
- * - Zero tracking cookies, zero external telemetry, zero child biometric data.
+ * Powers both:
+ * 1. WebXR Augmented Reality Mode (immersive-ar session on compatible mobile hardware)
+ * 2. Premium Interactive 3D Exhibition Mode (accessible universal fallback)
+ *
+ * Creative OS Governing Standards:
+ * - 44_AGENCYLIKE_UI (Spatial Persuasion Spine, Shared-Element Continuity, Physical Consequence)
+ * - DPDP Act 2023 §9 Child Safeguarding: Zero camera frames recorded, saved, or uploaded.
  */
 export class ArSceneEngine {
   constructor(canvas, options = {}) {
@@ -28,19 +30,36 @@ export class ArSceneEngine {
     this.clock = new THREE.Clock();
 
     // Scene groups
+    this.exhibitionPedestal = null;
     this.mainStageGroup = null;
-    this.currentObjectGroup = null;
+    this.currentStationGroup = null;
     this.mitraGroup = null;
-    this.realmsGroup = null;
+    this.particlesGroup = null;
     this.reticle = null;
     this.hitTestSource = null;
-    this.hitTestSourceRequested = false;
+
+    // Consequence animation states
+    this.activeSpatialEffect = null;
+    this.effectTimer = 0;
+    this.scaleTiltAngle = 0;
+    this.targetScaleTilt = 0;
+    this.gateAngle = 0;
+    this.targetGateAngle = 0;
+    this.scrollUnfurlProgress = 0;
+    this.targetScrollUnfurl = 0;
+    this.shieldDomeScale = 0;
+    this.targetShieldDomeScale = 0;
+    this.beaconPulseScale = 1;
+
+    // Mitra emotional state
+    this.mitraEmotion = 'welcome'; // 'welcome' | 'explaining' | 'thinking' | 'celebrating' | 'concerned'
+    this.mitraLanternIntensity = 1.0;
 
     // Interaction controls for 3D inspection
     this.isDragging = false;
     this.previousMousePosition = { x: 0, y: 0 };
-    this.rotationVelocity = { x: 0, y: 0.005 };
-    this.zoomLevel = 6.5;
+    this.rotationVelocity = { x: 0, y: 0.003 };
+    this.zoomLevel = 6.2;
 
     // Bind event listeners
     this.handlePointerDown = this.handlePointerDown.bind(this);
@@ -56,17 +75,17 @@ export class ArSceneEngine {
 
   init() {
     const width = this.canvas.clientWidth || window.innerWidth;
-    const height = this.canvas.clientHeight || (window.innerHeight * 0.7);
+    const height = this.canvas.clientHeight || (window.innerHeight * 0.72);
 
     // 1. Scene
     this.scene = new THREE.Scene();
 
-    // 2. Camera
-    this.camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 100);
-    this.camera.position.set(0, 0.8, this.zoomLevel);
-    this.camera.lookAt(0, 0, 0);
+    // 2. Camera with cinematic focal length
+    this.camera = new THREE.PerspectiveCamera(48, width / height, 0.1, 100);
+    this.camera.position.set(0, 1.1, this.zoomLevel);
+    this.camera.lookAt(0, 0.1, 0);
 
-    // 3. Renderer with transparent alpha and WebXR readiness
+    // 3. WebGL Renderer with WebXR capabilities
     const gl =
       this.canvas.getContext('webgl2', { antialias: true, alpha: true }) ||
       this.canvas.getContext('webgl', { antialias: true, alpha: true });
@@ -85,25 +104,35 @@ export class ArSceneEngine {
     this.renderer.setSize(width, height);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.xr.enabled = true;
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    // 4. Lighting
+    // 4. Lighting setup
     this.setupLighting();
 
-    // 5. Main Content Container
+    // 5. Architectural Exhibition Pedestal (for 3D mode)
+    this.exhibitionPedestal = this.buildPedestal();
+    this.scene.add(this.exhibitionPedestal);
+
+    // 6. Floating constitutional dust particles
+    this.particlesGroup = this.buildDustParticles();
+    this.scene.add(this.particlesGroup);
+
+    // 7. Main Stage Container
     this.mainStageGroup = new THREE.Group();
     this.scene.add(this.mainStageGroup);
 
-    // 6. Mitra 3D Mascot Companion
+    // 8. Mitra 3D Spatial Companion
     this.mitraGroup = this.buildMitraCompanion();
-    this.mitraGroup.position.set(2.8, -1.2, 0.5);
-    this.mitraGroup.scale.set(0.65, 0.65, 0.65);
+    this.mitraGroup.position.set(2.6, -0.9, 0.6);
+    this.mitraGroup.scale.set(0.68, 0.68, 0.68);
     this.scene.add(this.mitraGroup);
 
-    // 7. Reticle for WebXR surface placement
+    // 9. Reticle for WebXR surface placement
     this.reticle = this.buildReticle();
     this.scene.add(this.reticle);
 
-    // 8. Attach interaction listeners
+    // 10. Attach event listeners
     this.canvas.addEventListener('pointerdown', this.handlePointerDown);
     window.addEventListener('pointermove', this.handlePointerMove);
     window.addEventListener('pointerup', this.handlePointerUp);
@@ -111,34 +140,103 @@ export class ArSceneEngine {
     this.canvas.addEventListener('click', this.handleCanvasClick);
     window.addEventListener('resize', this.handleResize);
 
-    // Start 3D animation loop
+    // Start render loop
     this.startAnimationLoop();
   }
 
   setupLighting() {
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
-    this.scene.add(ambientLight);
+    const ambient = new THREE.AmbientLight(0xfff8ed, 1.4);
+    this.scene.add(ambient);
 
-    const keyLight = new THREE.DirectionalLight(0xfffaed, 2.0);
-    keyLight.position.set(5, 8, 5);
+    // Warm key light
+    const keyLight = new THREE.DirectionalLight(0xfffaea, 2.2);
+    keyLight.position.set(4, 7, 5);
+    keyLight.castShadow = true;
     this.scene.add(keyLight);
 
-    const saffronFillLight = new THREE.DirectionalLight(0xde7215, 1.2);
-    saffronFillLight.position.set(-6, -2, -3);
-    this.scene.add(saffronFillLight);
+    // Saffron fill light
+    const fillLight = new THREE.DirectionalLight(0xde7215, 1.2);
+    fillLight.position.set(-5, 2, -2);
+    this.scene.add(fillLight);
 
-    const peacockRimLight = new THREE.PointLight(0x1b6d80, 2.5, 20);
-    peacockRimLight.position.set(0, 4, -4);
-    this.scene.add(peacockRimLight);
+    // Peacock rim light
+    const rimLight = new THREE.PointLight(0x1b6d80, 2.5, 25);
+    rimLight.position.set(0, 4.5, -4);
+    this.scene.add(rimLight);
+  }
+
+  buildPedestal() {
+    const group = new THREE.Group();
+
+    // Marble circular stage
+    const stageMat = new THREE.MeshStandardMaterial({
+      color: 0xfdfbf7,
+      roughness: 0.35,
+      metalness: 0.1,
+    });
+
+    const trimMat = new THREE.MeshStandardMaterial({
+      color: 0xde7215,
+      roughness: 0.3,
+      metalness: 0.7,
+    });
+
+    const disc = new THREE.Mesh(new THREE.CylinderGeometry(2.8, 3.1, 0.28, 48), stageMat);
+    disc.position.y = -1.65;
+    disc.receiveShadow = true;
+    group.add(disc);
+
+    // Golden perimeter ring
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(2.85, 0.04, 12, 64), trimMat);
+    ring.rotation.x = Math.PI / 2;
+    ring.position.y = -1.51;
+    group.add(ring);
+
+    // Soft contact shadow disc
+    const shadowMat = new THREE.MeshBasicMaterial({
+      color: 0x111827,
+      transparent: true,
+      opacity: 0.18,
+    });
+    const shadowDisc = new THREE.Mesh(new THREE.CircleGeometry(3.6, 32), shadowMat);
+    shadowDisc.rotation.x = -Math.PI / 2;
+    shadowDisc.position.y = -1.79;
+    group.add(shadowDisc);
+
+    group.name = 'exhibitionPedestal';
+    return group;
+  }
+
+  buildDustParticles() {
+    const count = 45;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(count * 3);
+
+    for (let i = 0; i < count * 3; i += 3) {
+      positions[i] = (Math.random() - 0.5) * 8;
+      positions[i + 1] = (Math.random() - 0.5) * 5 + 0.5;
+      positions[i + 2] = (Math.random() - 0.5) * 6;
+    }
+
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+    const material = new THREE.PointsMaterial({
+      color: 0xffd54f,
+      size: 0.08,
+      transparent: true,
+      opacity: 0.65,
+    });
+
+    return new THREE.Points(geometry, material);
   }
 
   buildReticle() {
-    const ringGeo = new THREE.RingGeometry(0.18, 0.22, 32).rotateX(-Math.PI / 2);
+    const ringGeo = new THREE.RingGeometry(0.18, 0.23, 32).rotateX(-Math.PI / 2);
     const ringMat = new THREE.MeshBasicMaterial({
       color: 0xde7215,
       side: THREE.DoubleSide,
       transparent: true,
-      opacity: 0.85,
+      opacity: 0.9,
     });
     const reticleMesh = new THREE.Mesh(ringGeo, ringMat);
     reticleMesh.matrixAutoUpdate = false;
@@ -146,159 +244,297 @@ export class ArSceneEngine {
     return reticleMesh;
   }
 
+  // ── REFINED MITRA 3D MASCOT MODEL ──────────────────────────────────────────
+
   buildMitraCompanion() {
     const group = new THREE.Group();
 
-    // Stylized low-poly cute Sun-Fox / Lantern companion
-    const bodyMat = new THREE.MeshStandardMaterial({
-      color: 0xde7215, // Warm saffron
-      roughness: 0.4,
-      metalness: 0.1,
+    const saffronMat = new THREE.MeshStandardMaterial({
+      color: 0xde7215,
+      roughness: 0.45,
+      metalness: 0.15,
     });
 
-    const creamMat = new THREE.MeshStandardMaterial({
-      color: 0xfbf8f3,
-      roughness: 0.5,
+    const creamFurMat = new THREE.MeshStandardMaterial({
+      color: 0xfffcf5,
+      roughness: 0.55,
+      metalness: 0.05,
     });
 
     const eyeMat = new THREE.MeshBasicMaterial({ color: 0x111827 });
-    const lanternMat = new THREE.MeshStandardMaterial({
-      color: 0xffe082,
-      emissive: 0xffb300,
-      emissiveIntensity: 0.8,
+    const eyeHighlightMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const noseMat = new THREE.MeshStandardMaterial({ color: 0x27272a, roughness: 0.3 });
+
+    const lanternFrameMat = new THREE.MeshStandardMaterial({
+      color: 0xd4a017,
+      metalness: 0.85,
+      roughness: 0.2,
     });
 
-    // Body sphere
-    const body = new THREE.Mesh(new THREE.SphereGeometry(0.7, 16, 16), bodyMat);
-    body.scale.set(0.9, 1.1, 0.85);
+    const lanternCoreMat = new THREE.MeshStandardMaterial({
+      color: 0xfff3b0,
+      emissive: 0xffaa00,
+      emissiveIntensity: 1.2,
+      roughness: 0.1,
+    });
+
+    // Body
+    const body = new THREE.Mesh(new THREE.SphereGeometry(0.68, 20, 20), saffronMat);
+    body.scale.set(0.95, 1.15, 0.88);
+    body.name = 'mitraBody';
     group.add(body);
 
-    // Cream Belly patch
-    const belly = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), creamMat);
-    belly.position.set(0, -0.1, 0.35);
-    belly.scale.set(0.7, 0.8, 0.3);
+    // Chest & Belly Cream Fur Patch
+    const belly = new THREE.Mesh(new THREE.SphereGeometry(0.52, 16, 16), creamFurMat);
+    belly.position.set(0, -0.05, 0.36);
+    belly.scale.set(0.72, 0.85, 0.32);
     group.add(belly);
 
     // Head
-    const head = new THREE.Mesh(new THREE.SphereGeometry(0.55, 16, 16), bodyMat);
-    head.position.set(0, 1.05, 0.1);
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.56, 20, 20), saffronMat);
+    head.position.set(0, 1.1, 0.08);
+    head.name = 'mitraHead';
     group.add(head);
 
+    // Cheek Fluff (Left & Right)
+    const leftCheek = new THREE.Mesh(new THREE.ConeGeometry(0.25, 0.4, 8), creamFurMat);
+    leftCheek.position.set(-0.46, 0.98, 0.15);
+    leftCheek.rotation.z = 1.1;
+    group.add(leftCheek);
+
+    const rightCheek = new THREE.Mesh(new THREE.ConeGeometry(0.25, 0.4, 8), creamFurMat);
+    rightCheek.position.set(0.46, 0.98, 0.15);
+    rightCheek.rotation.z = -1.1;
+    group.add(rightCheek);
+
     // Muzzle
-    const muzzle = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.35, 12), creamMat);
+    const muzzle = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.38, 12), creamFurMat);
     muzzle.rotation.x = Math.PI / 2;
-    muzzle.position.set(0, 0.95, 0.55);
+    muzzle.position.set(0, 0.98, 0.58);
     group.add(muzzle);
 
-    // Cute Ears
-    const leftEar = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.4, 8), bodyMat);
-    leftEar.position.set(-0.35, 1.55, 0.05);
-    leftEar.rotation.z = 0.25;
-    group.add(leftEar);
+    // Nose tip
+    const nose = new THREE.Mesh(new THREE.SphereGeometry(0.065, 8, 8), noseMat);
+    nose.position.set(0, 1.02, 0.77);
+    group.add(nose);
 
-    const rightEar = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.4, 8), bodyMat);
-    rightEar.position.set(0.35, 1.55, 0.05);
-    rightEar.rotation.z = -0.25;
-    group.add(rightEar);
+    // Ears with Inner Cream Layer
+    const leftEarOuter = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.48, 8), saffronMat);
+    leftEarOuter.position.set(-0.35, 1.62, 0.05);
+    leftEarOuter.rotation.z = 0.28;
+    leftEarOuter.name = 'leftEar';
+    group.add(leftEarOuter);
 
-    // Eyes
-    const leftEye = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), eyeMat);
-    leftEye.position.set(-0.16, 1.1, 0.55);
+    const leftEarInner = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.36, 8), creamFurMat);
+    leftEarInner.position.set(-0.33, 1.62, 0.11);
+    leftEarInner.rotation.z = 0.28;
+    group.add(leftEarInner);
+
+    const rightEarOuter = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.48, 8), saffronMat);
+    rightEarOuter.position.set(0.35, 1.62, 0.05);
+    rightEarOuter.rotation.z = -0.28;
+    rightEarOuter.name = 'rightEar';
+    group.add(rightEarOuter);
+
+    const rightEarInner = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.36, 8), creamFurMat);
+    rightEarInner.position.set(0.33, 1.62, 0.11);
+    rightEarInner.rotation.z = -0.28;
+    group.add(rightEarInner);
+
+    // Expressive Almond Eyes
+    const leftEye = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 12), eyeMat);
+    leftEye.position.set(-0.17, 1.15, 0.58);
     group.add(leftEye);
 
-    const rightEye = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), eyeMat);
-    rightEye.position.set(0.16, 1.1, 0.55);
+    const leftHighlight = new THREE.Mesh(new THREE.SphereGeometry(0.024, 6, 6), eyeHighlightMat);
+    leftHighlight.position.set(-0.15, 1.18, 0.63);
+    group.add(leftHighlight);
+
+    const rightEye = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 12), eyeMat);
+    rightEye.position.set(0.17, 1.15, 0.58);
     group.add(rightEye);
 
-    // Floating Golden Wisdom Lantern (Mitra's Beacon)
-    const lantern = new THREE.Mesh(new THREE.OctahedronGeometry(0.22, 1), lanternMat);
-    lantern.position.set(0.75, 0.6, 0.3);
-    lantern.name = 'mitraLantern';
-    group.add(lantern);
+    const rightHighlight = new THREE.Mesh(new THREE.SphereGeometry(0.024, 6, 6), eyeHighlightMat);
+    rightHighlight.position.set(0.19, 1.18, 0.63);
+    group.add(rightHighlight);
+
+    // Bushy Fox Tail with Ivory Tip
+    const tailGroup = new THREE.Group();
+    tailGroup.position.set(0, -0.35, -0.45);
+
+    const tailBase = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.3, 0.7, 12), saffronMat);
+    tailBase.rotation.x = -0.7;
+    tailBase.position.set(0, 0.2, -0.2);
+    tailGroup.add(tailBase);
+
+    const tailPlume = new THREE.Mesh(new THREE.SphereGeometry(0.32, 12, 12), saffronMat);
+    tailPlume.scale.set(0.9, 1.3, 0.9);
+    tailPlume.position.set(0, 0.55, -0.45);
+    tailGroup.add(tailPlume);
+
+    const tailTip = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.42, 12), creamFurMat);
+    tailTip.position.set(0, 0.95, -0.55);
+    tailTip.rotation.x = 0.2;
+    tailGroup.add(tailTip);
+
+    tailGroup.name = 'mitraTail';
+    group.add(tailGroup);
+
+    // Floating Golden Wisdom Lantern (Mitra's Trademark Light)
+    const lanternGroup = new THREE.Group();
+    lanternGroup.position.set(0.85, 0.7, 0.35);
+
+    const lanternCore = new THREE.Mesh(new THREE.OctahedronGeometry(0.24, 1), lanternCoreMat);
+    lanternCore.name = 'lanternCore';
+    lanternGroup.add(lanternCore);
+
+    const lanternRing1 = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.025, 8, 24), lanternFrameMat);
+    lanternRing1.name = 'lanternRing1';
+    lanternGroup.add(lanternRing1);
+
+    const lanternRing2 = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.02, 8, 24), lanternFrameMat);
+    lanternRing2.rotation.x = Math.PI / 2;
+    lanternRing2.name = 'lanternRing2';
+    lanternGroup.add(lanternRing2);
+
+    lanternGroup.name = 'mitraLantern';
+    group.add(lanternGroup);
 
     group.name = 'mitraCompanion';
     return group;
   }
 
-  loadConstitutionalObject(objectData) {
-    if (!objectData) return;
+  setMitraEmotion(emotion) {
+    this.mitraEmotion = emotion;
+    if (!this.mitraGroup) return;
 
-    // Clear previous object
-    if (this.currentObjectGroup) {
-      this.mainStageGroup.remove(this.currentObjectGroup);
-      this.disposeObject(this.currentObjectGroup);
+    const lanternCore = this.mitraGroup.getObjectByName('lanternCore');
+    if (!lanternCore) return;
+
+    switch (emotion) {
+      case 'celebrating':
+        lanternCore.material.emissive.setHex(0x34d399); // Brilliant emerald celebration
+        lanternCore.material.emissiveIntensity = 2.0;
+        break;
+      case 'thinking':
+        lanternCore.material.emissive.setHex(0x60a5fa); // Thoughtful sky blue
+        lanternCore.material.emissiveIntensity = 1.0;
+        break;
+      case 'concerned':
+        lanternCore.material.emissive.setHex(0xfb923c); // Warm protective amber
+        lanternCore.material.emissiveIntensity = 1.3;
+        break;
+      default:
+        lanternCore.material.emissive.setHex(0xffaa00); // Golden sunshine
+        lanternCore.material.emissiveIntensity = 1.2;
+    }
+  }
+
+  // ── LOAD CONSTITUTIONAL STATION ───────────────────────────────────────────
+
+  loadConstitutionalStation(stationData) {
+    if (!stationData) return;
+
+    if (this.currentStationGroup) {
+      this.mainStageGroup.remove(this.currentStationGroup);
+      this.disposeObject(this.currentStationGroup);
     }
 
     const newGroup = new THREE.Group();
 
-    switch (objectData.geometryType) {
+    switch (stationData.geometryType) {
       case 'chakra':
-        this.buildAshokaChakraGeometry(newGroup, objectData);
+        this.buildAshokaChakraGeometry(newGroup, stationData);
         break;
       case 'pillar':
-        this.buildPillarGeometry(newGroup, objectData);
+        this.buildEqualityBalanceGeometry(newGroup, stationData);
         break;
       case 'beacon':
-        this.buildBeaconGeometry(newGroup, objectData);
+        this.buildVoiceBeaconGeometry(newGroup, stationData);
         break;
       case 'shield':
-        this.buildShieldGeometry(newGroup, objectData);
+        this.buildSafetyShieldGeometry(newGroup, stationData);
         break;
       case 'scroll':
-        this.buildScrollGeometry(newGroup, objectData);
+        this.buildEducationScrollGeometry(newGroup, stationData);
         break;
       case 'crest':
-        this.buildCrestGeometry(newGroup, objectData);
+        this.buildRemediesCrestGeometry(newGroup, stationData);
         break;
       default:
-        this.buildPillarGeometry(newGroup, objectData);
+        this.buildAshokaChakraGeometry(newGroup, stationData);
     }
 
-    // Attach metadata for raycaster picking
-    newGroup.userData = { ...objectData };
-    this.currentObjectGroup = newGroup;
+    newGroup.userData = { ...stationData };
+    this.currentStationGroup = newGroup;
     this.mainStageGroup.add(newGroup);
 
-    // If in 3D fallback mode, position at center
+    // Reset spatial states
+    this.activeSpatialEffect = null;
+    this.scaleTiltAngle = 0;
+    this.targetScaleTilt = 0;
+    this.gateAngle = 0;
+    this.targetGateAngle = 0;
+    this.scrollUnfurlProgress = 0;
+    this.targetScrollUnfurl = 0;
+    this.shieldDomeScale = 0;
+    this.targetShieldDomeScale = 0;
+
     if (!this.isArActive) {
       this.mainStageGroup.position.set(0, 0, 0);
     }
   }
 
+  // Backwards compatibility alias
+  loadConstitutionalObject(data) {
+    this.loadConstitutionalStation(data);
+  }
+
+  // ── 3D MODEL BUILDERS ─────────────────────────────────────────────────────
+
   buildAshokaChakraGeometry(group, data) {
     const goldMat = new THREE.MeshStandardMaterial({
       color: 0xde7215,
-      metalness: 0.85,
-      roughness: 0.25,
+      metalness: 0.88,
+      roughness: 0.22,
       emissive: 0x3d1c00,
-      emissiveIntensity: 0.2,
+      emissiveIntensity: 0.25,
     });
 
     const navyHubMat = new THREE.MeshStandardMaterial({
       color: 0x1b6d80,
-      metalness: 0.6,
-      roughness: 0.3,
+      metalness: 0.65,
+      roughness: 0.25,
     });
 
-    const outerRadius = 2.2;
-    const hubRadius = 0.55;
+    const outerRadius = 2.25;
+    const hubRadius = 0.58;
 
     // Outer Torus Ring
-    const outerRing = new THREE.Mesh(new THREE.TorusGeometry(outerRadius, 0.12, 16, 64), goldMat);
+    const outerRing = new THREE.Mesh(new THREE.TorusGeometry(outerRadius, 0.13, 16, 64), goldMat);
     group.add(outerRing);
 
-    // Secondary concentric inner rim
-    const innerRim = new THREE.Mesh(new THREE.TorusGeometry(outerRadius - 0.25, 0.04, 12, 64), goldMat);
+    // Inner Concentric Rim
+    const innerRim = new THREE.Mesh(new THREE.TorusGeometry(outerRadius - 0.26, 0.045, 12, 64), goldMat);
     group.add(innerRim);
 
-    // Central Navy Hub
-    const centralHub = new THREE.Mesh(new THREE.CylinderGeometry(hubRadius, hubRadius, 0.25, 32), navyHubMat);
+    // Central Navy Hub with 24 socket notches
+    const centralHub = new THREE.Mesh(new THREE.CylinderGeometry(hubRadius, hubRadius, 0.26, 32), navyHubMat);
     centralHub.rotation.x = Math.PI / 2;
     group.add(centralHub);
 
-    // 24 Radial Spokes
+    // Central Emblem Jewel
+    const jewel = new THREE.Mesh(
+      new THREE.OctahedronGeometry(0.24, 1),
+      new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffe082, emissiveIntensity: 0.8 })
+    );
+    jewel.position.z = 0.15;
+    group.add(jewel);
+
+    // Exactly 24 Spokes of the Chakra
     const spokeLength = outerRadius - 0.28 - hubRadius;
-    const spokeGeo = new THREE.CylinderGeometry(0.025, 0.05, spokeLength, 8);
+    const spokeGeo = new THREE.CylinderGeometry(0.026, 0.052, spokeLength, 8);
+    const spokesGroup = new THREE.Group();
 
     for (let i = 0; i < 24; i++) {
       const angle = (i * Math.PI * 2) / 24;
@@ -309,164 +545,300 @@ export class ArSceneEngine {
         0
       );
       spoke.rotation.z = angle - Math.PI / 2;
-      group.add(spoke);
+      spoke.userData = { spokeIndex: i + 1, spokeName: `Spoke ${i + 1}` };
+      spokesGroup.add(spoke);
     }
+    spokesGroup.name = 'chakraSpokesGroup';
+    group.add(spokesGroup);
 
     // 4 Cardinal Medallions of Rights (Survival, Development, Protection, Participation)
     for (let m = 0; m < 4; m++) {
       const angle = (m * Math.PI) / 2;
-      const med = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.16, 16), goldMat);
+      const med = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.14, 16), goldMat);
       med.rotation.x = Math.PI / 2;
-      med.position.set(Math.cos(angle) * outerRadius, Math.sin(angle) * outerRadius, 0.05);
+      med.position.set(Math.cos(angle) * outerRadius, Math.sin(angle) * outerRadius, 0.06);
       group.add(med);
     }
 
     group.name = 'ashokaChakraModel';
   }
 
-  buildPillarGeometry(group, data) {
-    const pillarMat = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(data.color || 0xd4a017),
-      metalness: 0.5,
-      roughness: 0.3,
+  buildEqualityBalanceGeometry(group, data) {
+    const brassMat = new THREE.MeshStandardMaterial({
+      color: 0xd4a017,
+      metalness: 0.75,
+      roughness: 0.28,
     });
 
-    const crystalMat = new THREE.MeshPhysicalMaterial({
+    const diamondMat = new THREE.MeshPhysicalMaterial({
       color: 0xffffff,
-      transmission: 0.7,
+      transmission: 0.85,
       opacity: 1,
       transparent: true,
-      roughness: 0.15,
-      ior: 1.5,
+      roughness: 0.1,
+      ior: 1.6,
     });
 
-    // Pedestal
-    const base = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.35, 1.4), pillarMat);
-    base.position.y = -1.6;
-    group.add(base);
+    // Central Pillar Stand
+    const stand = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.35, 3.2, 16), brassMat);
+    stand.position.y = -0.2;
+    group.add(stand);
 
-    // Two balanced crystal pillars
-    const leftPillar = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 2.4, 16), pillarMat);
-    leftPillar.position.set(-0.8, -0.25, 0);
-    group.add(leftPillar);
+    // Horizontal Balance Beam (rotates on z axis)
+    const beamGroup = new THREE.Group();
+    beamGroup.position.set(0, 1.4, 0);
 
-    const rightPillar = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 2.4, 16), pillarMat);
-    rightPillar.position.set(0.8, -0.25, 0);
-    group.add(rightPillar);
+    const beamBar = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.12, 0.15), brassMat);
+    beamGroup.add(beamBar);
 
-    // Horizontal Balance Beam (Article 14)
-    const beam = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.12, 0.18), pillarMat);
-    beam.position.y = 1.0;
-    group.add(beam);
+    // Center Diamond of Justice
+    const centerDiamond = new THREE.Mesh(new THREE.OctahedronGeometry(0.38, 0), diamondMat);
+    centerDiamond.name = 'equalityDiamond';
+    beamGroup.add(centerDiamond);
 
-    // Center Floating Diamond of Justice
-    const diamond = new THREE.Mesh(new THREE.OctahedronGeometry(0.45, 0), crystalMat);
-    diamond.position.y = 1.5;
-    group.add(diamond);
+    // Left Pan Suspension Rod & Bowl
+    const leftPanGroup = new THREE.Group();
+    leftPanGroup.position.set(-1.5, -0.9, 0);
 
-    group.name = 'equalityPillarModel';
+    const leftRod = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.6, 8), brassMat);
+    leftRod.position.y = 0.8;
+    leftPanGroup.add(leftRod);
+
+    const leftBowl = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.3, 0.2, 24, 1, false, 0, Math.PI * 2), brassMat);
+    leftPanGroup.add(leftBowl);
+    leftPanGroup.name = 'leftPanGroup';
+    beamGroup.add(leftPanGroup);
+
+    // Right Pan Suspension Rod & Bowl
+    const rightPanGroup = new THREE.Group();
+    rightPanGroup.position.set(1.5, -0.9, 0);
+
+    const rightRod = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.6, 8), brassMat);
+    rightRod.position.y = 0.8;
+    rightPanGroup.add(rightRod);
+
+    const rightBowl = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.3, 0.2, 24, 1, false, 0, Math.PI * 2), brassMat);
+    rightPanGroup.add(rightBowl);
+    rightPanGroup.name = 'rightPanGroup';
+    beamGroup.add(rightPanGroup);
+
+    beamGroup.name = 'balanceBeamGroup';
+    group.add(beamGroup);
+
+    group.name = 'equalityBalanceModel';
   }
 
-  buildBeaconGeometry(group, data) {
-    const beaconMat = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(data.color || 0x1b6d80),
-      metalness: 0.7,
-      roughness: 0.2,
+  buildVoiceBeaconGeometry(group, data) {
+    const tealMat = new THREE.MeshStandardMaterial({
+      color: 0x1b6d80,
+      metalness: 0.65,
+      roughness: 0.3,
     });
 
     const flameMat = new THREE.MeshStandardMaterial({
       color: 0xffffff,
-      emissive: new THREE.Color(data.color || 0x1b6d80),
-      emissiveIntensity: 1.2,
+      emissive: 0x38bdf8,
+      emissiveIntensity: 1.5,
     });
 
-    const tower = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.7, 2.6, 6), beaconMat);
-    tower.position.y = -0.3;
-    group.add(tower);
+    // Bal Sansad Assembly Column
+    const column = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.8, 2.6, 8), tealMat);
+    column.position.y = -0.3;
+    group.add(column);
 
-    const crown = new THREE.Mesh(new THREE.TorusGeometry(0.65, 0.1, 8, 24), beaconMat);
+    // Podium Crown
+    const crown = new THREE.Mesh(new THREE.TorusGeometry(0.8, 0.12, 12, 32), tealMat);
     crown.rotation.x = Math.PI / 2;
     crown.position.y = 1.0;
     group.add(crown);
 
-    const flame = new THREE.Mesh(new THREE.ConeGeometry(0.35, 0.9, 16), flameMat);
-    flame.position.y = 1.6;
+    // Civic Voice Flame
+    const flame = new THREE.Mesh(new THREE.ConeGeometry(0.42, 1.1, 16), flameMat);
+    flame.position.y = 1.65;
+    flame.name = 'beaconFlame';
     group.add(flame);
+
+    // Concentric Soundwave Rings
+    const soundwaveGroup = new THREE.Group();
+    soundwaveGroup.position.y = 1.65;
+
+    for (let r = 1; r <= 3; r++) {
+      const wave = new THREE.Mesh(
+        new THREE.TorusGeometry(r * 0.75, 0.035, 8, 32),
+        new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.7 })
+      );
+      wave.rotation.x = Math.PI / 2;
+      wave.name = `soundwaveRing${r}`;
+      soundwaveGroup.add(wave);
+    }
+
+    soundwaveGroup.name = 'soundwaveGroup';
+    group.add(soundwaveGroup);
 
     group.name = 'voiceBeaconModel';
   }
 
-  buildShieldGeometry(group, data) {
+  buildSafetyShieldGeometry(group, data) {
     const shieldMat = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(data.color || 0xd04f36),
-      metalness: 0.7,
-      roughness: 0.3,
+      color: 0xd04f36,
+      metalness: 0.72,
+      roughness: 0.28,
     });
 
-    const goldTrim = new THREE.MeshStandardMaterial({
+    const goldMat = new THREE.MeshStandardMaterial({
       color: 0xffd54f,
-      metalness: 0.8,
+      metalness: 0.85,
       roughness: 0.2,
     });
 
-    // Curved shield face
-    const shield = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 0.8, 2.4, 16, 1, false, 0, Math.PI), shieldMat);
+    // Curved Protective Shield
+    const shield = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 0.9, 2.6, 16, 1, false, 0, Math.PI), shieldMat);
     shield.rotation.y = -Math.PI / 2;
-    shield.scale.set(0.35, 1, 1);
+    shield.scale.set(0.38, 1, 1);
     group.add(shield);
 
-    // Emblem in center (Helpline 1098 Beacon)
-    const emblem = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.08, 12, 32), goldTrim);
-    emblem.position.set(0, 0.2, 0.35);
+    // 1098 Beacon Ring in Center
+    const emblem = new THREE.Mesh(new THREE.TorusGeometry(0.45, 0.09, 12, 32), goldMat);
+    emblem.position.set(0, 0.2, 0.38);
+    emblem.name = 'shield1098Beacon';
     group.add(emblem);
+
+    // Protective Translucent Sanctuary Forcefield Dome
+    const domeMat = new THREE.MeshPhysicalMaterial({
+      color: 0x22c55e,
+      transmission: 0.7,
+      transparent: true,
+      opacity: 0.45,
+      roughness: 0.15,
+    });
+    const sanctuaryDome = new THREE.Mesh(new THREE.SphereGeometry(2.6, 24, 24, 0, Math.PI * 2, 0, Math.PI / 2), domeMat);
+    sanctuaryDome.position.y = -1.2;
+    sanctuaryDome.scale.set(0.001, 0.001, 0.001);
+    sanctuaryDome.name = 'sanctuaryDome';
+    group.add(sanctuaryDome);
 
     group.name = 'safetyShieldModel';
   }
 
-  buildScrollGeometry(group, data) {
-    const scrollMat = new THREE.MeshStandardMaterial({
-      color: 0xfffaea,
-      roughness: 0.6,
-    });
+  buildEducationScrollGeometry(group, data) {
+    const woodMat = new THREE.MeshStandardMaterial({ color: 0x2a7a4c, roughness: 0.4, metalness: 0.3 });
+    const parchmentMat = new THREE.MeshStandardMaterial({ color: 0xfffcf0, roughness: 0.6 });
 
-    const woodMat = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(data.color || 0x2a7a4c),
-      metalness: 0.3,
-      roughness: 0.4,
-    });
+    // Schoolhouse Portal Frame
+    const leftPillar = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 2.8, 16), woodMat);
+    leftPillar.position.set(-1.4, 0, 0);
+    group.add(leftPillar);
 
-    // Parchment curve
-    const parchment = new THREE.Mesh(new THREE.BoxGeometry(2.0, 2.4, 0.08), scrollMat);
+    const rightPillar = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 2.8, 16), woodMat);
+    rightPillar.position.set(1.4, 0, 0);
+    group.add(rightPillar);
+
+    const arch = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.24, 0.3), woodMat);
+    arch.position.set(0, 1.45, 0);
+    group.add(arch);
+
+    // Two Wooden Gates (swing open when RTE choice is made)
+    const leftGate = new THREE.Mesh(new THREE.BoxGeometry(1.3, 2.4, 0.06), woodMat);
+    leftGate.position.set(-0.65, 0.1, 0);
+    leftGate.name = 'leftSchoolGate';
+    group.add(leftGate);
+
+    const rightGate = new THREE.Mesh(new THREE.BoxGeometry(1.3, 2.4, 0.06), woodMat);
+    rightGate.position.set(0.65, 0.1, 0);
+    rightGate.name = 'rightSchoolGate';
+    group.add(rightGate);
+
+    // Unfurling Article 21A Golden Parchment
+    const parchment = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.1, 0.08), parchmentMat);
+    parchment.position.set(0, 0.2, 0.2);
+    parchment.name = 'article21AParchment';
     group.add(parchment);
-
-    // Upper and lower scroll handles
-    const topHandle = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 2.4, 16), woodMat);
-    topHandle.rotation.z = Math.PI / 2;
-    topHandle.position.y = 1.25;
-    group.add(topHandle);
-
-    const bottomHandle = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 2.4, 16), woodMat);
-    bottomHandle.rotation.z = Math.PI / 2;
-    bottomHandle.position.y = -1.25;
-    group.add(bottomHandle);
 
     group.name = 'educationScrollModel';
   }
 
-  buildCrestGeometry(group, data) {
-    const crestMat = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(data.color || 0x3b5998),
-      metalness: 0.8,
-      roughness: 0.2,
-    });
+  buildRemediesCrestGeometry(group, data) {
+    const crestMat = new THREE.MeshStandardMaterial({ color: 0x3b5998, metalness: 0.85, roughness: 0.2 });
+    const rayMat = new THREE.MeshBasicMaterial({ color: 0x60a5fa, transparent: true, opacity: 0.75 });
 
-    const centerPillar = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.5, 2.8, 8), crestMat);
-    group.add(centerPillar);
+    // Octagonal Pillar of Constitutional Justice
+    const pillar = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.55, 3.0, 8), crestMat);
+    group.add(pillar);
 
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(1.6, 0.08, 12, 32), crestMat);
-    group.add(ring);
+    // Apex Diamond Seal
+    const apex = new THREE.Mesh(
+      new THREE.OctahedronGeometry(0.5, 0),
+      new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x60a5fa, emissiveIntensity: 1.5 })
+    );
+    apex.position.y = 1.8;
+    apex.name = 'remedyApex';
+    group.add(apex);
 
-    group.name = 'remedyCrestModel';
+    // 5 Radial Crystal Rays (the 5 Constitutional Writs)
+    const raysGroup = new THREE.Group();
+    for (let r = 0; r < 5; r++) {
+      const angle = (r * Math.PI * 2) / 5;
+      const ray = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.2, 8), rayMat);
+      ray.position.set(Math.cos(angle) * 1.1, 0.8, Math.sin(angle) * 1.1);
+      ray.rotation.z = Math.PI / 4;
+      ray.rotation.y = angle;
+      raysGroup.add(ray);
+    }
+    raysGroup.name = 'writsRaysGroup';
+    group.add(raysGroup);
+
+    group.name = 'remediesCrestModel';
+  }
+
+  // ── TRIGGER SPATIAL CONSEQUENCE ANIMATIONS ────────────────────────────────
+
+  triggerSpatialEffect(effectName) {
+    this.activeSpatialEffect = effectName;
+    this.effectTimer = 0;
+
+    switch (effectName) {
+      case 'scale-balanced':
+        this.targetScaleTilt = 0;
+        this.setMitraEmotion('celebrating');
+        break;
+      case 'scale-tilted':
+        this.targetScaleTilt = 0.42;
+        this.setMitraEmotion('concerned');
+        break;
+      case 'beacon-pulse':
+        this.beaconPulseScale = 1.0;
+        this.setMitraEmotion('celebrating');
+        break;
+      case 'beacon-quench':
+        this.setMitraEmotion('thinking');
+        break;
+      case 'shield-expand':
+        this.targetShieldDomeScale = 1.0;
+        this.setMitraEmotion('celebrating');
+        break;
+      case 'shield-shatter':
+        this.targetShieldDomeScale = 0.001;
+        this.setMitraEmotion('concerned');
+        break;
+      case 'scroll-unfurl':
+        this.targetGateAngle = 1.45;
+        this.targetScrollUnfurl = 2.4;
+        this.setMitraEmotion('celebrating');
+        break;
+      case 'scroll-roll-up':
+        this.targetGateAngle = 0;
+        this.targetScrollUnfurl = 0.1;
+        this.setMitraEmotion('concerned');
+        break;
+      case 'remedy-prisms-fire':
+        this.setMitraEmotion('celebrating');
+        break;
+      case 'chakra-glow-full':
+        this.setMitraEmotion('celebrating');
+        break;
+      default:
+        this.setMitraEmotion('explaining');
+    }
   }
 
   // ── WEBXR AUGMENTED REALITY LIFECYCLE ──────────────────────────────────────
@@ -493,24 +865,26 @@ export class ArSceneEngine {
     this.isPlacedInAr = false;
     this.renderer.xr.setSession(session);
 
-    // Reposition objects for real-world meters
-    this.mainStageGroup.scale.set(0.3, 0.3, 0.3);
-    this.mainStageGroup.position.set(0, 0, -1.2);
-    this.mitraGroup.scale.set(0.25, 0.25, 0.25);
-    this.mitraGroup.position.set(0.45, -0.2, -1.1);
+    // Hide the virtual pedestal so real physical floor/table is the surface
+    if (this.exhibitionPedestal) {
+      this.exhibitionPedestal.visible = false;
+    }
 
-    // Request XR reference space
+    // Scale to real-world meters
+    this.mainStageGroup.scale.set(0.32, 0.32, 0.32);
+    this.mainStageGroup.position.set(0, 0, -1.2);
+    this.mitraGroup.scale.set(0.24, 0.24, 0.24);
+    this.mitraGroup.position.set(0.42, -0.2, -1.1);
+
     const viewerSpace = await session.requestReferenceSpace('viewer');
     const localSpace = await session.requestReferenceSpace('local');
 
     try {
       this.hitTestSource = await session.requestHitTestSource({ space: viewerSpace });
     } catch {
-      // Hit-test unavailable; default to fixed distance floating
       this.hitTestSource = null;
     }
 
-    // Session event handlers
     session.addEventListener('select', this.handleSelect);
     session.addEventListener('end', () => {
       this.isArActive = false;
@@ -519,21 +893,23 @@ export class ArSceneEngine {
       this.hitTestSource = null;
       this.reticle.visible = false;
 
-      // Reset scale for 3D inspection
+      if (this.exhibitionPedestal) {
+        this.exhibitionPedestal.visible = true;
+      }
+
       this.mainStageGroup.scale.set(1, 1, 1);
       this.mainStageGroup.position.set(0, 0, 0);
-      this.mitraGroup.scale.set(0.65, 0.65, 0.65);
-      this.mitraGroup.position.set(2.8, -1.2, 0.5);
+      this.mitraGroup.scale.set(0.68, 0.68, 0.68);
+      this.mitraGroup.position.set(2.6, -0.9, 0.6);
 
       if (this.onArSessionEnd) this.onArSessionEnd();
       this.startAnimationLoop();
     });
 
     if (this.onPlacementStatus) {
-      this.onPlacementStatus('Scan your room surface. Tap screen to anchor constitutional object.');
+      this.onPlacementStatus('Scan your room surface. Tap screen to anchor constitutional station.');
     }
 
-    // AR render loop
     this.renderer.setAnimationLoop((timestamp, frame) => {
       this.renderArFrame(timestamp, frame, localSpace);
     });
@@ -546,12 +922,12 @@ export class ArSceneEngine {
       this.mainStageGroup.position.setFromMatrixPosition(this.reticle.matrix);
       this.mitraGroup.position.set(
         this.mainStageGroup.position.x + 0.35,
-        this.mainStageGroup.position.y + 0.1,
+        this.mainStageGroup.position.y + 0.08,
         this.mainStageGroup.position.z + 0.1
       );
       this.isPlacedInAr = true;
       if (this.onPlacementStatus) {
-        this.onPlacementStatus('Object anchored! Tap the object to explore fundamental rights.');
+        this.onPlacementStatus('Station anchored! Tap 3D elements to explore constitutional rights.');
       }
     }
   }
@@ -571,22 +947,7 @@ export class ArSceneEngine {
       this.reticle.visible = false;
     }
 
-    // Subtle gentle floating hover animation for Mitra
-    const elapsed = this.clock.getElapsedTime();
-    if (this.mitraGroup) {
-      this.mitraGroup.position.y += Math.sin(elapsed * 2.5) * 0.0015;
-      const lantern = this.mitraGroup.getObjectByName('mitraLantern');
-      if (lantern) {
-        lantern.rotation.y = elapsed * 1.5;
-        lantern.position.y = 0.6 + Math.sin(elapsed * 3) * 0.05;
-      }
-    }
-
-    // Slow rotation of selected learning object
-    if (this.currentObjectGroup) {
-      this.currentObjectGroup.rotation.y += 0.006;
-    }
-
+    this.updateSpatialAnimations();
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -605,30 +966,95 @@ export class ArSceneEngine {
       if (this.isArActive) return;
       this.animationFrameId = requestAnimationFrame(animate);
 
-      const elapsed = this.clock.getElapsedTime();
-
       // Inertial rotation
-      if (!this.isDragging && this.currentObjectGroup) {
-        this.currentObjectGroup.rotation.y += this.rotationVelocity.y;
-        this.currentObjectGroup.rotation.x += this.rotationVelocity.x;
+      if (!this.isDragging && this.currentStationGroup) {
+        this.currentStationGroup.rotation.y += this.rotationVelocity.y;
+        this.currentStationGroup.rotation.x += this.rotationVelocity.x;
         this.rotationVelocity.x *= 0.95;
-        this.rotationVelocity.y = this.rotationVelocity.y * 0.95 + 0.003 * 0.05;
+        this.rotationVelocity.y = this.rotationVelocity.y * 0.95 + 0.002 * 0.05;
       }
 
-      // Mitra idle floating
-      if (this.mitraGroup) {
-        this.mitraGroup.position.y = -1.2 + Math.sin(elapsed * 2.0) * 0.12;
-        const lantern = this.mitraGroup.getObjectByName('mitraLantern');
-        if (lantern) {
-          lantern.rotation.y = elapsed * 2.0;
-          lantern.rotation.x = Math.sin(elapsed) * 0.2;
-        }
-      }
-
+      this.updateSpatialAnimations();
       this.renderer.render(this.scene, this.camera);
     };
 
     animate();
+  }
+
+  updateSpatialAnimations() {
+    const elapsed = this.clock.getElapsedTime();
+
+    // 1. Mitra organic idle breathing & tail wag
+    if (this.mitraGroup) {
+      this.mitraGroup.position.y += Math.sin(elapsed * 2.2) * 0.0018;
+
+      const tail = this.mitraGroup.getObjectByName('mitraTail');
+      if (tail) {
+        tail.rotation.z = Math.sin(elapsed * 3.5) * 0.15;
+      }
+
+      const lantern = this.mitraGroup.getObjectByName('mitraLantern');
+      if (lantern) {
+        lantern.position.y = 0.7 + Math.sin(elapsed * 2.8) * 0.04;
+        const r1 = lantern.getObjectByName('lanternRing1');
+        const r2 = lantern.getObjectByName('lanternRing2');
+        if (r1) r1.rotation.y = elapsed * 1.5;
+        if (r2) r2.rotation.z = elapsed * 1.2;
+      }
+    }
+
+    // 2. Dust particles floating
+    if (this.particlesGroup) {
+      this.particlesGroup.rotation.y = elapsed * 0.03;
+    }
+
+    // 3. Equality Balance Scale Animation
+    if (this.currentStationGroup && this.currentStationGroup.name === 'equalityBalanceModel') {
+      const beamGroup = this.currentStationGroup.getObjectByName('balanceBeamGroup');
+      if (beamGroup) {
+        this.scaleTiltAngle += (this.targetScaleTilt - this.scaleTiltAngle) * 0.08;
+        beamGroup.rotation.z = this.scaleTiltAngle;
+
+        // Counter-rotate pans so bowls stay upright
+        const leftPan = beamGroup.getObjectByName('leftPanGroup');
+        const rightPan = beamGroup.getObjectByName('rightPanGroup');
+        if (leftPan) leftPan.rotation.z = -this.scaleTiltAngle;
+        if (rightPan) rightPan.rotation.z = -this.scaleTiltAngle;
+      }
+    }
+
+    // 4. Voice Beacon Soundwave expansion
+    if (this.currentStationGroup && this.currentStationGroup.name === 'voiceBeaconModel') {
+      const waves = this.currentStationGroup.getObjectByName('soundwaveGroup');
+      if (waves && this.activeSpatialEffect === 'beacon-pulse') {
+        const pulse = 1 + (Math.sin(elapsed * 4) * 0.2 + 0.2);
+        waves.scale.set(pulse, pulse, pulse);
+      }
+    }
+
+    // 5. Safety Shield Sanctuary Dome Expansion
+    if (this.currentStationGroup && this.currentStationGroup.name === 'safetyShieldModel') {
+      const dome = this.currentStationGroup.getObjectByName('sanctuaryDome');
+      if (dome) {
+        this.shieldDomeScale += (this.targetShieldDomeScale - this.shieldDomeScale) * 0.08;
+        const s = Math.max(0.001, this.shieldDomeScale);
+        dome.scale.set(s, s, s);
+      }
+    }
+
+    // 6. Education Schoolhouse Gates & Scroll Unfurl
+    if (this.currentStationGroup && this.currentStationGroup.name === 'educationScrollModel') {
+      const leftGate = this.currentStationGroup.getObjectByName('leftSchoolGate');
+      const rightGate = this.currentStationGroup.getObjectByName('rightSchoolGate');
+      const parchment = this.currentStationGroup.getObjectByName('article21AParchment');
+
+      this.gateAngle += (this.targetGateAngle - this.gateAngle) * 0.08;
+      this.scrollUnfurlProgress += (this.targetScrollUnfurl - this.scrollUnfurlProgress) * 0.08;
+
+      if (leftGate) leftGate.rotation.y = -this.gateAngle;
+      if (rightGate) rightGate.rotation.y = this.gateAngle;
+      if (parchment) parchment.scale.y = Math.max(0.05, this.scrollUnfurlProgress);
+    }
   }
 
   // ── MOUSE / TOUCH INTERACTION CONTROLS ─────────────────────────────────────
@@ -640,13 +1066,13 @@ export class ArSceneEngine {
   }
 
   handlePointerMove(e) {
-    if (!this.isDragging || this.isArActive || !this.currentObjectGroup) return;
+    if (!this.isDragging || this.isArActive || !this.currentStationGroup) return;
 
     const deltaX = e.clientX - this.previousMousePosition.x;
     const deltaY = e.clientY - this.previousMousePosition.y;
 
-    this.currentObjectGroup.rotation.y += deltaX * 0.008;
-    this.currentObjectGroup.rotation.x += deltaY * 0.008;
+    this.currentStationGroup.rotation.y += deltaX * 0.008;
+    this.currentStationGroup.rotation.x += deltaY * 0.008;
 
     this.rotationVelocity = {
       x: deltaY * 0.002,
@@ -662,7 +1088,7 @@ export class ArSceneEngine {
 
   handleWheel(e) {
     if (this.isArActive) return;
-    this.zoomLevel = Math.max(3.5, Math.min(10.0, this.zoomLevel + e.deltaY * 0.005));
+    this.zoomLevel = Math.max(3.8, Math.min(9.5, this.zoomLevel + e.deltaY * 0.005));
     this.camera.position.z = this.zoomLevel;
   }
 
@@ -691,7 +1117,7 @@ export class ArSceneEngine {
   handleResize() {
     if (!this.canvas || this.isArActive) return;
     const width = this.canvas.clientWidth || window.innerWidth;
-    const height = this.canvas.clientHeight || (window.innerHeight * 0.7);
+    const height = this.canvas.clientHeight || (window.innerHeight * 0.72);
 
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
@@ -729,4 +1155,3 @@ export class ArSceneEngine {
     this.renderer.dispose();
   }
 }
-
