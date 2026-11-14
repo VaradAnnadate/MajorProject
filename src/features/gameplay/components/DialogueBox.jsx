@@ -2,10 +2,12 @@
  * DialogueBox — Visual novel style dialogue display.
  * Smooth GSAP typewriter reveal, distinct speaker styles,
  * Mitra fox indicator for companion lines.
+ * Now includes TTS narration controls via useNarration hook.
  */
 import React, { useEffect, useRef, useCallback } from 'react';
 import gsap from 'gsap';
 import styles from './DialogueBox.module.css';
+import { Volume2, VolumeX, Loader } from 'lucide-react';
 
 const SPEAKER_VARIANTS = {
   narrator: 'narrator',
@@ -48,7 +50,7 @@ function MitraIcon() {
   );
 }
 
-export default function DialogueBox({ dialogue, onComplete, ageBandId }) {
+export default function DialogueBox({ dialogue, onComplete, ageBandId, narration }) {
   const textRef = useRef(null);
   const containerRef = useRef(null);
   const tweenRef = useRef(null);
@@ -105,6 +107,8 @@ export default function DialogueBox({ dialogue, onComplete, ageBandId }) {
         containerRef.current.style.transform = 'none';
       }
       runTypewriter();
+      // Auto-speak on reduced motion too
+      if (narration && resolvedText) narration.speak(resolvedText);
       return;
     }
 
@@ -112,7 +116,14 @@ export default function DialogueBox({ dialogue, onComplete, ageBandId }) {
     gsap.fromTo(
       containerRef.current,
       { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out', onComplete: runTypewriter }
+      {
+        opacity: 1, y: 0, duration: 0.3, ease: 'power2.out',
+        onComplete: () => {
+          runTypewriter();
+          // Auto-speak after animation
+          if (narration && resolvedText) narration.speak(resolvedText);
+        }
+      }
     );
     return () => {
       if (tweenRef.current) tweenRef.current.kill();
@@ -130,6 +141,8 @@ export default function DialogueBox({ dialogue, onComplete, ageBandId }) {
   }, [resolvedText, onComplete]);
 
   if (!dialogue) return null;
+
+  const { isLoading: ttsLoading, isPlaying: ttsPlaying, isMuted, toggleMute, speak, stop } = narration || {};
 
   return (
     <div
@@ -155,6 +168,48 @@ export default function DialogueBox({ dialogue, onComplete, ageBandId }) {
         )}
         {dialogue.type === 'evidence' && (
           <span className={`${styles.typePill} ${styles.evidencePill}`}>Evidence</span>
+        )}
+
+        {/* TTS narration controls */}
+        {narration && (
+          <div className={styles.narrationControls} onClick={(e) => e.stopPropagation()}>
+            {ttsPlaying ? (
+              <button
+                className={`${styles.ttsBtn} ${styles.ttsBtnPlaying}`}
+                onClick={stop}
+                aria-label="Stop narration"
+                title="Stop narration"
+              >
+                <span className={styles.ttsBtnWave} aria-hidden="true">
+                  <span /><span /><span />
+                </span>
+              </button>
+            ) : ttsLoading ? (
+              <button className={`${styles.ttsBtn} ${styles.ttsBtnLoading}`} aria-label="Loading audio…" disabled>
+                <Loader size={13} className={styles.ttsSpin} />
+              </button>
+            ) : (
+              <button
+                className={`${styles.ttsBtn} ${isMuted ? styles.ttsBtnMuted : ''}`}
+                onClick={() => isMuted ? toggleMute() : speak(resolvedText)}
+                aria-label={isMuted ? 'Unmute narration' : 'Play narration'}
+                title={isMuted ? 'Unmute narration' : 'Play narration'}
+              >
+                {isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
+              </button>
+            )}
+            <button
+              className={`${styles.ttsBtn} ${styles.ttsMuteToggle} ${isMuted ? styles.ttsBtnMuted : ''}`}
+              onClick={toggleMute}
+              aria-label={isMuted ? 'Enable auto-narration' : 'Mute auto-narration'}
+              title={isMuted ? 'Enable auto-narration' : 'Mute auto-narration'}
+            >
+              {isMuted ? <VolumeX size={11} /> : <Volume2 size={11} />}
+              <span style={{ fontSize: '0.6rem', letterSpacing: '0.04em' }}>
+                {isMuted ? 'OFF' : 'ON'}
+              </span>
+            </button>
+          </div>
         )}
       </div>
 
