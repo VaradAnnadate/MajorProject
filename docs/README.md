@@ -60,9 +60,18 @@ flowchart TD
 * **Part 06 (Complete):** Educator Studio (`/educator`) with cohort-level aggregates, NCERT/CBSE curriculum alignments, Socratic toolkits, and anonymized deliberation logs. Guardian Chronicle (`/guardian`) with "At the Dinner Table" family primers and anti-addiction guarantees compliant with DPDP Act 2023 §9. 104-point QA suite.
 * **3D Sovereign Portal Tunnel & Gamified Milestones (Complete):** Pinned Three.js dimensional warp bridge through the 24-spoke Golden Ashoka Chakra of Child Rights into Scene 05, plus high-vibe gamified milestone celebration modals. 25-point QA suite.
 * **Part 07 (Complete):** Child safety and rights education library (`/safety`), 3-tier age adaptation (8–10, 11–13, 14–16), verified statutory directory (MWCD Childline 1098, 112, 1930, POCSO e-Box), Get Help experience (`/safety/get-help`), discreet Quick Exit safety latch with neutral study decoy screen, and sensitive disclosure safeguard scanner (zero XP gamification for trauma disclosures). 149-point QA suite.
-* **Part 08 (Implemented):** Installable PWA with scalable, platform-sized icons; a build-generated service worker caches app routes for offline use while keeping `/api` requests network-only; IndexedDB saves quest scripts locally; an install/offline status control; and a 150 KiB gzipped initial-route budget (current build: 129.7 KiB). The optional 3D engine is deferred until its section approaches. Run `npm run test:part08` and `npm run build`; physical-device Lighthouse and screen-reader audits remain release validation work.
+* **Part 08 & Final Release (Complete):** Installable PWA with scalable, platform-sized icons; build-generated service worker precaching 53 app shell assets; IndexedDB saves and manages quest scripts locally (`list`, `remove`, `clear`); install/offline status controls; accessible 404 route handling; high-contrast `@media print` educator styles; and a 150 KiB gzipped initial-route budget (current build: 130.1 KiB). 9 automated test suites with **613 / 613 assertions passing (100% pass rate)**. Ready for supervised school pilot validation.
 
-### 2. [Supabase Database & Mitra AI Setup](./DATABASE_AND_MITRA_AI.md)
+### 2. [Final Project Completion Report](./FINAL_PROJECT_COMPLETION_REPORT.md)
+* Comprehensive pre-release report documenting project mandate, all 8 parts, 9 closure commits, test metrics, and statutory child safeguarding boundaries.
+
+### 3. [Project Documentation Inventory](./PROJECT_DOCUMENTATION_INVENTORY.md)
+* Complete catalogue and audit of all repository documentation, requirements, and dependencies.
+
+### 4. [Final Remaining Roadmap](./FINAL_REMAINING_ROADMAP.md)
+* Authoritative roadmap matrix classifying discovered workstreams and execution status.
+
+### 5. [Supabase Database & Mitra AI Setup](./DATABASE_AND_MITRA_AI.md)
 * Run the classroom summary schema in Supabase, configure server-only `.env` credentials, and start the frontend with the Node backend.
 * Documents the anonymous summary threshold, Groq-backed Mitra API, external AI data handling, and current authentication boundary.
 
@@ -103,6 +112,9 @@ npm run test:part06       # 104 checks (Part 06 Intelligence System)
 npm run test:transition   # 25 checks (3D Sovereign Portal Tunnel & Milestones)
 npm run test:part07       # 149 checks (Part 07 Child Safety & Safeguards System)
 npm run test:part08       # 16 checks (Part 08 PWA & Accessibility)
+npm run test:release      # 18 checks (Final Release Verification Suite)
+# Master test suite: 613 assertions across 9 dedicated test suites
+npm test
 
 # 4. Build optimized production bundle with dynamic chunk splitting
 npm run build
