@@ -25,7 +25,7 @@ const CHAT_RATE_LIMIT = 10;
 const questIds = new Set(CLASSROOM_QUESTS.map((quest) => quest.id));
 const questById = new Map(CLASSROOM_QUESTS.map((quest) => [quest.id, quest]));
 const allowedOrigins = new Set(
-  (process.env.CLASSROOM_ALLOWED_ORIGINS || 'http://localhost:5173,http://127.0.0.1:5173')
+  (process.env.CLASSROOM_ALLOWED_ORIGINS || 'http://localhost:5173,http://127.0.0.1:5173,http://localhost:4173,http://127.0.0.1:4173')
     .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean)
@@ -579,7 +579,10 @@ httpServer.on('upgrade', (request, socket, head) => {
     return;
   }
 
-  if (pathname !== '/classroom' || !allowedOrigins.has(request.headers.origin)) {
+  const origin = request.headers.origin;
+  const isAllowedOrigin = !origin || allowedOrigins.has(origin) || origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:');
+
+  if (pathname !== '/classroom' || !isAllowedOrigin) {
     socket.write('HTTP/1.1 403 Forbidden\r\n\r\n');
     socket.destroy();
     return;

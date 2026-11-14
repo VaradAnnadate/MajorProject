@@ -146,3 +146,32 @@
   align-self: flex-start;
 }
 
+/* High-Contrast Print Styles for Classroom Worksheets */
+@media print {
+  .educatorPage {
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+  }
+
+  .lessonCard,
+  .resourceCard,
+  .socraticPromptCard,
+  .metricCard {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    border: 1px solid #000000 !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .navRow,
+  .backLink,
+  .downloadButton,
+  .actionButton {
+    display: none !important;
+  }
+}
+
+
