@@ -18,6 +18,7 @@ const ScenarioPage = lazy(() => import('../features/gameplay/pages/ScenarioPage'
 const ClassroomPage = lazy(() => import('../features/classroom/pages/ClassroomPage'));
 const EducatorPage = lazy(() => import('../features/educator/pages/EducatorPage'));
 const GuardianPage = lazy(() => import('../features/guardian/pages/GuardianPage'));
+const ArExplorerPage = lazy(() => import('../features/ar/pages/ArExplorerPage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 
 // Refined Agency Suspense Fallback
@@ -165,6 +166,14 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<PageFallback />}>
             <AboutPage />
+          </Suspense>
+        )
+      },
+      {
+        path: 'ar-explorer',
+        element: (
+          <Suspense fallback={<PageFallback />}>
+            <ArExplorerPage />
           </Suspense>
         )
       },
