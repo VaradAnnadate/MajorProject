@@ -7,6 +7,7 @@ import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useScenarioEngine } from '../engine/useScenarioEngine';
 import { useDemoLearner } from '../../../context/DemoLearnerContext';
+import { useNarration } from '../hooks/useNarration';
 import ChapterProgress from './ChapterProgress';
 import DialogueBox from './DialogueBox';
 import ChoicePanel from './ChoicePanel';
@@ -21,6 +22,7 @@ export default function ScenarioRunner({ scenarioId, onComplete }) {
   const navigate = useNavigate();
   const engine = useScenarioEngine(scenarioId);
   const { activeAgeBand, inspectEvidenceReward } = useDemoLearner();
+  const narration = useNarration();
   const [evidenceOpen, setEvidenceOpen] = useState(false);
   const [pendingEvidence, setPendingEvidence] = useState(null);
   const [showCelebration, setShowCelebration] = useState(false);
@@ -45,13 +47,14 @@ export default function ScenarioRunner({ scenarioId, onComplete }) {
 
   // Handle evidence dialogues
   const handleAdvance = useCallback(() => {
+    narration.stop();
     if (currentDialogue?.type === 'evidence' && !evidenceOpen) {
       setPendingEvidence(currentDialogue);
       setEvidenceOpen(true);
       return;
     }
     advanceDialogue();
-  }, [currentDialogue, evidenceOpen, advanceDialogue]);
+  }, [currentDialogue, evidenceOpen, advanceDialogue, narration]);
 
   const handleEvidenceClose = useCallback(() => {
     if (pendingEvidence && inspectEvidenceReward) {
@@ -172,6 +175,7 @@ export default function ScenarioRunner({ scenarioId, onComplete }) {
               dialogue={currentDialogue}
               ageBandId={activeAgeBand?.id}
               onComplete={() => {}}
+              narration={narration}
             />
           )}
 
