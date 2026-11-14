@@ -153,3 +153,86 @@
   50% { opacity: 0.7; transform: scale(1.1); }
 }
 
+/* ── Narration / TTS controls ── */
+.narrationControls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.ttsBtn {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 20px;
+  padding: 3px 8px;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  font-size: 0.6rem;
+  font-family: var(--font-family-mono);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.ttsBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.ttsBtnPlaying {
+  background: rgba(99, 192, 142, 0.18);
+  border-color: rgba(99, 192, 142, 0.4);
+  color: #63c08e;
+}
+
+.ttsBtnLoading {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.ttsBtnMuted {
+  opacity: 0.4;
+}
+
+.ttsMuteToggle {
+  font-size: 0.58rem;
+}
+
+/* Animated sound wave for playing state */
+.ttsBtnWave {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+
+.ttsBtnWave span {
+  display: block;
+  width: 2px;
+  background: #63c08e;
+  border-radius: 2px;
+  animation: waveBar 0.7s ease-in-out infinite alternate;
+}
+
+.ttsBtnWave span:nth-child(1) { height: 5px; animation-delay: 0s; }
+.ttsBtnWave span:nth-child(2) { height: 10px; animation-delay: 0.15s; }
+.ttsBtnWave span:nth-child(3) { height: 7px; animation-delay: 0.3s; }
+
+@keyframes waveBar {
+  from { transform: scaleY(0.4); }
+  to   { transform: scaleY(1); }
+}
+
+@keyframes ttsSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.ttsSpin {
+  animation: ttsSpin 1s linear infinite;
+}
+
