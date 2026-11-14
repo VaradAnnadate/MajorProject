@@ -6,7 +6,10 @@ import {
   ShieldCheck, 
   Camera, 
   RotateCw, 
+  RotateCcw,
   ZoomIn, 
+  ZoomOut,
+  RefreshCw,
   CheckCircle2, 
   ArrowRight, 
   ArrowLeft,
@@ -205,7 +208,33 @@ export default function ArExplorerPage() {
       engineRef.current.stopArSession();
     }
     setIsArActive(false);
-    setMitraMessage('Returned to your 3D virtual classroom desk.');
+    setMitraMessage('Returned to your 3D virtual classroom wall exhibit.');
+  };
+
+  // On-Screen Inspection Controls for Wall Exhibit (Rotate, Zoom, Reset, Reposition)
+  const handleRotateExhibit = (deltaAngle) => {
+    if (engineRef.current?.rotateExhibit) {
+      engineRef.current.rotateExhibit(deltaAngle);
+    }
+  };
+
+  const handleZoomExhibit = (deltaScale) => {
+    if (engineRef.current?.zoomExhibit) {
+      engineRef.current.zoomExhibit(deltaScale);
+    }
+  };
+
+  const handleResetExhibit = () => {
+    if (engineRef.current?.resetExhibitTransform) {
+      engineRef.current.resetExhibitTransform();
+    }
+  };
+
+  const handleRepositionExhibit = () => {
+    if (engineRef.current?.repositionExhibit) {
+      engineRef.current.repositionExhibit();
+      setMitraMessage('Scan a vertical classroom wall in your room and tap to mount the exhibit.');
+    }
   };
 
   // Handle Scenario Choice Selection (Interactive Spatial Consequence)
@@ -338,16 +367,16 @@ export default function ArExplorerPage() {
       <header className={styles.heroHeader}>
         <div className="container-editorial">
           <div className={styles.badgeRow}>
-            <span className="editorial-eyebrow">Creative OS · RightsQuest Living Classroom</span>
+            <span className="editorial-eyebrow">Creative OS · RightsQuest Living Classroom Wall Exhibits</span>
             {isArSupported ? (
               <span className={`${styles.statusPill} ${styles.statusPillAr}`}>
                 <Camera size={13} aria-hidden="true" />
-                WebXR AR Capable · Place on Your Real Desk
+                WebXR AR Capable · Mount on Real Classroom Wall
               </span>
             ) : (
               <span className={styles.statusPill}>
                 <Layers size={13} aria-hidden="true" />
-                Virtual Classroom Studio · Tabletop 3D Laboratory
+                Virtual Classroom Studio · Wall Exhibit 3D Fallback
               </span>
             )}
             <span className={styles.stationTrackerBadge}>
@@ -357,11 +386,11 @@ export default function ArExplorerPage() {
           </div>
 
           <h1 className="hero-headline" style={{ fontSize: 'clamp(2.1rem, 4.6vw, 3.2rem)', margin: '0 0 var(--space-3)' }}>
-            Bring the Constitution onto Your Desk
+            Discover Constitutional Exhibits on Your Classroom Wall
           </h1>
 
           <p className="text-lead" style={{ maxWidth: '720px', margin: '0 0 var(--space-4)' }}>
-            Welcome to our hands-on constitutional classroom. Place 3D legal artifacts onto your student study desk, test fairness in everyday school situations with Mitra, and discover how India's fundamental rights protect you.
+            Welcome to our hands-on constitutional classroom. Explore compact 35–45 cm constitutional exhibits mounted on your classroom wall with Mitra. In Mode A, use WebXR Augmented Reality to place the exhibit onto your physical room wall via camera passthrough. In Mode B, explore our 3D classroom simulation with teacher's blackboard and student study desk.
           </p>
 
           {/* Age Adaptation & Factual Privacy Row */}
@@ -444,8 +473,38 @@ export default function ArExplorerPage() {
           </div>
         </nav>
 
+        {/* Experience Mode Banner: Honest Distinction between WebXR AR and Classroom 3D Simulation */}
+        <div 
+          className={`${styles.modeBanner} ${isArActive ? styles.modeBannerAr : styles.modeBannerSim}`}
+          role="region"
+          aria-label="Experience Mode Indicator"
+        >
+          <div className={styles.modeBannerHeader}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              {isArActive ? (
+                <Camera size={18} className={styles.modeIconAr} aria-hidden="true" />
+              ) : (
+                <Layers size={18} className={styles.modeIconSim} aria-hidden="true" />
+              )}
+              <h2 className={styles.modeBannerTitle}>
+                {isArActive
+                  ? 'Mode A: Live Camera WebXR AR (Wall Placement)'
+                  : 'Mode B: Classroom 3D Simulation (Wall Exhibit Fallback)'}
+              </h2>
+            </div>
+            <span className={styles.modeBannerBadge}>
+              {isArActive ? 'Camera Passthrough Active · Real Classroom Wall' : 'Virtual Classroom · Compact Wall Exhibit'}
+            </span>
+          </div>
+          <p className={styles.modeBannerText}>
+            {isArActive
+              ? 'Your physical room camera is active via WebXR. Scan and tap any vertical wall surface to mount this compact 35–45 cm constitutional exhibit flush against your wall. Zero camera video or photos are saved or uploaded (DPDP Act 2023 §9).'
+              : 'Believable 3D simulation of a modern Indian classroom. The constitutional artifact is mounted in a slim brass display frame with identification plaque against the rear wall, with the student desk and teacher’s blackboard providing realistic context.'}
+          </p>
+        </div>
+
         {/* 3D / AR Viewport Stage (Virtual Classroom & Real AR Placement) */}
-        <section className={styles.stageContainer} aria-label="3D Classroom Study Desk Stage">
+        <section className={styles.stageContainer} aria-label="Classroom Wall Exhibit Stage">
           <canvas ref={canvasRef} className={styles.canvas} />
 
           {/* Mitra In-Stage Speech Bubble HUD */}
@@ -469,10 +528,10 @@ export default function ArExplorerPage() {
                   type="button"
                   className={styles.arActionBtn}
                   onClick={handleLaunchAr}
-                  aria-label="Launch WebXR Augmented Reality on your physical desk"
+                  aria-label="Launch WebXR Augmented Reality on your physical classroom wall"
                 >
                   <Camera size={16} aria-hidden="true" />
-                  <span>Enter Classroom AR</span>
+                  <span>Mount on Real Wall (AR)</span>
                 </button>
               ) : isArActive ? (
                 <button
@@ -486,6 +545,72 @@ export default function ArExplorerPage() {
                   <span>Return to Virtual Classroom</span>
                 </button>
               ) : null}
+
+              {/* On-Screen 3D & AR Exhibit Inspection Toolbar */}
+              <div className={styles.inspectionToolbar} role="toolbar" aria-label="Exhibit Inspection Controls">
+                <button
+                  type="button"
+                  className={styles.inspectBtn}
+                  onClick={() => handleRotateExhibit(-0.25)}
+                  title="Rotate Exhibit Left"
+                  aria-label="Rotate Exhibit Left"
+                >
+                  <RotateCcw size={13} />
+                  <span>Rotate Left</span>
+                </button>
+                <button
+                  type="button"
+                  className={styles.inspectBtn}
+                  onClick={() => handleRotateExhibit(0.25)}
+                  title="Rotate Exhibit Right"
+                  aria-label="Rotate Exhibit Right"
+                >
+                  <RotateCw size={13} />
+                  <span>Rotate Right</span>
+                </button>
+                <button
+                  type="button"
+                  className={styles.inspectBtn}
+                  onClick={() => handleZoomExhibit(0.12)}
+                  title="Zoom In Exhibit"
+                  aria-label="Zoom In Exhibit"
+                >
+                  <ZoomIn size={13} />
+                  <span>Zoom In</span>
+                </button>
+                <button
+                  type="button"
+                  className={styles.inspectBtn}
+                  onClick={() => handleZoomExhibit(-0.12)}
+                  title="Zoom Out Exhibit"
+                  aria-label="Zoom Out Exhibit"
+                >
+                  <ZoomOut size={13} />
+                  <span>Zoom Out</span>
+                </button>
+                <button
+                  type="button"
+                  className={styles.inspectBtn}
+                  onClick={handleResetExhibit}
+                  title="Reset Orientation and View"
+                  aria-label="Reset Orientation and View"
+                >
+                  <RefreshCw size={13} />
+                  <span>Reset View</span>
+                </button>
+                {isArActive && (
+                  <button
+                    type="button"
+                    className={`${styles.inspectBtn} ${styles.inspectBtnHighlight}`}
+                    onClick={handleRepositionExhibit}
+                    title="Reposition Exhibit on Another Wall"
+                    aria-label="Reposition Exhibit on Another Wall"
+                  >
+                    <Camera size={13} />
+                    <span>Reposition</span>
+                  </button>
+                )}
+              </div>
 
               {/* Direct Desktop Model Interaction Buttons */}
               {currentStation.id === 'right-to-equality' && (
@@ -569,7 +694,7 @@ export default function ArExplorerPage() {
 
             {!isArActive && (
               <span className={styles.stageTip}>
-                Drag to rotate · Scroll to zoom · Tap desk objects to interact
+                Drag to rotate wall exhibit · Scroll to zoom · Use controls or tap plaque to inspect
               </span>
             )}
           </div>
@@ -590,7 +715,7 @@ export default function ArExplorerPage() {
             “{currentStation.classroomBoardSummary || currentStation.overview}”
           </p>
           <div className={styles.blackboardHint}>
-            <span>Tip: The 3D model on your student desk represents this principle. Test choices below to see physical cause-and-effect!</span>
+            <span>Tip: The 35–45 cm model mounted on your classroom wall represents this principle. Test choices below to see physical cause-and-effect!</span>
           </div>
         </section>
 

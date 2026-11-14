@@ -5,14 +5,15 @@ import * as THREE from 'three';
  * Premium Spatial Three.js Classroom Engine for RightsQuest India.
  *
  * Implements:
- * 1. Living Classroom 3D Studio (Universal Fallback):
- *    - Authentic student learning desk in warm polished teak.
- *    - Open student workbook with pencil and stationery.
- *    - Teacher's blackboard on the rear wall with dynamic Canvas chalk text.
- *    - Window with soft daylight and directional sunbeams.
- *    - Mitra the Sun-Fox companion sitting on the desk as an attentive study buddy.
- * 2. WebXR Classroom Augmented Reality Mode:
- *    - Real-world surface hit-testing and reticle placement on student's actual physical desk/floor.
+ * 1. Living Classroom Wall-Mounted 3D Studio (Universal Fallback - Mode B):
+ *    - Compact constitutional learning exhibit mounted on the classroom rear wall (~35-45 cm display scale).
+ *    - Slim architectural wall mounting frame with corner brackets, subtle wall contact shadow, and brass plaque.
+ *    - Secondary classroom context: Teacher's blackboard to the left, student study desk below/to the side.
+ *    - Mitra the Sun-Fox companion on a dedicated wall display perch beside the exhibit.
+ * 2. WebXR Classroom Augmented Reality Mode (Mode A):
+ *    - Real-world surface hit-testing with wall plane detection and pose alignment.
+ *    - Mounts compact exhibit flush against student's real physical classroom wall.
+ *    - Explicit on-screen inspection controls: rotate, scale/zoom, reset, reposition/remove.
  *    - Dynamic hide/show of virtual classroom geometry during real AR passthrough.
  *    - Zero camera frames recorded, saved, or uploaded (DPDP Act 2023 §9 compliant).
  */
@@ -36,7 +37,8 @@ export class ArSceneEngine {
 
     // Scene groups
     this.classroomGroup = null; // Contains desk, blackboard, workbook, floor, walls, window
-    this.mainStageGroup = null; // Contains the active constitutional artifact
+    this.mainStageGroup = null; // Contains wall mounting frame, plaque, and active constitutional artifact
+    this.wallMountingFrame = null;
     this.currentStationGroup = null;
     this.mitraGroup = null;
     this.particlesGroup = null;
@@ -47,6 +49,10 @@ export class ArSceneEngine {
     this.blackboardCanvas = null;
     this.blackboardTexture = null;
     this.blackboardMesh = null;
+
+    // Plaque canvas texture
+    this.plaqueCanvas = null;
+    this.plaqueTexture = null;
 
     // Consequence animation states
     this.activeSpatialEffect = null;
@@ -71,7 +77,7 @@ export class ArSceneEngine {
     this.isDragging = false;
     this.previousMousePosition = { x: 0, y: 0 };
     this.rotationVelocity = { x: 0, y: 0.0015 };
-    this.zoomLevel = 5.8;
+    this.zoomLevel = 3.4;
 
     // Bind event listeners
     this.handlePointerDown = this.handlePointerDown.bind(this);
@@ -92,10 +98,10 @@ export class ArSceneEngine {
     // 1. Scene
     this.scene = new THREE.Scene();
 
-    // 2. Camera with student classroom perspective
+    // 2. Camera with student classroom eye-level wall perspective
     this.camera = new THREE.PerspectiveCamera(46, width / height, 0.1, 100);
-    this.camera.position.set(0, 0.85, this.zoomLevel);
-    this.camera.lookAt(0, 0.1, 0);
+    this.camera.position.set(0, 0.95, this.zoomLevel);
+    this.camera.lookAt(0, 0.95, -2.18);
 
     // 3. WebGL Renderer with WebXR capabilities
     const gl =
@@ -122,7 +128,7 @@ export class ArSceneEngine {
     // 4. Natural Classroom Lighting Setup
     this.setupClassroomLighting();
 
-    // 5. Build Virtual 3D Classroom Environment (Desk, Blackboard, Floor, Window, Stationery)
+    // 5. Build Virtual 3D Classroom Environment (Rear Wall, Blackboard, Secondary Desk, Window, Floor)
     this.classroomGroup = this.buildClassroomEnvironment();
     this.scene.add(this.classroomGroup);
 
@@ -130,16 +136,16 @@ export class ArSceneEngine {
     this.particlesGroup = this.buildDustParticles();
     this.scene.add(this.particlesGroup);
 
-    // 7. Main Artifact Stage Container (Grounded on the student's desk)
+    // 7. Main Artifact Stage Container (Mounted flush on the classroom rear wall at eye level)
     this.mainStageGroup = new THREE.Group();
-    this.mainStageGroup.position.set(0, -0.28, -0.15); // Resting directly on desktop
+    this.mainStageGroup.position.set(0, 0.95, -2.18);
     this.scene.add(this.mainStageGroup);
 
-    // 8. Mitra 3D Mascot Companion (Sitting on student's desk beside artifact)
+    // 8. Mitra 3D Companion (Positioned on wall perch beside the constitutional exhibit)
     this.mitraGroup = this.buildMitraCompanion();
-    this.mitraGroup.position.set(1.95, -0.42, 0.35);
-    this.mitraGroup.rotation.y = -0.32; // Facing toward artifact and student
-    this.mitraGroup.scale.set(0.62, 0.62, 0.62);
+    this.mitraGroup.position.set(0.92, 0.65, -2.0);
+    this.mitraGroup.rotation.y = -0.35; // Looking toward artifact and student
+    this.mitraGroup.scale.set(0.38, 0.38, 0.38);
     this.scene.add(this.mitraGroup);
 
     // 9. Reticle for WebXR Real Surface Placement
@@ -267,13 +273,13 @@ export class ArSceneEngine {
     windowGroup.add(winBorder);
     classroom.add(windowGroup);
 
-    // 4. The Teacher's Classroom Blackboard (Dynamic Canvas Texture)
+    // 4. The Teacher's Classroom Blackboard (Positioned to the left of the wall exhibit)
     const blackboardGroup = new THREE.Group();
-    blackboardGroup.position.set(0, 1.85, -2.25);
+    blackboardGroup.position.set(-2.55, 1.45, -2.25);
 
     // Wooden Frame
     const frameWoodMat = new THREE.MeshStandardMaterial({ color: 0x92400e, roughness: 0.45 });
-    const boardFrame = new THREE.Mesh(new THREE.BoxGeometry(5.4, 2.5, 0.1), frameWoodMat);
+    const boardFrame = new THREE.Mesh(new THREE.BoxGeometry(3.6, 2.1, 0.08), frameWoodMat);
     boardFrame.castShadow = true;
     blackboardGroup.add(boardFrame);
 
@@ -288,84 +294,90 @@ export class ArSceneEngine {
       roughness: 0.65,
       metalness: 0.05,
     });
-    this.blackboardMesh = new THREE.Mesh(new THREE.BoxGeometry(5.1, 2.25, 0.04), boardMat);
-    this.blackboardMesh.position.z = 0.04;
+    this.blackboardMesh = new THREE.Mesh(new THREE.BoxGeometry(3.35, 1.88, 0.04), boardMat);
+    this.blackboardMesh.position.z = 0.035;
     blackboardGroup.add(this.blackboardMesh);
 
     // Chalk Ledge & Chalk Pieces
-    const ledge = new THREE.Mesh(new THREE.BoxGeometry(5.0, 0.08, 0.22), frameWoodMat);
-    ledge.position.set(0, -1.15, 0.1);
+    const ledge = new THREE.Mesh(new THREE.BoxGeometry(3.25, 0.07, 0.18), frameWoodMat);
+    ledge.position.set(0, -0.98, 0.09);
     blackboardGroup.add(ledge);
 
     const chalkMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.9 });
-    const chalk1 = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.14, 8), chalkMat);
+    const chalk1 = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.12, 8), chalkMat);
     chalk1.rotation.z = Math.PI / 2;
-    chalk1.position.set(-0.6, -1.11, 0.12);
+    chalk1.position.set(-0.45, -0.94, 0.11);
     blackboardGroup.add(chalk1);
 
     const goldChalkMat = new THREE.MeshStandardMaterial({ color: 0xfcd34d, roughness: 0.9 });
-    const chalk2 = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.12, 8), goldChalkMat);
+    const chalk2 = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.1, 8), goldChalkMat);
     chalk2.rotation.z = Math.PI / 2;
-    chalk2.position.set(-0.4, -1.11, 0.12);
+    chalk2.position.set(-0.28, -0.94, 0.11);
     blackboardGroup.add(chalk2);
 
     classroom.add(blackboardGroup);
 
-    // 5. The Student's Desk (Primary Learning Surface)
+    // 5. Secondary Student Study Desk (Positioned naturally below and to the side)
     const deskGroup = new THREE.Group();
-    deskGroup.position.set(0, -0.65, 0.25);
+    deskGroup.position.set(1.45, -1.05, 0.2);
 
     // Desktop
-    const tabletop = new THREE.Mesh(new THREE.BoxGeometry(5.4, 0.16, 2.8), deskWoodMat);
+    const tabletop = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.14, 1.9), deskWoodMat);
     tabletop.castShadow = true;
     tabletop.receiveShadow = true;
     deskGroup.add(tabletop);
 
     // 4 Tubular Desk Legs
     const legPositions = [
-      [-2.45, -0.55, -1.15],
-      [2.45, -0.55, -1.15],
-      [-2.45, -0.55, 1.15],
-      [2.45, -0.55, 1.15],
+      [-1.55, -0.45, -0.8],
+      [1.55, -0.45, -0.8],
+      [-1.55, -0.45, 0.8],
+      [1.55, -0.45, 0.8],
     ];
     legPositions.forEach(([x, y, z]) => {
-      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 1.05, 16), deskMetalMat);
+      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.88, 16), deskMetalMat);
       leg.position.set(x, y, z);
       leg.castShadow = true;
       deskGroup.add(leg);
     });
 
-    classroom.add(deskGroup);
-
-    // 6. Open Student Workbook & Stationery on Desk
+    // Open Student Workbook & Stationery on Desk
     const stationeryGroup = new THREE.Group();
-    stationeryGroup.position.set(-1.85, -0.54, 0.45);
+    stationeryGroup.position.set(-0.35, 0.09, 0.1);
 
-    // Open Workbook Pages
-    const workbook = new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.024, 0.75), paperMat);
-    workbook.rotation.y = 0.08;
+    const workbook = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.022, 0.65), paperMat);
+    workbook.rotation.y = 0.06;
     workbook.receiveShadow = true;
     stationeryGroup.add(workbook);
 
-    // Bookmark Ribbon
     const ribbonMat = new THREE.MeshBasicMaterial({ color: 0xde7215 });
-    const ribbon = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.026, 0.8), ribbonMat);
-    ribbon.rotation.y = 0.08;
+    const ribbon = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.024, 0.7), ribbonMat);
+    ribbon.rotation.y = 0.06;
     stationeryGroup.add(ribbon);
 
-    // Student Pencil
-    const pencil = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.45, 8), pencilMat);
+    const pencil = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.38, 8), pencilMat);
     pencil.rotation.z = Math.PI / 2.2;
-    pencil.position.set(0.65, 0.015, -0.05);
+    pencil.position.set(0.55, 0.015, -0.05);
     stationeryGroup.add(pencil);
 
-    // Pencil Holder
-    const holder = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.14, 0.28, 16), brassHolderMat);
-    holder.position.set(0.68, 0.14, -0.38);
+    const holder = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.12, 0.24, 16), brassHolderMat);
+    holder.position.set(0.6, 0.12, -0.32);
     holder.castShadow = true;
     stationeryGroup.add(holder);
 
-    classroom.add(stationeryGroup);
+    deskGroup.add(stationeryGroup);
+    classroom.add(deskGroup);
+
+    // 6. Mitra Wall Display Perch (Attached to classroom rear wall beside the exhibit)
+    const mitraPerch = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.05, 0.42), deskWoodMat);
+    mitraPerch.position.set(0.92, 0.54, -2.18);
+    mitraPerch.receiveShadow = true;
+    classroom.add(mitraPerch);
+
+    const mitraPerchBracket = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.25, 4), deskMetalMat);
+    mitraPerchBracket.rotation.x = Math.PI;
+    mitraPerchBracket.position.set(0.92, 0.4, -2.22);
+    classroom.add(mitraPerchBracket);
 
     // Draw initial blackboard lesson text
     this.renderBlackboardCanvas(
@@ -430,9 +442,153 @@ export class ArSceneEngine {
     // Footnote guidance
     ctx.font = '20px sans-serif';
     ctx.fillStyle = '#94A3B8';
-    ctx.fillText('Inspect the learning artifact on your desk · Make your decision below', w / 2, 345);
+    ctx.fillText('Inspect the wall-mounted learning exhibit · Make your decision below', w / 2, 345);
 
     this.blackboardTexture.needsUpdate = true;
+  }
+
+  // Draw Dynamic Exhibit Brass Identification Plaque Canvas
+  renderPlaqueCanvas(stationData) {
+    if (!this.plaqueCanvas || !this.plaqueTexture || !stationData) return;
+
+    const ctx = this.plaqueCanvas.getContext('2d');
+    const w = this.plaqueCanvas.width;
+    const h = this.plaqueCanvas.height;
+
+    // Brushed brass gradient background
+    const grad = ctx.createLinearGradient(0, 0, w, h);
+    grad.addColorStop(0, '#fef08a');
+    grad.addColorStop(0.3, '#d4a017');
+    grad.addColorStop(0.7, '#ca8a04');
+    grad.addColorStop(1, '#a16207');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Dark engraved bevel border
+    ctx.strokeStyle = '#78350f';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(6, 6, w - 12, h - 12);
+
+    ctx.strokeStyle = '#fef9c3';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(10, 10, w - 20, h - 20);
+
+    // Text: Article reference
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#451a03';
+    ctx.font = 'bold 20px monospace';
+    ctx.fillText((stationData.articleRef || 'CONSTITUTION OF INDIA').toUpperCase(), w / 2, 38);
+
+    // Text: Title
+    ctx.font = 'bold 30px Georgia, serif';
+    ctx.fillText((stationData.title || 'Constitutional Exhibit').toUpperCase(), w / 2, 78);
+
+    // Text: Subtitle
+    ctx.font = 'bold 16px sans-serif';
+    ctx.fillStyle = '#78350f';
+    ctx.fillText('RIGHTSQUEST CLASSROOM WALL EXHIBIT · COMPACT 35-45 CM', w / 2, 108);
+
+    this.plaqueTexture.needsUpdate = true;
+  }
+
+  // ── SLIM WALL-MOUNTED EXHIBIT FRAME & IDENTIFICATION PLAQUE ───────────────
+
+  buildWallMountingFrame(stationData) {
+    const frame = new THREE.Group();
+    frame.name = 'wallMountingFrame';
+
+    // 1. Subtle contact drop-shadow against the wall
+    const shadowGeo = new THREE.PlaneGeometry(0.96, 0.96);
+    const shadowMat = new THREE.MeshBasicMaterial({
+      color: 0x000000,
+      transparent: true,
+      opacity: 0.32,
+      side: THREE.DoubleSide,
+    });
+    const shadowMesh = new THREE.Mesh(shadowGeo, shadowMat);
+    shadowMesh.position.z = -0.018;
+    shadowMesh.name = 'wallContactShadow';
+    frame.add(shadowMesh);
+
+    // 2. Slim architectural mounting backplate (Dark bronze / slate teak)
+    const backplateMat = new THREE.MeshStandardMaterial({
+      color: 0x1e232a,
+      roughness: 0.58,
+      metalness: 0.32,
+    });
+    const backplate = new THREE.Mesh(new THREE.BoxGeometry(0.88, 0.88, 0.032), backplateMat);
+    backplate.castShadow = true;
+    backplate.receiveShadow = true;
+    frame.add(backplate);
+
+    // Slim outer gold trim border
+    const trimMat = new THREE.MeshStandardMaterial({
+      color: 0xd4a017,
+      metalness: 0.88,
+      roughness: 0.22,
+    });
+    const topTrim = new THREE.Mesh(new THREE.BoxGeometry(0.89, 0.018, 0.036), trimMat);
+    topTrim.position.set(0, 0.44, 0.002);
+    frame.add(topTrim);
+    const bottomTrim = new THREE.Mesh(new THREE.BoxGeometry(0.89, 0.018, 0.036), trimMat);
+    bottomTrim.position.set(0, -0.44, 0.002);
+    frame.add(bottomTrim);
+    const leftTrim = new THREE.Mesh(new THREE.BoxGeometry(0.018, 0.88, 0.036), trimMat);
+    leftTrim.position.set(-0.44, 0, 0.002);
+    frame.add(leftTrim);
+    const rightTrim = new THREE.Mesh(new THREE.BoxGeometry(0.018, 0.88, 0.036), trimMat);
+    rightTrim.position.set(0.44, 0, 0.002);
+    frame.add(rightTrim);
+
+    // 3. Architectural wall mounting brackets with hex bolts at 4 corners
+    const boltMat = new THREE.MeshStandardMaterial({
+      color: 0x78350f,
+      metalness: 0.92,
+      roughness: 0.3,
+    });
+
+    const bracketCorners = [
+      [-0.38, 0.38],
+      [0.38, 0.38],
+      [-0.38, -0.38],
+      [0.38, -0.38],
+    ];
+
+    bracketCorners.forEach(([bx, by]) => {
+      const bracket = new THREE.Mesh(new THREE.CylinderGeometry(0.024, 0.024, 0.04, 16), trimMat);
+      bracket.rotation.x = Math.PI / 2;
+      bracket.position.set(bx, by, 0.016);
+      frame.add(bracket);
+
+      const bolt = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.044, 6), boltMat);
+      bolt.rotation.x = Math.PI / 2;
+      bolt.position.set(bx, by, 0.018);
+      frame.add(bolt);
+    });
+
+    // 4. Exhibit Brass Identification Plaque
+    if (!this.plaqueCanvas) {
+      this.plaqueCanvas = document.createElement('canvas');
+      this.plaqueCanvas.width = 512;
+      this.plaqueCanvas.height = 128;
+      this.plaqueTexture = new THREE.CanvasTexture(this.plaqueCanvas);
+    }
+
+    const plaqueMat = new THREE.MeshStandardMaterial({
+      map: this.plaqueTexture,
+      roughness: 0.32,
+      metalness: 0.65,
+    });
+    const plaqueMesh = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.16, 0.018), plaqueMat);
+    plaqueMesh.position.set(0, -0.32, 0.024);
+    plaqueMesh.name = 'exhibitPlaqueMesh';
+    frame.add(plaqueMesh);
+
+    if (stationData) {
+      this.renderPlaqueCanvas(stationData);
+    }
+
+    return frame;
   }
 
   // Update Blackboard dynamically when station or age tier changes
@@ -452,7 +608,7 @@ export class ArSceneEngine {
 
   // For test script backward compatibility
   buildPedestal() {
-    return this.classroomGroup || new THREE.Group();
+    return this.wallMountingFrame || this.classroomGroup || new THREE.Group();
   }
 
   buildDustParticles() {
@@ -711,7 +867,7 @@ export class ArSceneEngine {
     }
   }
 
-  // ── LOAD CONSTITUTIONAL STATION ONTO DESK ─────────────────────────────────
+  // ── LOAD CONSTITUTIONAL EXHIBIT ONTO WALL MOUNT ──────────────────────────
 
   loadConstitutionalStation(stationData, ageKey = '8-10') {
     if (!stationData) return;
@@ -719,32 +875,55 @@ export class ArSceneEngine {
     if (this.currentStationGroup) {
       this.mainStageGroup.remove(this.currentStationGroup);
       this.disposeObject(this.currentStationGroup);
+      this.currentStationGroup = null;
     }
 
+    if (this.wallMountingFrame) {
+      this.mainStageGroup.remove(this.wallMountingFrame);
+      this.disposeObject(this.wallMountingFrame);
+      this.wallMountingFrame = null;
+    }
+
+    // 1. Build Wall Mounting Frame with contact shadow, corner brackets and brass identification plaque
+    this.wallMountingFrame = this.buildWallMountingFrame(stationData);
+    this.mainStageGroup.add(this.wallMountingFrame);
+
+    // 2. Build Station Geometry inside scaled model group (~35-45 cm display scale)
     const newGroup = new THREE.Group();
 
     switch (stationData.geometryType) {
       case 'chakra':
         this.buildAshokaChakraGeometry(newGroup, stationData);
+        newGroup.name = 'ashokaChakraModel';
         break;
       case 'pillar':
         this.buildEqualityBalanceGeometry(newGroup, stationData);
+        newGroup.name = 'equalityBalanceModel';
         break;
       case 'beacon':
         this.buildVoiceBeaconGeometry(newGroup, stationData);
+        newGroup.name = 'voiceBeaconModel';
         break;
       case 'shield':
         this.buildSafetyShieldGeometry(newGroup, stationData);
+        newGroup.name = 'safetyShieldModel';
         break;
       case 'scroll':
         this.buildEducationScrollGeometry(newGroup, stationData);
+        newGroup.name = 'educationScrollModel';
         break;
       case 'crest':
         this.buildRemediesCrestGeometry(newGroup, stationData);
+        newGroup.name = 'remediesCrestModel';
         break;
       default:
         this.buildAshokaChakraGeometry(newGroup, stationData);
+        newGroup.name = 'ashokaChakraModel';
     }
+
+    // Calibrate compact physical exhibit scale (~35-45 cm display scale)
+    newGroup.scale.set(0.118, 0.118, 0.118);
+    newGroup.position.set(0, 0.06, 0.08);
 
     newGroup.userData = { id: stationData.id, title: stationData.title };
     this.currentStationGroup = newGroup;
@@ -752,6 +931,7 @@ export class ArSceneEngine {
 
     // Update Blackboard dynamically
     this.updateBlackboardContent(stationData, ageKey);
+    this.renderPlaqueCanvas(stationData);
 
     if (stationData.id === 'right-to-equality') {
       this.targetScaleTilt = -0.22;
@@ -1293,7 +1473,7 @@ export class ArSceneEngine {
     }
   }
 
-  // ── WEBXR AUGMENTED REALITY (REAL CLASSROOM DESK PLACEMENT) ───────────────
+  // ── WEBXR AUGMENTED REALITY (REAL CLASSROOM WALL PLACEMENT) ───────────────
 
   async startArSession() {
     if (!navigator.xr) {
@@ -1312,18 +1492,18 @@ export class ArSceneEngine {
 
     await this.renderer.xr.setSession(session);
 
-    // In Real AR mode, hide the virtual 3D classroom (desk, blackboard, walls) so real physical desk shines through
+    // In Real AR mode, hide the virtual 3D classroom (desk, blackboard, walls) so real physical classroom wall shines through
     if (this.classroomGroup) this.classroomGroup.visible = false;
     if (this.particlesGroup) this.particlesGroup.visible = false;
 
-    this.mainStageGroup.scale.set(0.32, 0.32, 0.32);
+    this.mainStageGroup.scale.set(1, 1, 1);
     this.mainStageGroup.visible = false;
 
-    this.mitraGroup.scale.set(0.22, 0.22, 0.22);
+    this.mitraGroup.scale.set(0.24, 0.24, 0.24);
     this.mitraGroup.visible = false;
 
     if (this.onPlacementStatus) {
-      this.onPlacementStatus('Point phone camera at your classroom desk or floor.');
+      this.onPlacementStatus('Point phone camera at classroom wall surface to detect vertical plane.');
     }
 
     const viewerSpace = await session.requestReferenceSpace('viewer');
@@ -1351,17 +1531,23 @@ export class ArSceneEngine {
       const scale = new THREE.Vector3();
       this.reticle.matrix.decompose(pos, quat, scale);
 
+      // Mount exhibit flush against detected vertical wall surface
       this.mainStageGroup.position.copy(pos);
+      this.mainStageGroup.quaternion.copy(quat);
+      this.mainStageGroup.scale.set(1, 1, 1);
       this.mainStageGroup.visible = true;
 
-      this.mitraGroup.position.set(pos.x + 0.52, pos.y, pos.z + 0.15);
+      // Position Mitra alongside the wall exhibit
+      this.mitraGroup.position.set(pos.x + 0.38, pos.y - 0.12, pos.z + 0.05);
+      this.mitraGroup.quaternion.copy(quat);
+      this.mitraGroup.scale.set(0.24, 0.24, 0.24);
       this.mitraGroup.visible = true;
 
       this.isPlacedInAr = true;
       this.reticle.visible = false;
 
       if (this.onPlacementStatus) {
-        this.onPlacementStatus('Constitutional model anchored to your desk! Walk around and explore.');
+        this.onPlacementStatus('Constitutional exhibit mounted to wall! Use controls or walk around to inspect.');
       }
     }
   }
@@ -1396,19 +1582,74 @@ export class ArSceneEngine {
     this.isPlacedInAr = false;
     this.hitTestSource = null;
 
-    // Restore virtual classroom
+    // Restore virtual classroom wall environment
     if (this.classroomGroup) this.classroomGroup.visible = true;
     if (this.particlesGroup) this.particlesGroup.visible = true;
 
+    this.mainStageGroup.position.set(0, 0.95, -2.18);
+    this.mainStageGroup.rotation.set(0, 0, 0);
     this.mainStageGroup.scale.set(1, 1, 1);
-    this.mainStageGroup.position.set(0, -0.28, -0.15);
     this.mainStageGroup.visible = true;
 
-    this.mitraGroup.scale.set(0.62, 0.62, 0.62);
-    this.mitraGroup.position.set(1.95, -0.42, 0.35);
+    this.mitraGroup.position.set(0.92, 0.65, -2.0);
+    this.mitraGroup.rotation.set(0, -0.35, 0);
+    this.mitraGroup.scale.set(0.38, 0.38, 0.38);
     this.mitraGroup.visible = true;
 
     if (this.reticle) this.reticle.visible = false;
+  }
+
+  // ── ON-SCREEN AR & 3D INSPECTION CONTROLS ─────────────────────────────────
+
+  rotateExhibit(deltaAngle = 0.2) {
+    if (this.mainStageGroup) {
+      this.mainStageGroup.rotation.y += deltaAngle;
+    }
+  }
+
+  zoomExhibit(deltaScale = 0.12) {
+    if (this.isArActive && this.isPlacedInAr) {
+      const currentScale = this.mainStageGroup.scale.x;
+      const nextScale = Math.max(0.45, Math.min(2.2, currentScale + deltaScale));
+      this.mainStageGroup.scale.set(nextScale, nextScale, nextScale);
+    } else {
+      this.zoomLevel = Math.max(2.0, Math.min(5.2, this.zoomLevel - deltaScale * 2.2));
+      if (this.camera) {
+        this.camera.position.z = this.zoomLevel;
+      }
+    }
+  }
+
+  resetExhibitTransform() {
+    if (this.isArActive && this.isPlacedInAr) {
+      this.mainStageGroup.scale.set(1, 1, 1);
+      this.mainStageGroup.rotation.set(0, 0, 0);
+    } else {
+      this.mainStageGroup.rotation.set(0, 0, 0);
+      this.mainStageGroup.scale.set(1, 1, 1);
+      this.rotationVelocity = { x: 0, y: 0.0015 };
+      this.zoomLevel = 3.4;
+      if (this.camera) {
+        this.camera.position.set(0, 0.95, this.zoomLevel);
+        this.camera.lookAt(0, 0.95, -2.18);
+      }
+    }
+  }
+
+  repositionExhibit() {
+    if (this.isArActive) {
+      this.isPlacedInAr = false;
+      this.mainStageGroup.visible = false;
+      this.mitraGroup.visible = false;
+      if (this.reticle) this.reticle.visible = true;
+      if (this.onPlacementStatus) {
+        this.onPlacementStatus('Scan classroom wall surface and tap to mount exhibit.');
+      }
+    }
+  }
+
+  removeExhibit() {
+    this.repositionExhibit();
   }
 
   // ── UNIVERSAL 3D ANIMATION LOOP ───────────────────────────────────────────
@@ -1694,6 +1935,10 @@ export class ArSceneEngine {
 
     if (this.blackboardTexture) {
       this.blackboardTexture.dispose();
+    }
+
+    if (this.plaqueTexture) {
+      this.plaqueTexture.dispose();
     }
 
     if (this.scene) {

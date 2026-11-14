@@ -1,4 +1,4 @@
-# RightsQuest AR Explorer — Living Classroom & Augmented Reality Experience
+# RightsQuest AR Explorer — Classroom Wall-Mounted Augmented Reality Experience
 
 > **Governing Standards:** Creative OS (`44_AGENCYLIKE_UI`, `01_DESIGN_OS`, `04_TYPOGRAPHY_SYSTEM`, `05_MOTION_SYSTEM`)  
 > **Route:** `/ar-explorer`  
@@ -9,26 +9,31 @@
 
 ## 1. What is the RightsQuest Living Classroom?
 
-The **RightsQuest Living Classroom** brings the Constitution of India alive inside a modern, hands-on educational environment. The student experiences constitutional learning in two complementary ways:
-1. **The Virtual 3D Classroom Studio (Universal Fallback):**
-   - The student sits at a warm, polished teak study desk complete with an open workbook, bookmark ribbon, and wooden pencil.
-   - Behind the desk on the rear wall hangs the **Teacher’s Blackboard**, dynamically written with chalk text introducing today's lesson, relevant constitutional articles, and core principles.
-   - Sunlight streams in through an open classroom window, casting soft shadows across the desk.
-   - In the center of the desk sits the interactive 3D constitutional artifact for today's lesson.
-   - Beside the artifact sits **Mitra the Sun-Fox**, acting as an attentive, encouraging classroom study companion.
-2. **Live WebXR Classroom AR:**
-   - On compatible devices, students can anchor the constitutional artifacts directly onto their real classroom desk or room floor.
-   - The virtual classroom geometry hides cleanly so the real physical room becomes the stage.
-   - Real-world surface hit-testing with a golden placement reticle.
-   - Zero video/photo frames recorded or uploaded; 100% on-device processing.
+The **RightsQuest Living Classroom** brings the Constitution of India alive through compact, museum-grade educational exhibits mounted directly on classroom walls. The experience is designed with an honest and clear distinction between two operating modes:
 
-### The 6 Classroom Lessons
-- **Lesson 1: The Sovereign Ashoka Chakra** (*Preamble & Article 51A*): Explore the 24 Dharma spokes and constitutional values on the study desk.
-- **Lesson 2: The Balance of Equality** (*Articles 14–18*): Miniature tabletop demonstration scale testing fair equipment distribution and equal dignity.
-- **Lesson 3: The Beacon of Expression** (*Article 19 & UNCRC 12*): Tabletop Bal Sansad student forum model broadcasting child voices through concentric soundwaves.
-- **Lesson 4: The Shield of Bodily Safety** (*Articles 21, 24 & POCSO*): Protective learning object deploying a translucent emerald sanctuary dome and Childline 1098 beacon.
-- **Lesson 5: The Scroll of Free Learning** (*Article 21A & RTE Act*): Schoolhouse gates that swing open 90° on the desk, unrolling the Article 21A parchment.
-- **Lesson 6: The Crest of Legal Remedies** (*Article 32 Dr. Ambedkar’s Pillar*): Miniature constitutional model with 5 crystal facets for the 5 writs firing light rays to the Apex Court crystal.
+### Mode A: Live Camera WebXR AR (Wall Placement)
+- Uses standard WebXR `immersive-ar` with camera passthrough displaying the student's real physical room.
+- Detects vertical real-world surfaces (walls) via hit-test with pose normal alignment.
+- Mounts a compact 35–45 cm constitutional exhibit flush against the real classroom wall.
+- Includes on-screen controls to rotate left/right, scale/zoom, reset orientation, and reposition or remove the exhibit.
+- Zero raw video or photo frames recorded, stored, or transmitted over the network (DPDP Act 2023 §9 compliant).
+
+### Mode B: Virtual Classroom 3D Simulation (Wall Exhibit Fallback)
+- Renders an authentic modern Indian classroom with a warm rear plaster wall.
+- The constitutional learning artifact is mounted at eye level inside an architectural wall mounting frame with corner brackets, subtle contact shadow against the wall, and an engraved brass identification plaque.
+- Secondary classroom context:
+  - **Teacher’s Blackboard:** Positioned on the wall to the left of the exhibit, dynamically chalked with lesson topics, article references, and core constitutional principles.
+  - **Student Study Desk:** Positioned naturally below and to the side as environmental context (not an oversized pedestal beneath the artifact), complete with open workbook, bookmark ribbon, pencil, and brass holder.
+  - **Window:** Placed on the left wall with soft daylight streaming across the classroom.
+  - **Mitra Companion:** Sits on an elegant wall display perch beside the exhibit, serving as an encouraging classroom docent companion.
+
+### The 6 Classroom Wall Exhibits (~35–45 cm Compact Scale)
+- **Lesson 1: The Sovereign Ashoka Chakra** (*Preamble & Article 51A*): Compact 43.6 cm circular exhibit with 24 Dharma spokes and cardinal medallions.
+- **Lesson 2: The Balance of Equality** (*Articles 14–18*): Compact 42.5 cm wide classical balance scale with calibrated equilibrium gauge and weighted tokens.
+- **Lesson 3: The Beacon of Expression** (*Article 19 & UNCRC 12*): Compact 35.4 cm tall Bal Sansad forum tower broadcasting concentric soundwaves.
+- **Lesson 4: The Shield of Bodily Safety** (*Articles 21, 24 & POCSO*): Compact 37.7 cm tall protective shield deploying a translucent emerald sanctuary dome and 1098 beacon.
+- **Lesson 5: The Scroll of Free Learning** (*Article 21A & RTE Act*): Compact 35.4 cm tall schoolhouse portal with swinging gates and unrolling Article 21A parchment.
+- **Lesson 6: The Crest of Legal Remedies** (*Article 32 Dr. Ambedkar’s Pillar*): Compact 37.7 cm tall pillar with 5 crystal facets for constitutional writs firing light rays to the Apex Court crystal.
 
 ---
 
@@ -69,16 +74,19 @@ flowchart TD
 
 ---
 
-## 4. WebXR AR vs. 3D Fallback Comparison
+## 4. Mode A (WebXR AR) vs. Mode B (3D Simulation Fallback) Comparison
 
-| Feature | WebXR AR Mode (`immersive-ar`) | Universal 3D Fallback Mode |
+| Feature | Mode A: Live Camera WebXR AR | Mode B: Classroom 3D Simulation Fallback |
 | :--- | :--- | :--- |
-| **Environment** | Real physical room (desk, table, floor) via camera pass-through. | Styled editorial canvas with subtle ambient studio lighting. |
-| **Tracking** | WebXR surface plane detection (`hit-test`). | Mouse drag / touch drag inertial rotation. |
-| **Camera Access** | User-authorized WebXR camera pass-through. | No camera needed or requested. |
+| **Experience Goal** | Mount compact exhibits on the student's real physical room wall. | Believable 3D simulation of a modern Indian classroom with wall exhibit. |
+| **Environment** | Real physical room via camera passthrough. | 3D virtual classroom: plaster rear wall, blackboard, window, study desk. |
+| **Exhibit Mounting** | Anchored flush against real vertical wall via WebXR hit-test. | Mounted on classroom rear wall with slim frame, brackets & brass plaque. |
+| **Object Scale** | Compact 35–45 cm real-world scale (1:1 display scale). | Compact 35–45 cm proportional exhibit on classroom wall. |
+| **Inspection Controls** | On-screen buttons: rotate, zoom/scale, reset, reposition on wall. | Pointer drag, mouse wheel, on-screen rotate/zoom/reset buttons. |
+| **Camera Access** | User-authorized WebXR camera pass-through (zero frames saved). | No camera required or requested. |
 | **Supported Devices** | Android Chrome / WebXR-compatible mobile browsers. | 100% of modern browsers (Desktop, Laptop, Tablets, iOS, Android). |
-| **Learning Content** | Full constitutional descriptions, Mitra guidance & reflection quiz. | Full constitutional descriptions, Mitra guidance & reflection quiz. |
-| **Progression Sync** | Awards Dignity XP to local progress engine. | Awards Dignity XP to local progress engine. |
+| **Pedagogical Engine** | Full 3-tier age dilemmas, physical consequence animations & quiz. | Full 3-tier age dilemmas, physical consequence animations & quiz. |
+| **Progression Sync** | Awards Dignity XP to local progress engine (idempotent). | Awards Dignity XP to local progress engine (idempotent). |
 
 ---
 
@@ -87,25 +95,28 @@ flowchart TD
 1. **Zero Video/Photo Capture:** The application uses browser-level WebXR session anchors. The JavaScript application never receives, records, or stores raw camera video frames.
 2. **Zero Biometrics / Facial Recognition:** No face mesh, eye tracking, or identity analysis is conducted.
 3. **No Cloud Upload:** All 3D rendering happens locally on the client GPU.
-4. **Explicit User Initiation:** Camera access is never prompted on page load; it requires an explicit learner click on "Launch WebXR AR".
-5. **Clean Session Exit:** When the user taps "Exit AR" or leaves the route, `session.end()` is invoked immediately, stopping all camera streams.
+4. **Explicit User Initiation:** Camera access is never prompted on page load; it requires an explicit learner click on "Mount on Real Wall (AR)".
+5. **Clean Session Exit:** When the user taps "Return to Virtual Classroom" or leaves the route, `session.end()` is invoked immediately, stopping all camera streams.
 
 ---
 
 ## 6. How to Demonstrate in a Viva or Evaluation
 
-1. **Desktop Demonstration:**
+1. **Desktop Demonstration (Mode B — Classroom 3D Simulation):**
    - Navigate to `http://localhost:5173/ar-explorer`.
-   - Show the examiner the **Interactive 3D Stage (Universal Fallback)**.
-   - Click and drag the **Ashoka Chakra** to rotate the 24 golden spokes.
-   - Switch to **Right to Education (Article 21A)** using the object selector tabs.
-   - Point out Mitra's commentary and the real-world scenario example.
-   - Answer the quiz question; show the live **Dignity XP** surge.
-2. **Mobile AR Demonstration:**
-   - Open Chrome on a WebXR-compatible Android phone connected to the Vite dev server or production URL.
-   - Tap **Launch WebXR AR** $\to$ allow camera permission $\to$ point phone at the evaluation table.
-   - Watch the golden placement ring anchor onto the desk.
-   - Tap the screen: the 3D Ashoka Chakra and Mitra companion appear physically on the desk!
+   - Show the examiner the **Classroom Wall Exhibit Stage**:
+     - Point out the clear mode indicator: **Mode B: Classroom 3D Simulation (Wall Exhibit Fallback)**.
+     - Note the compact 35–45 cm scale: the artifact is mounted on the rear wall inside an elegant brass display frame with identification plaque.
+     - Point out the secondary classroom context: Teacher’s blackboard on the left, student desk with workbook and pencil below/to the side, and Mitra on the wall perch.
+   - Use the on-screen inspection toolbar: **Rotate Left/Right**, **Zoom In/Out**, and **Reset View**.
+   - Test dilemmas and observe physical spatial consequences (e.g. Balance of Equality tilting or balancing).
+   - Answer the quiz question and show the live **Dignity XP** surge.
+2. **Mobile AR Demonstration (Mode A — Live Camera WebXR AR):**
+   - Open Chrome on a WebXR-compatible Android phone connected to the application.
+   - Tap **Mount on Real Wall (AR)** $\to$ allow camera permission $\to$ point phone at a classroom wall.
+   - The virtual classroom geometry hides; the real room is seen through camera passthrough.
+   - Tap the wall: the compact 35–45 cm constitutional exhibit and brass identification plaque mount flush against the real wall!
+   - Use on-screen controls to inspect or walk closer to read the plaque.
 
 ---
 

@@ -211,6 +211,76 @@
   color: #34d399;
 }
 
+/* Mode Distinction Banner: Honest Distinction between Live WebXR AR & 3D Simulation */
+.modeBanner {
+  border-radius: var(--radius-md, 12px);
+  padding: 1rem 1.25rem;
+  margin: var(--space-4, 1rem) 0 0.5rem;
+  transition: all 0.25s ease;
+}
+
+.modeBannerAr {
+  background: #fff7ed;
+  border: 1.5px solid #fdba74;
+}
+
+.modeBannerSim {
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+}
+
+.modeBannerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.modeBannerTitle {
+  font-size: 0.96rem;
+  font-weight: 750;
+  margin: 0;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+}
+
+.modeIconAr {
+  color: #ea580c;
+  flex-shrink: 0;
+}
+
+.modeIconSim {
+  color: #0284c7;
+  flex-shrink: 0;
+}
+
+.modeBannerBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-pill, 9999px);
+  font-family: var(--font-family-mono, monospace);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.06);
+  color: #334155;
+}
+
+.modeBannerAr .modeBannerBadge {
+  background: rgba(234, 88, 12, 0.12);
+  color: #c2410c;
+}
+
+.modeBannerText {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #475569;
+  line-height: 1.45;
+}
+
 /* 3D Classroom Viewport Stage */
 .stageContainer {
   position: relative;
@@ -343,6 +413,45 @@
   background: #111827;
   border-color: #de7215;
   transform: translateY(-1px);
+}
+
+/* On-Screen Exhibit Inspection Toolbar */
+.inspectionToolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.inspectBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.42rem 0.72rem;
+  background: rgba(17, 24, 39, 0.88);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-pill, 9999px);
+  font-size: 0.75rem;
+  font-weight: 650;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: all 0.2s ease;
+}
+
+.inspectBtn:hover {
+  background: #111827;
+  border-color: #f59e0b;
+  transform: translateY(-1px);
+}
+
+.inspectBtnHighlight {
+  background: #de7215;
+  border-color: #f59e0b;
+}
+
+.inspectBtnHighlight:hover {
+  background: #c5620e;
 }
 
 .stageTip {
