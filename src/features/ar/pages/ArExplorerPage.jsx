@@ -5,11 +5,6 @@ import {
   Sparkles, 
   ShieldCheck, 
   Camera, 
-  RotateCw, 
-  RotateCcw,
-  ZoomIn, 
-  ZoomOut,
-  RefreshCw,
   CheckCircle2, 
   ArrowRight, 
   ArrowLeft,
@@ -18,8 +13,6 @@ import {
   Lock,
   Layers,
   Award,
-  Scale,
-  Volume2,
   BookOpen,
   HelpCircle,
   GraduationCap
@@ -42,13 +35,35 @@ export default function ArExplorerPage() {
   // Selected station
   const [selectedId, setSelectedId] = useState('ashoka-chakra');
 
-  // Age band key ('8-10' | '11-13' | '14-16')
-  const currentAgeKey = useMemo(() => {
-    const bandId = activeAgeBand?.id || '8-10';
+  // Adaptive Age Tier Key state ('8-10' | '11-13' | '14-16') with context synchronization
+  const [selectedAgeTier, setSelectedAgeTier] = useState(() => {
+    const bandId = activeAgeBand?.id || 'band-8-10';
     if (bandId.includes('14') || bandId.includes('16')) return '14-16';
     if (bandId.includes('11') || bandId.includes('13')) return '11-13';
     return '8-10';
+  });
+
+  // Keep in sync with activeAgeBand if externally modified
+  useEffect(() => {
+    if (activeAgeBand?.id) {
+      if (activeAgeBand.id.includes('14') || activeAgeBand.id.includes('16')) {
+        setSelectedAgeTier('14-16');
+      } else if (activeAgeBand.id.includes('11') || activeAgeBand.id.includes('13')) {
+        setSelectedAgeTier('11-13');
+      } else {
+        setSelectedAgeTier('8-10');
+      }
+    }
   }, [activeAgeBand]);
+
+  const currentAgeKey = selectedAgeTier;
+
+  const handleSelectAgeTier = useCallback((tierKey) => {
+    setSelectedAgeTier(tierKey);
+    if (setAgeBand) {
+      setAgeBand(`band-${tierKey}`);
+    }
+  }, [setAgeBand]);
 
   // WebXR AR session state
   const [isArSupported, setIsArSupported] = useState(false);
@@ -72,7 +87,20 @@ export default function ArExplorerPage() {
   const [isQuizSubmitted, setIsQuizSubmitted] = useState(false);
   const [quizFeedback, setQuizFeedback] = useState(null);
   const [completedObjects, setCompletedObjects] = useState(new Set());
-  const [artifactTransform, setArtifactTransform] = useState({ scale: 1.4, rotationY: 0 });
+  const [focusedObject, setFocusedObject] = useState(null);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
+  const [artifactTransform, setArtifactTransform] = useState({
+    stationId: 'ashoka-chakra',
+    stationTitle: 'The Sovereign Ashoka Chakra',
+    rotationDegrees: 0,
+    scalePercent: 100,
+    apparentSize: '62.1 cm apparent',
+    physicalMetricSize: '39.2 cm (diameter)',
+    isArActive: false,
+    isPlacedInAr: false,
+    isWallDetected: false,
+    canPlace: false,
+  });
 
   // Current station data
   const currentStationIndex = useMemo(() => {
@@ -131,8 +159,19 @@ export default function ArExplorerPage() {
           if (data?.id) setSelectedId(data.id);
         },
         onInteractivePartClick: (action) => {
+          setHasUserInteracted(true);
           if (action.message) {
             setMitraMessage(action.message);
+          }
+          if (action.part && action.part !== 'overview' && action.part !== 'balance-pan') {
+            setFocusedObject({
+              part: action.part,
+              title: action.title || action.part,
+              badge: action.badge || 'Classroom Discovery',
+              message: action.message,
+            });
+          } else if (action.part === 'overview') {
+            setFocusedObject(null);
           }
         },
         onArSessionEnd: () => {
@@ -215,29 +254,92 @@ export default function ArExplorerPage() {
     setMitraMessage('Returned to your 3D virtual classroom wall exhibit.');
   };
 
-  // On-Screen Inspection Controls for Wall Exhibit (Rotate, Zoom, Reset, Reposition)
-  const handleRotateExhibit = (deltaAngle) => {
-    if (engineRef.current?.rotateExhibit) {
-      engineRef.current.rotateExhibit(deltaAngle);
+  // Whole-Classroom Navigation & Focal Object Interactions
+  const handleResetCameraView = useCallback(() => {
+    if (engineRef.current) {
+      engineRef.current.resetCameraOverview();
     }
-  };
+    setFocusedObject(null);
+  }, []);
 
-  const handleZoomExhibit = (deltaScale) => {
-    if (engineRef.current?.zoomExhibit) {
-      engineRef.current.zoomExhibit(deltaScale);
+  const handleFocusClassroomObject = useCallback((objectKey) => {
+    setHasUserInteracted(true);
+    if (engineRef.current) {
+      engineRef.current.focusOnObject(objectKey);
     }
-  };
-
-  const handleResetExhibit = () => {
-    if (engineRef.current?.resetExhibitTransform) {
-      engineRef.current.resetExhibitTransform();
-    }
-  };
+  }, []);
 
   const handleRepositionExhibit = () => {
     if (engineRef.current?.repositionExhibit) {
       engineRef.current.repositionExhibit();
       setMitraMessage('Scan a vertical classroom wall in your room and tap to mount the exhibit.');
+    }
+  };
+
+  // Universal Keyboard Spatial Navigation Controls for Accessibility
+  const handleStageKeyDown = (e) => {
+    setHasUserInteracted(true);
+    switch (e.key) {
+      case 'ArrowLeft':
+        e.preventDefault();
+        if (engineRef.current) {
+          engineRef.current.activeFocusObject = null;
+          engineRef.current.desiredCameraYaw = Math.max(-0.65, Math.min(0.65, engineRef.current.desiredCameraYaw + 0.1));
+        }
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        if (engineRef.current) {
+          engineRef.current.activeFocusObject = null;
+          engineRef.current.desiredCameraYaw = Math.max(-0.65, Math.min(0.65, engineRef.current.desiredCameraYaw - 0.1));
+        }
+        break;
+      case 'ArrowUp':
+      case '+':
+      case '=':
+        e.preventDefault();
+        if (engineRef.current) {
+          engineRef.current.activeFocusObject = null;
+          engineRef.current.desiredCameraDistance = Math.max(1.5, Math.min(5.2, engineRef.current.desiredCameraDistance - 0.3));
+        }
+        break;
+      case 'ArrowDown':
+      case '-':
+      case '_':
+        e.preventDefault();
+        if (engineRef.current) {
+          engineRef.current.activeFocusObject = null;
+          engineRef.current.desiredCameraDistance = Math.max(1.5, Math.min(5.2, engineRef.current.desiredCameraDistance + 0.3));
+        }
+        break;
+      case 'r':
+      case 'R':
+      case 'Escape':
+        e.preventDefault();
+        handleResetCameraView();
+        break;
+      case '1':
+        e.preventDefault();
+        handleFocusClassroomObject('blackboard');
+        break;
+      case '2':
+        e.preventDefault();
+        handleFocusClassroomObject('exhibit');
+        break;
+      case '3':
+        e.preventDefault();
+        handleFocusClassroomObject('charter');
+        break;
+      case '4':
+        e.preventDefault();
+        handleFocusClassroomObject('mitra');
+        break;
+      case '5':
+        e.preventDefault();
+        handleFocusClassroomObject('desk');
+        break;
+      default:
+        break;
     }
   };
 
@@ -264,37 +366,6 @@ export default function ArExplorerPage() {
       }
       setMitraEmotionState('concerned');
       setMitraMessage(`Notice the imbalance: ${choice.explanation}`);
-    }
-  };
-
-  // Direct Interactive Action Buttons for Model on the Desk
-  const handleDirectModelAction = (actionType) => {
-    if (!engineRef.current) return;
-
-    if (actionType === 'test_balance') {
-      const isCurrentlyZero = Math.abs(engineRef.current.scaleTiltAngle) < 0.05;
-      const nextTilt = isCurrentlyZero ? 'scale-unbalanced' : 'scale-balanced';
-      engineRef.current.triggerSpatialEffect(nextTilt);
-      setMitraMessage(
-        nextTilt === 'scale-balanced'
-          ? 'Equilibrium restored! Article 14 ensures equal dignity on the playground and in class.'
-          : 'Notice how the scale tilts lopsided when opportunities are unequally distributed.'
-      );
-    } else if (actionType === 'spin_chakra') {
-      engineRef.current.triggerSpatialEffect('chakra-glow-full');
-      setMitraMessage('The 24 spokes radiate continuous Dharma and civic fairness for every child!');
-    } else if (actionType === 'pulse_beacon') {
-      engineRef.current.triggerSpatialEffect('beacon-pulse');
-      setMitraMessage('Article 19 & UNCRC 12: Student voices echo across our Bal Sansad assembly!');
-    } else if (actionType === 'expand_shield') {
-      engineRef.current.triggerSpatialEffect('shield-expand');
-      setMitraMessage('Emerald protective sanctuary dome deployed! Childline 1098 guards every child.');
-    } else if (actionType === 'open_gates') {
-      engineRef.current.triggerSpatialEffect('scroll-unfurl');
-      setMitraMessage('The school gates swing wide open! Article 21A guarantees free, high-quality learning.');
-    } else if (actionType === 'fire_remedies') {
-      engineRef.current.triggerSpatialEffect('remedy-prisms-fire');
-      setMitraMessage('Dr. Ambedkar’s Article 32: Constitutional writ light rays connect to the Apex Court!');
     }
   };
 
@@ -394,7 +465,7 @@ export default function ArExplorerPage() {
           </h1>
 
           <p className="text-lead" style={{ maxWidth: '720px', margin: '0 0 var(--space-4)' }}>
-            Welcome to our hands-on constitutional classroom. Explore compact 35–45 cm constitutional exhibits mounted on your classroom wall with Mitra. In Mode A, use WebXR Augmented Reality to place the exhibit onto your physical room wall via camera passthrough. In Mode B, explore our 3D classroom simulation with teacher's blackboard and student study desk.
+            Welcome to our hands-on constitutional classroom. Explore compact 35–45 cm constitutional exhibits mounted on your classroom wall with Mitra in Mode A: Live Camera WebXR AR. Place the exhibit onto your physical room wall via camera passthrough, explore the classroom landmarks, and resolve living dilemmas.
           </p>
 
           {/* Age Adaptation & Factual Privacy Row */}
@@ -413,8 +484,9 @@ export default function ArExplorerPage() {
                       key={band.id}
                       type="button"
                       className={`${styles.agePill} ${isCurrent ? styles.agePillActive : ''}`}
-                      onClick={() => setAgeBand && setAgeBand(band.id)}
+                      onClick={() => handleSelectAgeTier(band.id)}
                       aria-pressed={isCurrent}
+                      data-testid={`age-tier-${band.id}`}
                     >
                       <span className={styles.agePillLabel}>{band.label}</span>
                       <span className={styles.agePillSub}>{band.sub}</span>
@@ -477,38 +549,37 @@ export default function ArExplorerPage() {
           </div>
         </nav>
 
-        {/* Experience Mode Banner: Honest Distinction between WebXR AR and Classroom 3D Simulation */}
+        {/* Experience Mode Banner: Mode A Augmented Reality Wall Exhibit Experience */}
         <div 
-          className={`${styles.modeBanner} ${isArActive ? styles.modeBannerAr : styles.modeBannerSim}`}
+          className={`${styles.modeBanner} ${styles.modeBannerAr}`}
           role="region"
           aria-label="Experience Mode Indicator"
         >
           <div className={styles.modeBannerHeader}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              {isArActive ? (
-                <Camera size={18} className={styles.modeIconAr} aria-hidden="true" />
-              ) : (
-                <Layers size={18} className={styles.modeIconSim} aria-hidden="true" />
-              )}
+              <Camera size={18} className={styles.modeIconAr} aria-hidden="true" />
               <h2 className={styles.modeBannerTitle}>
-                {isArActive
-                  ? 'Mode A: Live Camera WebXR AR (Wall Placement)'
-                  : 'Mode B: Classroom 3D Simulation (Wall Exhibit Fallback)'}
+                Mode A: Live Camera WebXR AR (Wall Placement)
               </h2>
             </div>
             <span className={styles.modeBannerBadge}>
-              {isArActive ? 'Camera Passthrough Active · Real Classroom Wall' : 'Virtual Classroom · Compact Wall Exhibit'}
+              {isArActive ? 'Camera Passthrough Active · Real Classroom Wall' : 'Augmented Reality (AR) · Interactive Wall Exhibit'}
             </span>
           </div>
           <p className={styles.modeBannerText}>
             {isArActive
               ? 'Your physical room camera is active via WebXR. Scan and tap any vertical wall surface to mount this compact 35–45 cm constitutional exhibit flush against your wall. Zero camera video or photos are saved or uploaded (DPDP Act 2023 §9).'
-              : 'Believable 3D simulation of a modern Indian classroom. The constitutional artifact is mounted in a slim brass display frame with identification plaque against the rear wall, with the student desk and teacher’s blackboard providing realistic context.'}
+              : 'Augmented Reality constitutional learning experience. Explore living constitutional exhibits calibrated to physical 35–45 cm dimensions. Tap "Mount on Real Wall (AR)" to project directly onto your physical room wall via WebXR camera passthrough.'}
           </p>
         </div>
 
         {/* 3D / AR Viewport Stage (Virtual Classroom & Real AR Placement) */}
-        <section className={styles.stageContainer} aria-label="Classroom Wall Exhibit Stage">
+        <section 
+          className={styles.stageContainer} 
+          tabIndex={0}
+          onKeyDown={handleStageKeyDown}
+          aria-label="Classroom Wall Exhibit Stage. Use Arrow Keys to rotate, +/- to zoom, R to reset view."
+        >
           <canvas ref={canvasRef} className={styles.canvas} />
 
           {/* Mitra In-Stage Speech Bubble HUD */}
@@ -538,181 +609,116 @@ export default function ArExplorerPage() {
                   <span>Mount on Real Wall (AR)</span>
                 </button>
               ) : isArActive ? (
-                <button
-                  type="button"
-                  className={styles.arActionBtn}
-                  onClick={handleStopAr}
-                  style={{ background: '#111827' }}
-                  aria-label="Exit AR Session"
-                >
-                  <X size={16} aria-hidden="true" />
-                  <span>Return to Virtual Classroom</span>
-                </button>
-              ) : null}
-
-              {/* On-Screen 3D & AR Exhibit Inspection Toolbar */}
-              <div className={styles.inspectionToolbar} role="toolbar" aria-label="Exhibit Inspection Controls">
-                <button
-                  type="button"
-                  className={styles.inspectBtn}
-                  onClick={() => handleRotateExhibit(-0.25)}
-                  title="Rotate Exhibit Left"
-                  aria-label="Rotate Exhibit Left"
-                >
-                  <RotateCcw size={13} />
-                  <span>Rotate Left</span>
-                </button>
-                <button
-                  type="button"
-                  className={styles.inspectBtn}
-                  onClick={() => handleRotateExhibit(0.25)}
-                  title="Rotate Exhibit Right"
-                  aria-label="Rotate Exhibit Right"
-                >
-                  <RotateCw size={13} />
-                  <span>Rotate Right</span>
-                </button>
-                <button
-                  type="button"
-                  className={styles.inspectBtn}
-                  onClick={() => handleZoomExhibit(0.12)}
-                  title="Zoom In Exhibit"
-                  aria-label="Zoom In Exhibit"
-                >
-                  <ZoomIn size={13} />
-                  <span>Zoom In</span>
-                </button>
-                <button
-                  type="button"
-                  className={styles.inspectBtn}
-                  onClick={() => handleZoomExhibit(-0.12)}
-                  title="Zoom Out Exhibit"
-                  aria-label="Zoom Out Exhibit"
-                >
-                  <ZoomOut size={13} />
-                  <span>Zoom Out</span>
-                </button>
-                <button
-                  type="button"
-                  className={styles.inspectBtn}
-                  onClick={handleResetExhibit}
-                  title="Reset Orientation and View"
-                  aria-label="Reset Orientation and View"
-                >
-                  <RefreshCw size={13} />
-                  <span>Reset View</span>
-                </button>
-                {isArActive && (
+                <>
                   <button
                     type="button"
-                    className={`${styles.inspectBtn} ${styles.inspectBtnHighlight}`}
+                    className={styles.arActionBtn}
+                    onClick={handleStopAr}
+                    style={{ background: '#111827' }}
+                    aria-label="Exit AR Session"
+                  >
+                    <X size={16} aria-hidden="true" />
+                    <span>Return to Virtual Classroom</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.arRepositionBtn}
                     onClick={handleRepositionExhibit}
                     title="Reposition Exhibit on Another Wall"
                     aria-label="Reposition Exhibit on Another Wall"
                   >
-                    <Camera size={13} />
-                    <span>Reposition</span>
+                    <Camera size={14} />
+                    <span>Reposition on Wall</span>
                   </button>
-                )}
+                  <span className={artifactTransform.isWallDetected ? styles.wallBadgeValid : styles.wallBadgeInvalid}>
+                    {artifactTransform.isWallDetected ? '✓ Vertical Wall Detected' : '⚠ Aim at Vertical Wall'}
+                  </span>
+                </>
+              ) : null}
 
-                {/* Live Exhibit Transform Visual Readout */}
-                <div className={styles.inspectionFeedbackBadge} aria-live="polite">
-                  <span className={styles.feedbackItem}>
-                    <strong>Scale:</strong> {Math.round((artifactTransform.scale / 1.4) * 100)}% ({isArActive ? 'WebXR 1:1 Physical' : `${(artifactTransform.scale * 43).toFixed(0)}cm apparent`})
-                  </span>
-                  <span className={styles.feedbackDivider}>•</span>
-                  <span className={styles.feedbackItem}>
-                    <strong>Rotation:</strong> {Math.round((((artifactTransform.rotationY % (Math.PI * 2)) + (Math.PI * 2)) % (Math.PI * 2)) * (180 / Math.PI))}°
-                  </span>
+              {/* Natural Classroom Exploration Contextual Hint Banner */}
+              {!isArActive && (
+                <div 
+                  className={`${styles.classroomGestureHint} ${hasUserInteracted ? styles.hintDimmed : ''}`}
+                  role="status"
+                  aria-live="polite"
+                >
+                  <Compass size={14} className={styles.gestureHintIcon} aria-hidden="true" />
+                  <span>Drag to explore · Scroll or pinch to move closer · Tap classroom objects to discover</span>
+                  {hasUserInteracted && (
+                    <button 
+                      type="button" 
+                      className={styles.resetViewPill} 
+                      onClick={handleResetCameraView}
+                      title="Reset classroom overview"
+                    >
+                      Reset View
+                    </button>
+                  )}
                 </div>
-              </div>
-
-              {/* Direct Desktop Model Interaction Buttons */}
-              {currentStation.id === 'right-to-equality' && (
-                <button
-                  type="button"
-                  className={styles.stageActionPill}
-                  onClick={() => handleDirectModelAction('test_balance')}
-                  aria-label="Toggle scale balance equilibrium"
-                >
-                  <Scale size={14} />
-                  <span>Test Scale Balance</span>
-                </button>
-              )}
-
-              {currentStation.id === 'ashoka-chakra' && (
-                <button
-                  type="button"
-                  className={styles.stageActionPill}
-                  onClick={() => handleDirectModelAction('spin_chakra')}
-                  aria-label="Spin Dharma Chakra"
-                >
-                  <RotateCw size={14} />
-                  <span>Spin 24 Spokes</span>
-                </button>
-              )}
-
-              {currentStation.id === 'right-to-freedom' && (
-                <button
-                  type="button"
-                  className={styles.stageActionPill}
-                  onClick={() => handleDirectModelAction('pulse_beacon')}
-                  aria-label="Broadcast student voice"
-                >
-                  <Volume2 size={14} />
-                  <span>Broadcast Bal Sansad</span>
-                </button>
-              )}
-
-              {currentStation.id === 'right-against-exploitation' && (
-                <button
-                  type="button"
-                  className={styles.stageActionPill}
-                  onClick={() => handleDirectModelAction('expand_shield')}
-                  aria-label="Deploy 1098 sanctuary dome"
-                >
-                  <ShieldCheck size={14} />
-                  <span>Deploy 1098 Sanctuary</span>
-                </button>
-              )}
-
-              {currentStation.id === 'right-to-education' && (
-                <button
-                  type="button"
-                  className={styles.stageActionPill}
-                  onClick={() => handleDirectModelAction('open_gates')}
-                  aria-label="Open school gates and unroll scroll"
-                >
-                  <BookOpen size={14} />
-                  <span>Open School Gates</span>
-                </button>
-              )}
-
-              {currentStation.id === 'constitutional-remedies' && (
-                <button
-                  type="button"
-                  className={styles.stageActionPill}
-                  onClick={() => handleDirectModelAction('fire_remedies')}
-                  aria-label="Fire 5 crystal writ rays"
-                >
-                  <Sparkles size={14} />
-                  <span>Fire Writ Light Rays</span>
-                </button>
-              )}
-
-              {isArActive && arStatusMessage && (
-                <span className={styles.stageTip} role="status">
-                  {arStatusMessage}
-                </span>
               )}
             </div>
 
-            {!isArActive && (
-              <span className={styles.stageTip}>
-                Drag to rotate wall exhibit · Scroll to zoom · Use controls or tap plaque to inspect
+            {isArActive && arStatusMessage && (
+              <span className={styles.stageTip} role="status">
+                {arStatusMessage}
               </span>
             )}
           </div>
+
+          {/* Dismissible Interactive Classroom Object Focus Card */}
+          {focusedObject && (
+            <aside 
+              className={styles.focusedObjectCard} 
+              role="region" 
+              aria-label={`Inspecting ${focusedObject.title}`}
+            >
+              <div className={styles.focusedObjectHeader}>
+                <div className={styles.focusedObjectBadgeWrap}>
+                  <Sparkles size={13} className={styles.focusedObjectSparkle} aria-hidden="true" />
+                  <span className={styles.focusedObjectBadge}>{focusedObject.badge}</span>
+                </div>
+                <button
+                  type="button"
+                  className={styles.focusedObjectClose}
+                  onClick={handleResetCameraView}
+                  aria-label="Return to classroom overview"
+                >
+                  <X size={15} />
+                </button>
+              </div>
+              <h3 className={styles.focusedObjectTitle}>{focusedObject.title}</h3>
+              <p className={styles.focusedObjectMessage}>{focusedObject.message}</p>
+              <div className={styles.focusedObjectActions}>
+                <button
+                  type="button"
+                  className={styles.returnOverviewBtn}
+                  onClick={handleResetCameraView}
+                >
+                  <Compass size={14} />
+                  <span>Classroom Overview</span>
+                </button>
+                {focusedObject.part === 'exhibit' && (
+                  <a
+                    href="#constitutional-inquiry-section"
+                    className={styles.inspectExhibitBtn}
+                  >
+                    <BookOpen size={14} />
+                    <span>Study Lesson Below</span>
+                  </a>
+                )}
+                {focusedObject.part === 'desk' && (
+                  <a
+                    href="#constitutional-inquiry-section"
+                    className={styles.inspectExhibitBtn}
+                  >
+                    <GraduationCap size={14} />
+                    <span>Open Civics Dilemma</span>
+                  </a>
+                )}
+              </div>
+            </aside>
+          )}
         </section>
 
         {/* Phase 5: Teacher's Blackboard Synchronized Card */}
@@ -1034,7 +1040,7 @@ export default function ArExplorerPage() {
                 <tr>
                   <td><strong>3D Classroom Simulation</strong></td>
                   <td>Interactive 3D environment with wall, blackboard, preamble charter, desk, and exhibit transforms.</td>
-                  <td><span className={styles.capabilityBadge3D}>Mode B: 3D Studio</span></td>
+                  <td><span className={styles.capabilityBadge3D}>Mode B: Classroom 3D Simulation</span></td>
                   <td>Active on all WebGL browsers</td>
                 </tr>
                 <tr>

@@ -17,6 +17,104 @@ import * as THREE from 'three';
  *    - Dynamic hide/show of virtual classroom geometry during real AR passthrough.
  *    - Zero camera frames recorded, saved, or uploaded (DPDP Act 2023 §9 compliant).
  */
+/**
+ * Calibrated Station Transform and Metric Sizing Configurations
+ * Strictly defines physical AR metric scale (~35-45 cm physical size in Mode A)
+ * and balanced hero apparent scale (~58-62 cm apparent size in Mode B 3D studio).
+ */
+export const STATION_TRANSFORM_CONFIGS = {
+  'ashoka-chakra': {
+    id: 'ashoka-chakra',
+    title: 'The Sovereign Ashoka Chakra',
+    geometryType: 'chakra',
+    baseScale3D: 0.130, // ~62 cm apparent diameter on classroom wall
+    baseScaleAr: 0.082, // 39.2 cm physical diameter in WebXR AR
+    baseMetricCm: 39.2,
+    metricUnit: 'cm (diameter)',
+    baseApparentCm: 62.1,
+    minZoomFactor: 0.65,
+    maxZoomFactor: 2.2,
+    defaultRotationY: 0,
+    modelCenterY: 0.06,
+    depthOffset: 0.08,
+  },
+  'right-to-equality': {
+    id: 'right-to-equality',
+    title: 'The Balance of Equality',
+    geometryType: 'pillar',
+    baseScale3D: 0.165, // ~59 cm apparent width on classroom wall
+    baseScaleAr: 0.115, // 41.4 cm physical width in WebXR AR
+    baseMetricCm: 41.4,
+    metricUnit: 'cm (width)',
+    baseApparentCm: 59.4,
+    minZoomFactor: 0.65,
+    maxZoomFactor: 2.2,
+    defaultRotationY: 0,
+    modelCenterY: 0.06,
+    depthOffset: 0.08,
+  },
+  'right-to-freedom': {
+    id: 'right-to-freedom',
+    title: 'The Beacon of Expression',
+    geometryType: 'beacon',
+    baseScale3D: 0.155, // ~58 cm apparent height on classroom wall
+    baseScaleAr: 0.098, // 36.9 cm physical height in WebXR AR
+    baseMetricCm: 36.9,
+    metricUnit: 'cm (height)',
+    baseApparentCm: 58.4,
+    minZoomFactor: 0.65,
+    maxZoomFactor: 2.2,
+    defaultRotationY: 0,
+    modelCenterY: 0.06,
+    depthOffset: 0.08,
+  },
+  'right-against-exploitation': {
+    id: 'right-against-exploitation',
+    title: 'The Shield of Bodily Safety',
+    geometryType: 'shield',
+    baseScale3D: 0.225, // ~59 cm apparent height on classroom wall
+    baseScaleAr: 0.145, // 37.7 cm physical height in WebXR AR
+    baseMetricCm: 37.7,
+    metricUnit: 'cm (height)',
+    baseApparentCm: 58.5,
+    minZoomFactor: 0.65,
+    maxZoomFactor: 2.2,
+    defaultRotationY: 0,
+    modelCenterY: 0.06,
+    depthOffset: 0.08,
+  },
+  'right-to-education': {
+    id: 'right-to-education',
+    title: 'The Scroll of Free Learning',
+    geometryType: 'scroll',
+    baseScale3D: 0.165, // ~59 cm apparent width on classroom wall
+    baseScaleAr: 0.112, // 40.3 cm physical width in WebXR AR
+    baseMetricCm: 40.3,
+    metricUnit: 'cm (width)',
+    baseApparentCm: 59.4,
+    minZoomFactor: 0.65,
+    maxZoomFactor: 2.2,
+    defaultRotationY: 0,
+    modelCenterY: 0.06,
+    depthOffset: 0.08,
+  },
+  'constitutional-remedies': {
+    id: 'constitutional-remedies',
+    title: 'The Crest of Legal Remedies',
+    geometryType: 'crest',
+    baseScale3D: 0.178, // ~59 cm apparent height on classroom wall
+    baseScaleAr: 0.118, // 39.2 cm physical height in WebXR AR
+    baseMetricCm: 39.2,
+    metricUnit: 'cm (height)',
+    baseApparentCm: 59.1,
+    minZoomFactor: 0.65,
+    maxZoomFactor: 2.2,
+    defaultRotationY: 0,
+    modelCenterY: 0.06,
+    depthOffset: 0.08,
+  },
+};
+
 export class ArSceneEngine {
   constructor(canvas, options = {}) {
     this.canvas = canvas;
@@ -39,12 +137,33 @@ export class ArSceneEngine {
     // Scene groups
     this.classroomGroup = null; // Contains desk, blackboard, workbook, floor, walls, window
     this.mainStageGroup = null; // Contains wall mounting frame, plaque, and active constitutional artifact
+    this.activeExhibitRoot = null; // Dedicated active transform container for the constitutional exhibit
     this.wallMountingFrame = null;
     this.currentStationGroup = null;
     this.mitraGroup = null;
     this.particlesGroup = null;
     this.reticle = null;
     this.hitTestSource = null;
+
+    // Active Station & Independent Transform States
+    this.activeStationId = 'ashoka-chakra';
+    this.stationStates = {};
+    Object.keys(STATION_TRANSFORM_CONFIGS).forEach((id) => {
+      this.stationStates[id] = {
+        rotationY: STATION_TRANSFORM_CONFIGS[id].defaultRotationY,
+        zoomFactor: 1.0,
+      };
+    });
+
+    // AR Wall Placement & Pose Tracking State
+    this.isWallDetected = false;
+    this.placedAnchorPosition = new THREE.Vector3();
+    this.placedAnchorQuaternion = new THREE.Quaternion();
+    this.currentAnchor = null;
+    this.reticleValidMat = null;
+    this.reticleInvalidMat = null;
+    this.reticleRing = null;
+    this.reticleDot = null;
 
     // Blackboard canvas texture
     this.blackboardCanvas = null;
@@ -58,6 +177,7 @@ export class ArSceneEngine {
     // Charter canvas texture
     this.charterCanvas = null;
     this.charterTexture = null;
+    this.charterMesh = null;
 
     // Consequence animation states
     this.activeSpatialEffect = null;
@@ -78,16 +198,74 @@ export class ArSceneEngine {
     this.mitraEmotion = 'welcome';
     this.mitraBlinkTimer = 0;
 
-    // Interaction controls for 3D inspection
+    // Whole-Classroom Camera Navigation State (Natural pan, orbit, and zoom)
+    this.cameraDefaultPosition = new THREE.Vector3(0, 1.05, 2.5);
+    this.cameraDefaultTarget = new THREE.Vector3(0, 1.05, -2.18);
+    this.cameraTarget = new THREE.Vector3(0, 1.05, -2.18);
+    this.desiredCameraTarget = new THREE.Vector3(0, 1.05, -2.18);
+    this.desiredCameraPosition = new THREE.Vector3(0, 1.05, 2.5);
+
+    // Orbit angles & distance from wall target (target z = -2.18, camera default z = 2.5 -> distance = 4.68m)
+    this.cameraYaw = 0;
+    this.cameraPitch = 0;
+    this.cameraDistance = 4.68;
+    this.desiredCameraYaw = 0;
+    this.desiredCameraPitch = 0;
+    this.desiredCameraDistance = 4.68;
+
+    this.activeFocusObject = null; // null | 'overview' | 'blackboard' | 'charter' | 'mitra' | 'desk' | 'exhibit'
     this.isDragging = false;
     this.previousMousePosition = { x: 0, y: 0 };
-    this.rotationVelocity = { x: 0, y: 0.0015 };
-    this.zoomLevel = 2.5;
+    this.rotationVelocity = { x: 0, y: 0 };
+    this.initialPinchDistance = null;
+
+    // Interactive Classroom Spatial Focal Points
+    this.classroomFocalPoints = {
+      overview: {
+        target: new THREE.Vector3(0, 1.05, -2.18),
+        cameraPos: new THREE.Vector3(0, 1.05, 2.5),
+        title: 'Classroom Overview',
+        badge: 'Whole Room',
+      },
+      exhibit: {
+        target: new THREE.Vector3(0, 1.05, -2.18),
+        cameraPos: new THREE.Vector3(0, 1.05, -0.65),
+        title: 'Constitutional Exhibit',
+        badge: 'Constitutional Artifact',
+      },
+      blackboard: {
+        target: new THREE.Vector3(-2.75, 1.25, -2.28),
+        cameraPos: new THREE.Vector3(-2.3, 1.25, -0.7),
+        title: 'Teacher’s Blackboard',
+        badge: 'Lesson Topic',
+      },
+      charter: {
+        target: new THREE.Vector3(2.75, 1.25, -2.28),
+        cameraPos: new THREE.Vector3(2.3, 1.25, -0.7),
+        title: 'The Constitution Charter',
+        badge: 'Preamble Bedrock',
+      },
+      mitra: {
+        target: new THREE.Vector3(1.08, 0.72, -2.05),
+        cameraPos: new THREE.Vector3(0.95, 0.72, -1.05),
+        title: 'Mitra Companion Perch',
+        badge: 'Learning Companion',
+      },
+      desk: {
+        target: new THREE.Vector3(1.65, -0.85, 0.45),
+        cameraPos: new THREE.Vector3(1.35, -0.15, 1.45),
+        title: 'Student Desk & Civics Journal',
+        badge: 'Learner Workbook',
+      },
+    };
 
     // Bind event listeners
     this.handlePointerDown = this.handlePointerDown.bind(this);
     this.handlePointerMove = this.handlePointerMove.bind(this);
     this.handlePointerUp = this.handlePointerUp.bind(this);
+    this.handleTouchStart = this.handleTouchStart.bind(this);
+    this.handleTouchMove = this.handleTouchMove.bind(this);
+    this.handleTouchEnd = this.handleTouchEnd.bind(this);
     this.handleWheel = this.handleWheel.bind(this);
     this.handleCanvasClick = this.handleCanvasClick.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
@@ -144,8 +322,13 @@ export class ArSceneEngine {
     // 7. Main Artifact Stage Container (Prominently centered on classroom rear wall)
     this.mainStageGroup = new THREE.Group();
     this.mainStageGroup.position.set(0, 1.05, -2.18);
-    this.mainStageGroup.scale.set(1.4, 1.4, 1.4); // Modestly enlarged hero scale for 3D classroom studio
+    this.mainStageGroup.scale.set(1, 1, 1);
     this.scene.add(this.mainStageGroup);
+
+    // Universal Active Exhibit Root Container (Transforms affect this group directly)
+    this.activeExhibitRoot = new THREE.Group();
+    this.activeExhibitRoot.name = 'activeExhibitRoot';
+    this.mainStageGroup.add(this.activeExhibitRoot);
 
     // 8. Mitra 3D Companion (Grounded securely on crafted museum corbel wall shelf)
     this.mitraGroup = this.buildMitraCompanion();
@@ -162,7 +345,10 @@ export class ArSceneEngine {
     this.canvas.addEventListener('pointerdown', this.handlePointerDown);
     window.addEventListener('pointermove', this.handlePointerMove);
     window.addEventListener('pointerup', this.handlePointerUp);
-    this.canvas.addEventListener('wheel', this.handleWheel, { passive: true });
+    this.canvas.addEventListener('touchstart', this.handleTouchStart, { passive: false });
+    this.canvas.addEventListener('touchmove', this.handleTouchMove, { passive: false });
+    this.canvas.addEventListener('touchend', this.handleTouchEnd, { passive: true });
+    this.canvas.addEventListener('wheel', this.handleWheel, { passive: false });
     this.canvas.addEventListener('click', this.handleCanvasClick);
     window.addEventListener('resize', this.handleResize);
 
@@ -326,6 +512,7 @@ export class ArSceneEngine {
       metalness: 0.05,
     });
     this.blackboardMesh = new THREE.Mesh(new THREE.BoxGeometry(2.18, 1.58, 0.04), boardMat);
+    this.blackboardMesh.name = 'blackboardMesh';
     this.blackboardMesh.position.z = 0.035;
     blackboardGroup.add(this.blackboardMesh);
 
@@ -367,6 +554,7 @@ export class ArSceneEngine {
       metalness: 0.05,
     });
     this.charterMesh = new THREE.Mesh(new THREE.BoxGeometry(2.18, 1.58, 0.035), charterMat);
+    this.charterMesh.name = 'charterMesh';
     this.charterMesh.position.z = 0.03;
     charterGroup.add(this.charterMesh);
 
@@ -374,6 +562,8 @@ export class ArSceneEngine {
 
     // 6. Secondary Student Study Desk (Grounded naturally in lower right foreground)
     const deskGroup = new THREE.Group();
+    deskGroup.name = 'studentDeskGroup';
+    this.deskGroup = deskGroup;
     deskGroup.position.set(1.9, -1.15, 0.5);
     deskGroup.scale.set(0.85, 0.85, 0.85);
 
@@ -399,6 +589,8 @@ export class ArSceneEngine {
     stationeryGroup.position.set(-0.35, 0.09, 0.1);
 
     const workbook = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.022, 0.65), paperMat);
+    workbook.name = 'studentWorkbookMesh';
+    this.workbookMesh = workbook;
     workbook.rotation.y = 0.06;
     workbook.receiveShadow = true;
     stationeryGroup.add(workbook);
@@ -423,6 +615,8 @@ export class ArSceneEngine {
 
     // 7. Grounded Museum Corbel Wall Shelf for Mitra (Firmly attached to wall beside exhibit)
     const corbelGroup = new THREE.Group();
+    corbelGroup.name = 'mitraCorbelShelf';
+    this.corbelShelfGroup = corbelGroup;
     corbelGroup.position.set(1.08, 0.65, -2.18);
 
     // Polished Teak Shelf Slab
@@ -770,17 +964,67 @@ export class ArSceneEngine {
   }
 
   buildReticle() {
-    const ringGeo = new THREE.RingGeometry(0.18, 0.24, 32).rotateX(-Math.PI / 2);
-    const ringMat = new THREE.MeshBasicMaterial({
-      color: 0xde7215,
+    const reticleGroup = new THREE.Group();
+    reticleGroup.name = 'placementReticle';
+    reticleGroup.matrixAutoUpdate = false;
+    reticleGroup.visible = false;
+
+    this.reticleValidMat = new THREE.MeshBasicMaterial({
+      color: 0x10b981, // Vibrant emerald green for valid vertical wall
       side: THREE.DoubleSide,
       transparent: true,
-      opacity: 0.9,
+      opacity: 0.95,
     });
-    const reticleMesh = new THREE.Mesh(ringGeo, ringMat);
-    reticleMesh.matrixAutoUpdate = false;
-    reticleMesh.visible = false;
-    return reticleMesh;
+
+    this.reticleInvalidMat = new THREE.MeshBasicMaterial({
+      color: 0xef4444, // Red for invalid horizontal floor/ceiling surface
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.88,
+    });
+
+    // Flat ring on XY plane (faces camera/wall normal)
+    const ringGeo = new THREE.RingGeometry(0.18, 0.22, 36);
+    this.reticleRing = new THREE.Mesh(ringGeo, this.reticleValidMat);
+    reticleGroup.add(this.reticleRing);
+
+    // Center targeting dot
+    const dotGeo = new THREE.CircleGeometry(0.024, 16);
+    this.reticleDot = new THREE.Mesh(dotGeo, this.reticleValidMat);
+    reticleGroup.add(this.reticleDot);
+
+    // 4 Cardinal Crosshair ticks
+    const tickGeo = new THREE.PlaneGeometry(0.016, 0.08);
+    const tickN = new THREE.Mesh(tickGeo, this.reticleValidMat);
+    tickN.position.y = 0.27;
+    reticleGroup.add(tickN);
+    const tickS = new THREE.Mesh(tickGeo, this.reticleValidMat);
+    tickS.position.y = -0.27;
+    reticleGroup.add(tickS);
+    const tickE = new THREE.Mesh(tickGeo, this.reticleValidMat);
+    tickE.rotation.z = Math.PI / 2;
+    tickE.position.x = 0.27;
+    reticleGroup.add(tickE);
+    const tickW = new THREE.Mesh(tickGeo, this.reticleValidMat);
+    tickW.rotation.z = Math.PI / 2;
+    tickW.position.x = -0.27;
+    reticleGroup.add(tickW);
+
+    this.reticleCrosshairs = [tickN, tickS, tickE, tickW];
+
+    return reticleGroup;
+  }
+
+  setReticleState(state) {
+    const mat = state === 'valid' ? this.reticleValidMat : this.reticleInvalidMat;
+    if (!mat) return;
+    if (this.reticleRing) this.reticleRing.material = mat;
+    if (this.reticleDot) this.reticleDot.material = mat;
+    if (this.reticleCrosshairs) {
+      this.reticleCrosshairs.forEach((tick) => {
+        tick.material = mat;
+      });
+    }
   }
 
   // ── REFINED 3D MITRA MASCOT COMPANION (STUDY BUDDY ON DESK) ───────────────
@@ -1002,13 +1246,29 @@ export class ArSceneEngine {
     }
   }
 
+  getStationConfig(stationId = this.activeStationId) {
+    return STATION_TRANSFORM_CONFIGS[stationId] || STATION_TRANSFORM_CONFIGS['ashoka-chakra'];
+  }
+
+  getActiveExhibitRoot() {
+    return this.activeExhibitRoot || this.currentStationGroup;
+  }
+
   // ── LOAD CONSTITUTIONAL EXHIBIT ONTO WALL MOUNT ──────────────────────────
 
   loadConstitutionalStation(stationData, ageKey = '8-10') {
     if (!stationData) return;
+    const stationId = stationData.id || 'ashoka-chakra';
+    this.activeStationId = stationId;
+
+    if (!this.activeExhibitRoot) {
+      this.activeExhibitRoot = new THREE.Group();
+      this.activeExhibitRoot.name = 'activeExhibitRoot';
+      this.mainStageGroup.add(this.activeExhibitRoot);
+    }
 
     if (this.currentStationGroup) {
-      this.mainStageGroup.remove(this.currentStationGroup);
+      this.activeExhibitRoot.remove(this.currentStationGroup);
       this.disposeObject(this.currentStationGroup);
       this.currentStationGroup = null;
     }
@@ -1023,7 +1283,7 @@ export class ArSceneEngine {
     this.wallMountingFrame = this.buildWallMountingFrame(stationData);
     this.mainStageGroup.add(this.wallMountingFrame);
 
-    // 2. Build Station Geometry inside scaled model group (~35-45 cm display scale)
+    // 2. Build Station Geometry inside scaled model group
     const newGroup = new THREE.Group();
 
     switch (stationData.geometryType) {
@@ -1056,19 +1316,23 @@ export class ArSceneEngine {
         newGroup.name = 'ashokaChakraModel';
     }
 
-    // Calibrate compact physical exhibit scale (~35-45 cm display scale)
-    newGroup.scale.set(0.118, 0.118, 0.118);
-    newGroup.position.set(0, 0.06, 0.08);
-
-    newGroup.userData = { id: stationData.id, title: stationData.title };
+    const config = this.getStationConfig(stationId);
+    newGroup.position.set(0, 0, 0);
+    newGroup.userData = { id: stationId, title: stationData.title };
     this.currentStationGroup = newGroup;
-    this.mainStageGroup.add(newGroup);
+    this.activeExhibitRoot.add(newGroup);
+
+    // Position active exhibit root relative to wall mounting backplate
+    this.activeExhibitRoot.position.set(0, config.modelCenterY, config.depthOffset);
+
+    // Apply this station's independent transform state (no leakage!)
+    this.applyExhibitTransform();
 
     // Update Blackboard dynamically
     this.updateBlackboardContent(stationData, ageKey);
     this.renderPlaqueCanvas(stationData);
 
-    if (stationData.id === 'right-to-equality') {
+    if (stationId === 'right-to-equality') {
       this.targetScaleTilt = -0.22;
     } else {
       this.targetScaleTilt = 0;
@@ -1104,18 +1368,22 @@ export class ArSceneEngine {
     const chakraGroup = new THREE.Group();
     chakraGroup.position.set(0, 0.65, 0);
 
+    // Rotating Wheel Body (Contains hub, core, rims, and 24 Dharma spokes)
+    const chakraWheelBody = new THREE.Group();
+    chakraWheelBody.name = 'chakraWheelBody';
+
     const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.22, 32), chakraNavy);
     hub.rotation.x = Math.PI / 2;
-    chakraGroup.add(hub);
+    chakraWheelBody.add(hub);
 
     const core = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), chakraGold);
-    chakraGroup.add(core);
+    chakraWheelBody.add(core);
 
     const outerRim = new THREE.Mesh(new THREE.TorusGeometry(1.85, 0.085, 16, 64), chakraNavy);
-    chakraGroup.add(outerRim);
+    chakraWheelBody.add(outerRim);
 
     const innerRim = new THREE.Mesh(new THREE.TorusGeometry(1.72, 0.035, 12, 64), chakraGold);
-    chakraGroup.add(innerRim);
+    chakraWheelBody.add(innerRim);
 
     // 24 Dharma Spokes
     for (let i = 0; i < 24; i++) {
@@ -1131,10 +1399,12 @@ export class ArSceneEngine {
       tipBead.position.y = 1.76;
       spokeGroup.add(tipBead);
 
-      chakraGroup.add(spokeGroup);
+      chakraWheelBody.add(spokeGroup);
     }
 
-    // 4 Cardinal Medallions of Rights
+    chakraGroup.add(chakraWheelBody);
+
+    // 4 Cardinal Medallions of Rights (Stationary orientation brackets)
     for (let i = 0; i < 4; i++) {
       const angle = (i * Math.PI) / 2;
       const med = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.08, 16), chakraGold);
@@ -1617,13 +1887,14 @@ export class ArSceneEngine {
 
     const sessionInit = {
       requiredFeatures: ['hit-test'],
-      optionalFeatures: ['dom-overlay', 'light-estimation'],
+      optionalFeatures: ['dom-overlay', 'light-estimation', 'anchors', 'local-floor'],
     };
 
     const session = await navigator.xr.requestSession('immersive-ar', sessionInit);
     this.currentSession = session;
     this.isArActive = true;
     this.isPlacedInAr = false;
+    this.isWallDetected = false;
 
     await this.renderer.xr.setSession(session);
 
@@ -1631,9 +1902,7 @@ export class ArSceneEngine {
     if (this.classroomGroup) this.classroomGroup.visible = false;
     if (this.particlesGroup) this.particlesGroup.visible = false;
 
-    this.mainStageGroup.scale.set(1, 1, 1);
     this.mainStageGroup.visible = false;
-
     this.mitraGroup.scale.set(0.24, 0.24, 0.24);
     this.mitraGroup.visible = false;
 
@@ -1641,9 +1910,25 @@ export class ArSceneEngine {
       this.onPlacementStatus('Point phone camera at classroom wall surface to detect vertical plane.');
     }
 
+    // Try requesting local-floor reference space, falling back to local
+    let refSpace;
+    try {
+      refSpace = await session.requestReferenceSpace('local-floor');
+    } catch {
+      refSpace = await session.requestReferenceSpace('local');
+    }
+
     const viewerSpace = await session.requestReferenceSpace('viewer');
     this.hitTestSource = await session.requestHitTestSource({ space: viewerSpace });
-    const refSpace = await session.requestReferenceSpace('local');
+
+    // Handle tracking state / visibility change
+    session.addEventListener('visibilitychange', () => {
+      if (session.visibilityState === 'visible-blurred' || session.visibilityState === 'hidden') {
+        if (this.onPlacementStatus) {
+          this.onPlacementStatus('Tracking paused. Hold device steady to resume.');
+        }
+      }
+    });
 
     session.addEventListener('select', this.handleSelect);
     session.addEventListener('end', () => {
@@ -1661,28 +1946,52 @@ export class ArSceneEngine {
 
   handleSelect() {
     if (this.reticle && this.reticle.visible && !this.isPlacedInAr) {
-      const pos = new THREE.Vector3();
-      const quat = new THREE.Quaternion();
-      const scale = new THREE.Vector3();
-      this.reticle.matrix.decompose(pos, quat, scale);
+      // Strictly enforce vertical wall detection (reject floors, tables, ceilings)
+      if (!this.isWallDetected) {
+        if (this.onPlacementStatus) {
+          this.onPlacementStatus('Cannot mount on floor or table. Please aim at a vertical classroom wall.');
+        }
+        return;
+      }
+
+      const m = this.reticle.matrix.elements;
+      const pos = new THREE.Vector3(m[12], m[13], m[14]);
+
+      // WebXR hit test normal: column 1 (+Y) is the surface normal pointing outward
+      const normal = new THREE.Vector3(m[4], m[5], m[6]).normalize();
+      const worldUp = new THREE.Vector3(0, 1, 0);
+
+      // Construct orthonormal basis where +Z points out along normal and +Y points upright
+      const right = new THREE.Vector3().crossVectors(worldUp, normal).normalize();
+      const wallUp = new THREE.Vector3().crossVectors(normal, right).normalize();
+
+      const rotMatrix = new THREE.Matrix4().makeBasis(right, wallUp, normal);
+      const wallQuat = new THREE.Quaternion().setFromRotationMatrix(rotMatrix);
+
+      this.placedAnchorPosition.copy(pos);
+      this.placedAnchorQuaternion.copy(wallQuat);
 
       // Mount exhibit flush against detected vertical wall surface
       this.mainStageGroup.position.copy(pos);
-      this.mainStageGroup.quaternion.copy(quat);
+      this.mainStageGroup.quaternion.copy(wallQuat);
       this.mainStageGroup.scale.set(1, 1, 1);
       this.mainStageGroup.visible = true;
 
-      // Position Mitra alongside the wall exhibit
-      this.mitraGroup.position.set(pos.x + 0.38, pos.y - 0.12, pos.z + 0.05);
-      this.mitraGroup.quaternion.copy(quat);
+      // Position Mitra alongside the wall exhibit on the right
+      const mitraPos = pos.clone().addScaledVector(right, 0.42).addScaledVector(wallUp, -0.12);
+      this.mitraGroup.position.copy(mitraPos);
+      this.mitraGroup.quaternion.copy(wallQuat);
       this.mitraGroup.scale.set(0.24, 0.24, 0.24);
       this.mitraGroup.visible = true;
 
       this.isPlacedInAr = true;
       this.reticle.visible = false;
 
+      // Apply AR physical metric scale
+      this.applyExhibitTransform();
+
       if (this.onPlacementStatus) {
-        this.onPlacementStatus('Constitutional exhibit mounted to wall! Use controls or walk around to inspect.');
+        this.onPlacementStatus('Constitutional exhibit mounted flush to wall! Use controls or walk around to inspect.');
       }
     }
   }
@@ -1695,11 +2004,34 @@ export class ArSceneEngine {
         const hit = hitTestResults[0];
         const pose = hit.getPose(referenceSpace);
         if (pose && this.reticle) {
+          const m = pose.transform.matrix;
+          // In WebXR hit testing, column 1 (index 5) is the Y component of surface normal (+Y)
+          const normalY = m[5];
+          const isVerticalWall = Math.abs(normalY) <= 0.45;
+          this.isWallDetected = isVerticalWall;
+
           this.reticle.visible = true;
-          this.reticle.matrix.fromArray(pose.transform.matrix);
+          this.reticle.matrix.fromArray(m);
+
+          if (isVerticalWall) {
+            this.setReticleState('valid');
+            if (this.onPlacementStatus) {
+              this.onPlacementStatus('Vertical wall surface detected! Tap to mount exhibit.');
+            }
+          } else {
+            this.setReticleState('invalid');
+            if (this.onPlacementStatus) {
+              this.onPlacementStatus('Horizontal surface detected (floor/desk). Aim camera at a vertical classroom wall.');
+            }
+          }
+
+          if (this.onTransformChange) {
+            this.onTransformChange(this.getExhibitTransformState());
+          }
         }
       } else if (this.reticle) {
         this.reticle.visible = false;
+        this.isWallDetected = false;
       }
     }
 
@@ -1715,6 +2047,7 @@ export class ArSceneEngine {
     }
     this.isArActive = false;
     this.isPlacedInAr = false;
+    this.isWallDetected = false;
     this.hitTestSource = null;
 
     // Restore virtual classroom wall environment
@@ -1723,7 +2056,7 @@ export class ArSceneEngine {
 
     this.mainStageGroup.position.set(0, 1.05, -2.18);
     this.mainStageGroup.rotation.set(0, 0, 0);
-    this.mainStageGroup.scale.set(1.4, 1.4, 1.4);
+    this.mainStageGroup.scale.set(1, 1, 1);
     this.mainStageGroup.visible = true;
 
     this.mitraGroup.position.set(1.08, 0.72, -2.05);
@@ -1733,76 +2066,111 @@ export class ArSceneEngine {
 
     if (this.reticle) this.reticle.visible = false;
 
-    if (this.onTransformChange) {
-      this.onTransformChange({
-        scale: this.mainStageGroup.scale.x,
-        rotationY: this.mainStageGroup.rotation.y,
-      });
-    }
+    // Reapply 3D studio scale and rotation for active station
+    this.applyExhibitTransform();
   }
 
-  // ── ON-SCREEN AR & 3D INSPECTION CONTROLS ─────────────────────────────────
+  // ── UNIVERSAL OBJECT TRANSFORM ARCHITECTURE ───────────────────────────────
 
-  rotateExhibit(deltaAngle = 0.2) {
-    if (this.mainStageGroup) {
-      this.mainStageGroup.rotation.y += deltaAngle;
-      if (this.onTransformChange) {
-        this.onTransformChange({
-          scale: this.mainStageGroup.scale.x,
-          rotationY: this.mainStageGroup.rotation.y,
-        });
+  applyExhibitTransform() {
+    const stationId = this.activeStationId || 'ashoka-chakra';
+    const config = this.getStationConfig(stationId);
+    const state = this.stationStates[stationId] || { rotationY: 0, zoomFactor: 1.0 };
+
+    if (this.activeExhibitRoot) {
+      this.activeExhibitRoot.rotation.y = state.rotationY;
+
+      if (this.isArActive && this.isPlacedInAr) {
+        // Mode A: WebXR AR - Calibrated physical metric scale (~35-45 cm physical size * zoomFactor)
+        const scaleMetric = config.baseScaleAr * state.zoomFactor;
+        this.activeExhibitRoot.scale.set(scaleMetric, scaleMetric, scaleMetric);
+      } else {
+        // Mode B: 3D Studio - Calibrated hero apparent scale (~58-62 cm apparent size * zoomFactor)
+        const scale3D = config.baseScale3D * state.zoomFactor;
+        this.activeExhibitRoot.scale.set(scale3D, scale3D, scale3D);
       }
     }
+
+    if (this.onTransformChange) {
+      this.onTransformChange(this.getExhibitTransformState());
+    }
   }
 
-  zoomExhibit(deltaScale = 0.12) {
-    if (this.isArActive && this.isPlacedInAr) {
-      const currentScale = this.mainStageGroup.scale.x;
-      const nextScale = Math.max(0.45, Math.min(2.2, currentScale + deltaScale));
-      this.mainStageGroup.scale.set(nextScale, nextScale, nextScale);
-    } else {
-      // Direct artifact inspection: visibly zoom the exhibit itself, NOT the classroom room/camera
-      const currentScale = this.mainStageGroup.scale.x;
-      const nextScale = Math.max(0.85, Math.min(2.6, currentScale + deltaScale));
-      this.mainStageGroup.scale.set(nextScale, nextScale, nextScale);
+  rotateExhibit(deltaAngle = 0.25) {
+    const stationId = this.activeStationId || 'ashoka-chakra';
+    if (!this.stationStates[stationId]) {
+      this.stationStates[stationId] = { rotationY: 0, zoomFactor: 1.0 };
     }
-    if (this.onTransformChange) {
-      this.onTransformChange({
-        scale: this.mainStageGroup.scale.x,
-        rotationY: this.mainStageGroup.rotation.y,
-      });
+    this.stationStates[stationId].rotationY += deltaAngle;
+    this.applyExhibitTransform();
+  }
+
+  zoomExhibit(deltaZoom = 0.12) {
+    const stationId = this.activeStationId || 'ashoka-chakra';
+    const config = this.getStationConfig(stationId);
+    if (!this.stationStates[stationId]) {
+      this.stationStates[stationId] = { rotationY: 0, zoomFactor: 1.0 };
     }
+    const current = this.stationStates[stationId].zoomFactor;
+    const next = Math.max(config.minZoomFactor, Math.min(config.maxZoomFactor, current + deltaZoom));
+    this.stationStates[stationId].zoomFactor = next;
+    this.applyExhibitTransform();
   }
 
   resetExhibitTransform() {
-    if (this.isArActive && this.isPlacedInAr) {
-      this.mainStageGroup.scale.set(1, 1, 1);
-      this.mainStageGroup.rotation.set(0, 0, 0);
-    } else {
-      this.mainStageGroup.rotation.set(0, 0, 0);
-      this.mainStageGroup.scale.set(1.4, 1.4, 1.4);
-      this.rotationVelocity = { x: 0, y: 0.0015 };
-      if (this.camera) {
-        this.camera.position.set(0, 1.05, 2.5);
-        this.camera.lookAt(0, 1.05, -2.18);
-      }
+    const stationId = this.activeStationId || 'ashoka-chakra';
+    const config = this.getStationConfig(stationId);
+    if (this.stationStates[stationId]) {
+      this.stationStates[stationId].rotationY = config.defaultRotationY;
+      this.stationStates[stationId].zoomFactor = 1.0;
     }
-    if (this.onTransformChange) {
-      this.onTransformChange({
-        scale: this.mainStageGroup.scale.x,
-        rotationY: this.mainStageGroup.rotation.y,
-      });
+    this.rotationVelocity = { x: 0, y: 0 };
+    this.desiredCameraYaw = 0;
+    this.desiredCameraPitch = 0;
+    this.desiredCameraDistance = 4.68;
+    this.activeFocusObject = null;
+    if (!this.isArActive && this.camera) {
+      this.camera.position.set(0, 1.05, 2.5);
+      this.camera.lookAt(0, 1.05, -2.18);
     }
+    this.applyExhibitTransform();
+  }
+
+  getExhibitTransformState() {
+    const stationId = this.activeStationId || 'ashoka-chakra';
+    const config = this.getStationConfig(stationId);
+    const state = this.stationStates[stationId] || { rotationY: 0, zoomFactor: 1.0 };
+    const rawRot = ((state.rotationY % (Math.PI * 2)) + (Math.PI * 2)) % (Math.PI * 2);
+    const degrees = Math.round(rawRot * (180 / Math.PI));
+
+    return {
+      stationId,
+      stationTitle: config.title,
+      rotationY: state.rotationY,
+      rotationDegrees: degrees,
+      zoomFactor: state.zoomFactor,
+      scalePercent: Math.round(state.zoomFactor * 100),
+      apparentSize: `${(config.baseApparentCm * state.zoomFactor).toFixed(1)} cm apparent`,
+      physicalMetricSize: `${(config.baseMetricCm * state.zoomFactor).toFixed(1)} ${config.metricUnit}`,
+      isArActive: this.isArActive,
+      isPlacedInAr: this.isPlacedInAr,
+      isWallDetected: this.isWallDetected,
+      canPlace: this.isWallDetected && !this.isPlacedInAr,
+    };
   }
 
   repositionExhibit() {
     if (this.isArActive) {
       this.isPlacedInAr = false;
+      this.isWallDetected = false;
       this.mainStageGroup.visible = false;
       this.mitraGroup.visible = false;
       if (this.reticle) this.reticle.visible = true;
       if (this.onPlacementStatus) {
-        this.onPlacementStatus('Scan classroom wall surface and tap to mount exhibit.');
+        this.onPlacementStatus('Aim phone at a vertical classroom wall surface to remount exhibit.');
+      }
+      if (this.onTransformChange) {
+        this.onTransformChange(this.getExhibitTransformState());
       }
     }
   }
@@ -1813,22 +2181,71 @@ export class ArSceneEngine {
 
   // ── UNIVERSAL 3D ANIMATION LOOP ───────────────────────────────────────────
 
+  focusOnObject(key) {
+    if (!this.classroomFocalPoints[key]) return;
+    this.activeFocusObject = key;
+    const fp = this.classroomFocalPoints[key];
+    this.desiredCameraTarget.copy(fp.target);
+    this.desiredCameraPosition.copy(fp.cameraPos);
+    if (key === 'overview') {
+      this.desiredCameraYaw = 0;
+      this.desiredCameraPitch = 0;
+      this.desiredCameraDistance = 4.68;
+    }
+  }
+
+  resetCameraOverview() {
+    this.focusOnObject('overview');
+    this.activeFocusObject = null;
+    if (this.onInteractivePartClick) {
+      this.onInteractivePartClick({
+        part: 'overview',
+        title: 'Classroom Overview',
+        badge: 'Whole Room',
+        message: 'Viewing the full constitutional classroom.',
+        focalObject: null,
+      });
+    }
+  }
+
   startAnimationLoop() {
     const animate = () => {
       this.animationFrameId = requestAnimationFrame(animate);
 
       if (!this.isArActive) {
-        if (!this.isDragging) {
-          this.mainStageGroup.rotation.y += this.rotationVelocity.y;
-          this.rotationVelocity.y *= 0.985;
-        }
-
         this.updateSpatialAnimations();
+        this.updateCameraNavigation();
         this.renderer.render(this.scene, this.camera);
       }
     };
 
     animate();
+  }
+
+  updateCameraNavigation() {
+    if (this.isArActive || !this.camera) return;
+
+    if (this.activeFocusObject && this.classroomFocalPoints[this.activeFocusObject]) {
+      const fp = this.classroomFocalPoints[this.activeFocusObject];
+      this.camera.position.lerp(fp.cameraPos, 0.08);
+      this.cameraTarget.lerp(fp.target, 0.08);
+      this.camera.lookAt(this.cameraTarget);
+    } else {
+      // Smooth whole-classroom orbit and zoom navigation
+      this.cameraYaw += (this.desiredCameraYaw - this.cameraYaw) * 0.08;
+      this.cameraPitch += (this.desiredCameraPitch - this.cameraPitch) * 0.08;
+      this.cameraDistance += (this.desiredCameraDistance - this.cameraDistance) * 0.08;
+
+      const target = this.classroomFocalPoints.overview.target;
+      const targetX = target.x + Math.sin(this.cameraYaw) * this.cameraDistance;
+      const targetY = target.y + Math.sin(this.cameraPitch) * this.cameraDistance * 0.4;
+      const targetZ = target.z + Math.cos(this.cameraYaw) * Math.cos(this.cameraPitch) * this.cameraDistance;
+
+      this.desiredCameraPosition.set(targetX, targetY, targetZ);
+      this.camera.position.lerp(this.desiredCameraPosition, 0.08);
+      this.cameraTarget.lerp(target, 0.08);
+      this.camera.lookAt(this.cameraTarget);
+    }
   }
 
   updateSpatialAnimations() {
@@ -1895,11 +2312,21 @@ export class ArSceneEngine {
       }
     }
 
-    // 4. Ashoka Chakra Spoke Glow
+    // 4. Ashoka Chakra Spoke Glow & Automatic Educational Rotation
     if (this.currentStationGroup && this.currentStationGroup.name === 'ashokaChakraModel') {
+      const wheelBody = this.currentStationGroup.getObjectByName('chakraWheelBody');
+      if (wheelBody) {
+        // Continuous dignified automatic educational rotation representing constant civic progress
+        wheelBody.rotation.z -= (this.chakraSpinSpeed || 0.003);
+      }
+
       const aura = this.currentStationGroup.getObjectByName('chakraAura');
-      if (aura && this.activeSpatialEffect === 'chakra-glow-full') {
-        aura.material.opacity = 0.45 + Math.sin(elapsed * 3) * 0.15;
+      if (aura) {
+        if (this.activeSpatialEffect === 'chakra-glow-full') {
+          aura.material.opacity = 0.45 + Math.sin(elapsed * 3) * 0.15;
+        } else {
+          aura.material.opacity = 0.22 + Math.sin(elapsed * 1.8) * 0.05;
+        }
       }
     }
 
@@ -1961,27 +2388,67 @@ export class ArSceneEngine {
     const deltaX = e.clientX - this.previousMousePosition.x;
     const deltaY = e.clientY - this.previousMousePosition.y;
 
-    this.mainStageGroup.rotation.y += deltaX * 0.008;
-    this.rotationVelocity.y = deltaX * 0.008;
+    // Natural Whole-Classroom Navigation: Orbit camera horizontally and vertically
+    this.activeFocusObject = null;
+    this.desiredCameraYaw = Math.max(-0.65, Math.min(0.65, this.desiredCameraYaw - deltaX * 0.0035));
+    this.desiredCameraPitch = Math.max(-0.30, Math.min(0.35, this.desiredCameraPitch + deltaY * 0.0025));
 
     this.previousMousePosition = { x: e.clientX, y: e.clientY };
-
-    if (this.onTransformChange) {
-      this.onTransformChange({
-        scale: this.mainStageGroup.scale.x,
-        rotationY: this.mainStageGroup.rotation.y,
-      });
-    }
   }
 
   handlePointerUp() {
     this.isDragging = false;
   }
 
+  handleTouchStart(e) {
+    if (this.isArActive) return;
+    if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      this.initialPinchDistance = Math.hypot(dx, dy);
+    } else if (e.touches.length === 1) {
+      this.isDragging = true;
+      this.previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+  }
+
+  handleTouchMove(e) {
+    if (this.isArActive) return;
+    if (e.touches.length === 2 && this.initialPinchDistance) {
+      if (e.cancelable) e.preventDefault();
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const currentPinchDistance = Math.hypot(dx, dy);
+      const pinchDelta = (this.initialPinchDistance - currentPinchDistance) * 0.008;
+      this.activeFocusObject = null;
+      this.desiredCameraDistance = Math.max(1.5, Math.min(5.2, this.desiredCameraDistance + pinchDelta));
+      this.initialPinchDistance = currentPinchDistance;
+    } else if (e.touches.length === 1 && this.isDragging) {
+      const deltaX = e.touches[0].clientX - this.previousMousePosition.x;
+      const deltaY = e.touches[0].clientY - this.previousMousePosition.y;
+      this.activeFocusObject = null;
+      this.desiredCameraYaw = Math.max(-0.65, Math.min(0.65, this.desiredCameraYaw - deltaX * 0.0035));
+      this.desiredCameraPitch = Math.max(-0.30, Math.min(0.35, this.desiredCameraPitch + deltaY * 0.0025));
+      this.previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+  }
+
+  handleTouchEnd(e) {
+    if (e.touches.length < 2) {
+      this.initialPinchDistance = null;
+    }
+    if (e.touches.length === 0) {
+      this.isDragging = false;
+    }
+  }
+
   handleWheel(e) {
     if (this.isArActive) return;
-    e.preventDefault();
-    this.zoomExhibit(e.deltaY < 0 ? 0.08 : -0.08);
+    if (e.cancelable) e.preventDefault();
+    // Whole-Classroom Camera Zoom: moves entire camera smoothly closer or farther
+    const delta = e.deltaY < 0 ? -0.32 : 0.32;
+    this.activeFocusObject = null;
+    this.desiredCameraDistance = Math.max(1.5, Math.min(5.2, this.desiredCameraDistance + delta));
   }
 
   handleCanvasClick(e) {
@@ -1998,15 +2465,19 @@ export class ArSceneEngine {
     if (intersects.length > 0) {
       let hitObj = intersects[0].object;
 
-      // Check if user tapped Mitra
+      // 1. Check if user tapped Mitra or perch
       let checkMitra = hitObj;
       while (checkMitra) {
-        if (checkMitra === this.mitraGroup) {
+        if (checkMitra === this.mitraGroup || checkMitra === this.corbelShelfGroup) {
+          this.focusOnObject('mitra');
           this.setMitraEmotion('celebrating');
           if (this.onInteractivePartClick) {
             this.onInteractivePartClick({
               part: 'mitra',
-              message: 'Mitra: "Welcome to class! Inspect the wall exhibit and let’s explore our constitutional rights together."',
+              title: 'Mitra the Sun-Fox',
+              badge: 'Learning Companion',
+              message: '“I’m Mitra! Tap any object in our classroom to inspect it, or drag and scroll around to explore.”',
+              focalObject: 'mitra',
             });
           }
           return;
@@ -2014,14 +2485,19 @@ export class ArSceneEngine {
         checkMitra = checkMitra.parent;
       }
 
-      // Check if user tapped the blackboard
+      // 2. Check if user tapped the Teacher's Blackboard
       let checkBoard = hitObj;
       while (checkBoard) {
-        if (checkBoard === this.blackboardMesh) {
+        if (checkBoard === this.blackboardMesh || checkBoard.name === 'blackboardMesh') {
+          this.focusOnObject('blackboard');
+          this.setMitraEmotion('encouraging');
           if (this.onInteractivePartClick) {
             this.onInteractivePartClick({
               part: 'blackboard',
-              message: 'Teacher’s Board: Review today’s constitutional principle and take action below.',
+              title: 'Teacher’s Blackboard',
+              badge: 'Lesson Topic',
+              message: 'Classroom Topic: Inspect the wall exhibit, resolve the constitutional dilemma, and test your civic understanding.',
+              focalObject: 'blackboard',
             });
           }
           return;
@@ -2029,14 +2505,19 @@ export class ArSceneEngine {
         checkBoard = checkBoard.parent;
       }
 
-      // Check if user tapped the Preamble charter panel
+      // 3. Check if user tapped the Constitution Preamble Charter
       let checkCharter = hitObj;
       while (checkCharter) {
-        if (checkCharter === this.charterMesh) {
+        if (checkCharter === this.charterMesh || checkCharter.name === 'charterMesh') {
+          this.focusOnObject('charter');
+          this.setMitraEmotion('welcome');
           if (this.onInteractivePartClick) {
             this.onInteractivePartClick({
               part: 'charter',
-              message: 'Constitution Charter: "WE, THE PEOPLE OF INDIA — Justice, Liberty, Equality, Fraternity."',
+              title: 'The Constitution Charter',
+              badge: 'Preamble Bedrock',
+              message: '“WE, THE PEOPLE OF INDIA — Justice, Liberty, Equality, Fraternity.” The fundamental foundation of citizen dignity.',
+              focalObject: 'charter',
             });
           }
           return;
@@ -2044,7 +2525,27 @@ export class ArSceneEngine {
         checkCharter = checkCharter.parent;
       }
 
-      // Check if user tapped the active 3D model parts
+      // 4. Check if user tapped the Student Desk or Civics Workbook
+      let checkDesk = hitObj;
+      while (checkDesk) {
+        if (checkDesk === this.deskGroup || checkDesk === this.workbookMesh || checkDesk.name === 'studentWorkbookMesh') {
+          this.focusOnObject('desk');
+          this.setMitraEmotion('encouraging');
+          if (this.onInteractivePartClick) {
+            this.onInteractivePartClick({
+              part: 'desk',
+              title: 'Student Desk & Civics Journal',
+              badge: 'Learner Workbook',
+              message: 'Your personal RightsQuest study desk. Deliberate on real constitutional scenarios and earn Dignity XP.',
+              focalObject: 'desk',
+            });
+          }
+          return;
+        }
+        checkDesk = checkDesk.parent;
+      }
+
+      // 5. Check if user tapped active model interactive parts (e.g. Equality Balance pans)
       let checkModel = hitObj;
       while (checkModel && checkModel.parent !== this.mainStageGroup && checkModel.parent !== this.scene) {
         if (checkModel.name === 'leftPanGroup' || checkModel.name === 'rightPanGroup') {
@@ -2065,9 +2566,35 @@ export class ArSceneEngine {
         checkModel = checkModel.parent;
       }
 
+      // 6. Check if user tapped the Central Constitutional Wall Exhibit
+      let checkExhibit = hitObj;
+      while (checkExhibit) {
+        if (checkExhibit === this.activeExhibitRoot || checkExhibit === this.mainStageGroup) {
+          this.focusOnObject('exhibit');
+          const config = this.getStationConfig(this.activeStationId || 'ashoka-chakra');
+          if (this.onInteractivePartClick) {
+            this.onInteractivePartClick({
+              part: 'exhibit',
+              title: config.title,
+              badge: 'Constitutional Artifact',
+              message: `Inspecting ${config.title}. Mounted on the classroom wall for constitutional inquiry.`,
+              focalObject: 'exhibit',
+            });
+          }
+          return;
+        }
+        checkExhibit = checkExhibit.parent;
+      }
+
       if (hitObj.userData && hitObj.userData.id && this.onObjectClick) {
         this.onObjectClick(hitObj.userData);
+        return;
       }
+    }
+
+    // If user tapped empty space or background while inspecting an object, smoothly return to overview
+    if (this.activeFocusObject && this.activeFocusObject !== 'overview') {
+      this.resetCameraOverview();
     }
   }
 
@@ -2111,6 +2638,9 @@ export class ArSceneEngine {
     this.canvas.removeEventListener('pointerdown', this.handlePointerDown);
     window.removeEventListener('pointermove', this.handlePointerMove);
     window.removeEventListener('pointerup', this.handlePointerUp);
+    this.canvas.removeEventListener('touchstart', this.handleTouchStart);
+    this.canvas.removeEventListener('touchmove', this.handleTouchMove);
+    this.canvas.removeEventListener('touchend', this.handleTouchEnd);
     this.canvas.removeEventListener('wheel', this.handleWheel);
     this.canvas.removeEventListener('click', this.handleCanvasClick);
     window.removeEventListener('resize', this.handleResize);
@@ -2125,6 +2655,14 @@ export class ArSceneEngine {
 
     if (this.plaqueTexture) {
       this.plaqueTexture.dispose();
+    }
+
+    if (this.reticleValidMat) {
+      this.reticleValidMat.dispose();
+    }
+
+    if (this.reticleInvalidMat) {
+      this.reticleInvalidMat.dispose();
     }
 
     if (this.scene) {
