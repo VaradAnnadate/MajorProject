@@ -29,8 +29,10 @@ export function toLocalDateString(date = new Date()) {
  * @returns {number}
  */
 export function differenceInDays(dateStr1, dateStr2) {
+  if (!dateStr1 || !dateStr2) return 0;
   const d1 = new Date(dateStr1 + 'T00:00:00');
   const d2 = new Date(dateStr2 + 'T00:00:00');
+  if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return 0;
   const diffTime = d1.getTime() - d2.getTime();
   return Math.round(diffTime / (1000 * 60 * 60 * 24));
 }

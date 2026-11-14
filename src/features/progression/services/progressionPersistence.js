@@ -18,7 +18,16 @@ export function loadProgressionState() {
     if (!parsed || typeof parsed !== 'object' || typeof parsed.totalXp !== 'number') {
       return getInitialProgressionState();
     }
-    return parsed;
+    const baseline = getInitialProgressionState();
+    return {
+      ...baseline,
+      ...parsed,
+      completedMissions: Array.isArray(parsed.completedMissions) ? parsed.completedMissions : baseline.completedMissions,
+      unlockedArticles: Array.isArray(parsed.unlockedArticles) ? parsed.unlockedArticles : baseline.unlockedArticles,
+      unlockedBadgeIds: Array.isArray(parsed.unlockedBadgeIds) ? parsed.unlockedBadgeIds : baseline.unlockedBadgeIds,
+      transactions: Array.isArray(parsed.transactions) ? parsed.transactions : baseline.transactions,
+      streak: (parsed.streak && typeof parsed.streak === 'object') ? { ...baseline.streak, ...parsed.streak } : baseline.streak,
+    };
   } catch (err) {
     console.warn('Could not read progression state from localStorage, using initial baseline:', err);
     return getInitialProgressionState();
@@ -26,7 +35,7 @@ export function loadProgressionState() {
 }
 
 export function saveProgressionState(state) {
-  if (!state) return;
+  if (!state || typeof state !== 'object') return;
   try {
     localStorage.setItem(PROGRESSION_STORAGE_KEY, JSON.stringify(state));
   } catch (err) {
