@@ -64,7 +64,13 @@ AR_CONSTITUTIONAL_STATIONS.forEach(station => {
 });
 verify(true, 'All 6 stations define 3-tier age adaptation with branching choices and spatial consequence triggers');
 
-// 5. Five Miniature Living Realms
+// 5. Living Classroom Lesson Metadata
+AR_CONSTITUTIONAL_STATIONS.forEach(station => {
+  assert.ok(station.classroomTopic && station.classroomBoardSummary, `Station ${station.id} defines classroom topic and blackboard summary`);
+});
+verify(true, 'All 6 stations define classroom lesson topics and blackboard summaries');
+
+// 6. Five Miniature Living Realms
 verify(Array.isArray(AR_MINIATURE_REALMS) && AR_MINIATURE_REALMS.length === 5, 'Five miniature living realms are defined');
 verify(AR_MINIATURE_REALMS.some(r => r.id === 'gardens-of-growth'), 'Miniature realms link to existing story realms (Gardens of Growth)');
 
@@ -72,6 +78,8 @@ verify(AR_MINIATURE_REALMS.some(r => r.id === 'gardens-of-growth'), 'Miniature r
 const engineSource = await source('src/features/ar/engine/ArSceneEngine.js');
 verify(engineSource.includes('renderer.xr.enabled = true'), 'Engine enables Three.js WebXR support');
 verify(engineSource.includes("'immersive-ar'") && engineSource.includes('startArSession'), 'Engine implements WebXR immersive-ar session request');
+verify(engineSource.includes('buildClassroomEnvironment'), 'Engine builds 3D virtual classroom with student desk, blackboard, and window');
+verify(engineSource.includes('renderBlackboardCanvas'), 'Engine renders dynamic teacher blackboard canvas texture');
 verify(engineSource.includes('buildAshokaChakraGeometry') && engineSource.includes('24'), 'Engine procedurally generates 24-spoke Ashoka Chakra geometry');
 verify(engineSource.includes('buildEqualityBalanceGeometry'), 'Engine builds Equality Balance scale with tilt animation');
 verify(engineSource.includes('buildVoiceBeaconGeometry'), 'Engine builds Voice Beacon with concentric soundwave rings');
@@ -90,6 +98,7 @@ verify(pageSource.includes('DPDP Act 2023'), 'Component displays DPDP Act 2023 c
 verify(!pageSource.includes('canvas.toDataURL') && !pageSource.includes('navigator.mediaDevices.getUserMedia'), 'Zero raw camera frames or photos are captured or uploaded');
 verify(pageSource.includes('awardReward') && pageSource.includes('RIGHTS_DISCOVERY'), 'Component integrates with existing useDemoLearner progression engine');
 verify(pageSource.includes('completedObjects'), 'Component enforces idempotent XP awarding per object');
+verify(pageSource.includes('teacherBlackboardCard'), 'Component renders synchronized classroom teacher blackboard HUD');
 verify(pageSource.includes('triggerSpatialEffect'), 'Component triggers spatial consequences on dilemma choice selection');
 verify(pageSource.includes('setMitraEmotion'), 'Component synchronizes Mitra emotions with learner decisions');
 

@@ -19,8 +19,7 @@ import {
   Volume2,
   BookOpen,
   HelpCircle,
-  Eye,
-  Sliders
+  GraduationCap
 } from 'lucide-react';
 import { 
   AR_CONSTITUTIONAL_STATIONS, 
@@ -54,11 +53,11 @@ export default function ArExplorerPage() {
   const [arStatusMessage, setArStatusMessage] = useState('');
   const [arError, setArError] = useState(null);
 
-  // Mitra Companion state & speech
+  // Mitra Companion state & classroom dialogue
   const [mitraEmotion, setMitraEmotionState] = useState('welcome');
   const [mitraMessage, setMitraMessage] = useState('');
 
-  // Spatial Scenario Decision state (Inside-Stage Interaction)
+  // Spatial Scenario Decision state
   const [selectedChoiceId, setSelectedChoiceId] = useState(null);
   const [activeConsequence, setActiveConsequence] = useState(null);
 
@@ -91,7 +90,7 @@ export default function ArExplorerPage() {
     return currentScenario?.quiz || currentStation.quiz;
   }, [currentScenario, currentStation]);
 
-  // Phase 2: Fix clipped heading by ensuring clean top scroll on mount
+  // Scroll to top on mount
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     document.documentElement.scrollTop = 0;
@@ -118,7 +117,7 @@ export default function ArExplorerPage() {
     };
   }, []);
 
-  // 2. Initialize Three.js Engine
+  // 2. Initialize Three.js Classroom Engine
   useEffect(() => {
     if (!canvasRef.current) return;
 
@@ -142,11 +141,14 @@ export default function ArExplorerPage() {
       });
 
       engineRef.current = engine;
-      engine.loadConstitutionalStation(currentStation);
-      setMitraMessage(currentStation.mitraPrompt || 'Welcome to the Constitutional Exhibition!');
+      engine.loadConstitutionalStation(currentStation, currentAgeKey);
+      setMitraMessage(
+        currentStation.mitraPrompt ||
+          'Welcome to our RightsQuest classroom! Inspect the constitutional artifact on your student desk.'
+      );
     } catch (err) {
-      console.warn('Could not initialize Three.js AR Scene Engine:', err);
-      setArError('Interactive 3D graphics initialization failed on this device.');
+      console.warn('Could not initialize Three.js Classroom Scene Engine:', err);
+      setArError('Interactive 3D classroom initialization failed on this device.');
     }
 
     return () => {
@@ -157,13 +159,16 @@ export default function ArExplorerPage() {
     };
   }, []);
 
-  // 3. Swap 3D Model when selection changes
+  // 3. Swap 3D Model & Update Blackboard when selection or age tier changes
   useEffect(() => {
     if (engineRef.current && currentStation) {
-      engineRef.current.loadConstitutionalStation(currentStation);
+      engineRef.current.loadConstitutionalStation(currentStation, currentAgeKey);
       engineRef.current.setMitraEmotion('welcome');
       setMitraEmotionState('welcome');
-      setMitraMessage(currentStation.mitraPrompt || 'Explore this constitutional pillar!');
+      setMitraMessage(
+        currentStation.mitraPrompt ||
+          'Look at the model on your student desk! Let’s explore what this constitutional symbol teaches us.'
+      );
 
       // Reset scenario and quiz state for new station
       setSelectedChoiceId(null);
@@ -173,7 +178,7 @@ export default function ArExplorerPage() {
       setIsQuizSubmitted(false);
       setQuizFeedback(null);
     }
-  }, [currentStation]);
+  }, [currentStation, currentAgeKey]);
 
   // Handle AR Session launch
   const handleLaunchAr = async () => {
@@ -187,7 +192,7 @@ export default function ArExplorerPage() {
         engineRef.current.setMitraEmotion('celebrating');
         setMitraEmotionState('celebrating');
       }
-      setMitraMessage('WebXR AR active! Scan a flat floor or table and tap to place your constitutional monument.');
+      setMitraMessage('Classroom AR active! Scan your room to detect your physical desk or floor, then tap to place the model.');
     } catch (err) {
       console.warn('AR Session launch error:', err);
       setArError(err.message || 'Could not launch AR camera session on this device.');
@@ -200,7 +205,7 @@ export default function ArExplorerPage() {
       engineRef.current.stopArSession();
     }
     setIsArActive(false);
-    setMitraMessage('Returned to interactive 3D studio.');
+    setMitraMessage('Returned to your 3D virtual classroom desk.');
   };
 
   // Handle Scenario Choice Selection (Interactive Spatial Consequence)
@@ -229,7 +234,7 @@ export default function ArExplorerPage() {
     }
   };
 
-  // Direct Interactive Action Buttons for Model
+  // Direct Interactive Action Buttons for Model on the Desk
   const handleDirectModelAction = (actionType) => {
     if (!engineRef.current) return;
 
@@ -239,21 +244,21 @@ export default function ArExplorerPage() {
       engineRef.current.triggerSpatialEffect(nextTilt);
       setMitraMessage(
         nextTilt === 'scale-balanced'
-          ? 'Equilibrium restored! Article 14 guarantees equal dignity.'
-          : 'Notice how the scale tilts lopsided when opportunities are unequal.'
+          ? 'Equilibrium restored! Article 14 ensures equal dignity on the playground and in class.'
+          : 'Notice how the scale tilts lopsided when opportunities are unequally distributed.'
       );
     } else if (actionType === 'spin_chakra') {
       engineRef.current.triggerSpatialEffect('chakra-glow-full');
-      setMitraMessage('The 24 spokes radiate continuous Dharma and justice for every child!');
+      setMitraMessage('The 24 spokes radiate continuous Dharma and civic fairness for every child!');
     } else if (actionType === 'pulse_beacon') {
       engineRef.current.triggerSpatialEffect('beacon-pulse');
-      setMitraMessage('Article 19 & UNCRC 12: Child voices broadcast across the student assembly!');
+      setMitraMessage('Article 19 & UNCRC 12: Student voices echo across our Bal Sansad assembly!');
     } else if (actionType === 'expand_shield') {
       engineRef.current.triggerSpatialEffect('shield-expand');
-      setMitraMessage('Protective emerald sanctuary dome deployed! Childline 1098 stands ready.');
+      setMitraMessage('Emerald protective sanctuary dome deployed! Childline 1098 guards every child.');
     } else if (actionType === 'open_gates') {
       engineRef.current.triggerSpatialEffect('scroll-unfurl');
-      setMitraMessage('The schoolhouse gates swing wide open! Article 21A guarantees free learning.');
+      setMitraMessage('The school gates swing wide open! Article 21A guarantees free, high-quality learning.');
     } else if (actionType === 'fire_remedies') {
       engineRef.current.triggerSpatialEffect('remedy-prisms-fire');
       setMitraMessage('Dr. Ambedkar’s Article 32: Constitutional writ light rays connect to the Apex Court!');
@@ -267,7 +272,7 @@ export default function ArExplorerPage() {
       engineRef.current.setMitraEmotion('explaining');
     }
     setMitraEmotionState('explaining');
-    setMitraMessage(`Inspecting ${item.name || item.meaning}: ${item.description || item.purpose}`);
+    setMitraMessage(`Classroom note on ${item.name || item.meaning}: ${item.description || item.purpose}`);
   };
 
   // Handle Quiz Answer
@@ -280,7 +285,7 @@ export default function ArExplorerPage() {
     if (isCorrect) {
       setQuizFeedback({
         correct: true,
-        message: `Excellent! ${currentQuiz.explanation || 'You mastered this constitutional principle!'}`,
+        message: `Excellent! ${currentQuiz.explanation || 'You mastered this classroom lesson!'}`,
       });
 
       if (engineRef.current?.setMitraEmotion) {
@@ -307,7 +312,7 @@ export default function ArExplorerPage() {
     } else {
       setQuizFeedback({
         correct: false,
-        message: `Not quite right, but every try teaches us something! ${currentQuiz.explanation || 'Review the constitutional principle and try again.'}`,
+        message: `Not quite right, but every try teaches us something! ${currentQuiz.explanation || 'Review the classroom board above and try again.'}`,
       });
       if (engineRef.current?.setMitraEmotion) {
         engineRef.current.setMitraEmotion('concerned');
@@ -329,33 +334,34 @@ export default function ArExplorerPage() {
 
   return (
     <div className={styles.arPage}>
-      {/* Editorial Header with Protected Breathing Room */}
+      {/* Editorial Header with Classroom Context */}
       <header className={styles.heroHeader}>
         <div className="container-editorial">
           <div className={styles.badgeRow}>
-            <span className="editorial-eyebrow">Creative OS · Spatial Constitutional Museum</span>
+            <span className="editorial-eyebrow">Creative OS · RightsQuest Living Classroom</span>
             {isArSupported ? (
               <span className={`${styles.statusPill} ${styles.statusPillAr}`}>
                 <Camera size={13} aria-hidden="true" />
-                WebXR AR Capable
+                WebXR AR Capable · Place on Your Real Desk
               </span>
             ) : (
               <span className={styles.statusPill}>
                 <Layers size={13} aria-hidden="true" />
-                Exhibition 3D Studio (Universal Fallback)
+                Virtual Classroom Studio · Tabletop 3D Laboratory
               </span>
             )}
             <span className={styles.stationTrackerBadge}>
-              Station {currentStation.stationNumber} of {AR_CONSTITUTIONAL_STATIONS.length} · {completedObjects.size} Mastered
+              <GraduationCap size={13} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+              Lesson {currentStation.stationNumber} of {AR_CONSTITUTIONAL_STATIONS.length} · {completedObjects.size} Mastered
             </span>
           </div>
 
           <h1 className="hero-headline" style={{ fontSize: 'clamp(2.1rem, 4.6vw, 3.2rem)', margin: '0 0 var(--space-3)' }}>
-            Bring the Constitution to Life
+            Bring the Constitution onto Your Desk
           </h1>
 
           <p className="text-lead" style={{ maxWidth: '720px', margin: '0 0 var(--space-4)' }}>
-            Step inside a museum of living democracy. Place handcrafted 3D constitutional artifacts into your room with WebXR AR or explore them on the architectural 3D stage with Mitra the Sun-Fox.
+            Welcome to our hands-on constitutional classroom. Place 3D legal artifacts onto your student study desk, test fairness in everyday school situations with Mitra, and discover how India's fundamental rights protect you.
           </p>
 
           {/* Age Adaptation & Factual Privacy Row */}
@@ -385,7 +391,7 @@ export default function ArExplorerPage() {
               </div>
             </div>
 
-            {/* Factual, Verified Privacy Banner (aligned with DPDP Act 2023 §9 child safeguarding) */}
+            {/* Factual, Verified Privacy Banner */}
             <div className={styles.privacyNotice} role="note">
               <Lock size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
               <div>
@@ -411,12 +417,12 @@ export default function ArExplorerPage() {
             }}
             role="alert"
           >
-            {arError} Continuing in Exhibition 3D Studio mode below.
+            {arError} Continuing in 3D Virtual Classroom mode below.
           </div>
         )}
 
-        {/* 6-Station Navigation Ribbon */}
-        <nav className={styles.stationRibbon} aria-label="Constitutional Stations Ribbon">
+        {/* 6-Lesson Navigation Ribbon */}
+        <nav className={styles.stationRibbon} aria-label="Classroom Lessons Ribbon">
           <div className={styles.ribbonScroll}>
             {AR_CONSTITUTIONAL_STATIONS.map((station) => {
               const isActive = station.id === selectedId;
@@ -430,7 +436,7 @@ export default function ArExplorerPage() {
                   aria-pressed={isActive}
                 >
                   <span className={styles.stationPillNum}>{station.stationNumber}</span>
-                  <span className={styles.stationPillTitle}>{station.title}</span>
+                  <span className={styles.stationPillTitle}>Lesson {station.stationNumber}: {station.title}</span>
                   {isDone && <CheckCircle2 size={14} className={styles.doneCheck} />}
                 </button>
               );
@@ -438,8 +444,8 @@ export default function ArExplorerPage() {
           </div>
         </nav>
 
-        {/* 3D / AR Viewport Stage with In-Scene Interactive Spatial HUD */}
-        <section className={styles.stageContainer} aria-label="Constitutional Spatial 3D Stage">
+        {/* 3D / AR Viewport Stage (Virtual Classroom & Real AR Placement) */}
+        <section className={styles.stageContainer} aria-label="3D Classroom Study Desk Stage">
           <canvas ref={canvasRef} className={styles.canvas} />
 
           {/* Mitra In-Stage Speech Bubble HUD */}
@@ -463,10 +469,10 @@ export default function ArExplorerPage() {
                   type="button"
                   className={styles.arActionBtn}
                   onClick={handleLaunchAr}
-                  aria-label="Launch WebXR Augmented Reality Camera"
+                  aria-label="Launch WebXR Augmented Reality on your physical desk"
                 >
                   <Camera size={16} aria-hidden="true" />
-                  <span>Launch WebXR AR</span>
+                  <span>Enter Classroom AR</span>
                 </button>
               ) : isArActive ? (
                 <button
@@ -474,14 +480,14 @@ export default function ArExplorerPage() {
                   className={styles.arActionBtn}
                   onClick={handleStopAr}
                   style={{ background: '#111827' }}
-                  aria-label="Exit AR Mode"
+                  aria-label="Exit AR Session"
                 >
                   <X size={16} aria-hidden="true" />
-                  <span>Exit AR Mode</span>
+                  <span>Return to Virtual Classroom</span>
                 </button>
               ) : null}
 
-              {/* Direct In-Scene Physical Interaction Trigger */}
+              {/* Direct Desktop Model Interaction Buttons */}
               {currentStation.id === 'right-to-equality' && (
                 <button
                   type="button"
@@ -523,7 +529,7 @@ export default function ArExplorerPage() {
                   type="button"
                   className={styles.stageActionPill}
                   onClick={() => handleDirectModelAction('expand_shield')}
-                  aria-label="Expand 1098 sanctuary dome"
+                  aria-label="Deploy 1098 sanctuary dome"
                 >
                   <ShieldCheck size={14} />
                   <span>Deploy 1098 Sanctuary</span>
@@ -563,23 +569,42 @@ export default function ArExplorerPage() {
 
             {!isArActive && (
               <span className={styles.stageTip}>
-                Drag to rotate · Scroll to zoom · Tap pans/models to interact
+                Drag to rotate · Scroll to zoom · Tap desk objects to interact
               </span>
             )}
           </div>
         </section>
 
-        {/* Spatial Challenge Panel: Learning Inside the Scene */}
+        {/* Phase 5: Teacher's Blackboard Synchronized Card */}
+        <section className={styles.teacherBlackboardCard} aria-labelledby="teacher-board-heading">
+          <div className={styles.blackboardHeader}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '1.2rem' }} aria-hidden="true">📋</span>
+              <h3 id="teacher-board-heading" className={styles.blackboardTitle}>
+                Teacher’s Classroom Board · Lesson {currentStation.stationNumber}: {currentStation.classroomTopic || currentStation.title}
+              </h3>
+            </div>
+            <span className={styles.blackboardArticleBadge}>{currentStation.articleRef}</span>
+          </div>
+          <p className={styles.blackboardPrinciple}>
+            “{currentStation.classroomBoardSummary || currentStation.overview}”
+          </p>
+          <div className={styles.blackboardHint}>
+            <span>Tip: The 3D model on your student desk represents this principle. Test choices below to see physical cause-and-effect!</span>
+          </div>
+        </section>
+
+        {/* Interactive Classroom Situation Challenge */}
         {currentScenario && (
           <section className={styles.inSceneChallengeCard} aria-labelledby="spatial-challenge-heading">
             <div className={styles.challengeHeader}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <Compass size={18} className={styles.scenarioIcon} />
                 <h3 id="spatial-challenge-heading" className={styles.challengeTitle}>
-                  Interactive Constitutional Challenge ({currentAgeKey} Tier)
+                  Classroom Situation Challenge ({currentAgeKey} Tier)
                 </h3>
               </div>
-              <span className={styles.categoryBadge}>{currentStation.articleRef}</span>
+              <span className={styles.categoryBadge}>{currentStation.category}</span>
             </div>
 
             <p className={styles.scenarioContext}>
@@ -621,12 +646,12 @@ export default function ArExplorerPage() {
                     <Info size={18} style={{ color: '#D97706', flexShrink: 0 }} />
                   )}
                   <strong>
-                    {activeConsequence.isConstitutional ? 'Constitutional Equilibrium Achieved!' : 'Constitutional Reflection Needed'}
+                    {activeConsequence.isConstitutional ? 'Constitutional Equilibrium Achieved on Desk!' : 'Classroom Imbalance Observed'}
                   </strong>
                 </div>
 
                 <p className={styles.consequenceSpatialEffect}>
-                  <strong>3D Spatial Consequence:</strong> {activeConsequence.consequence}
+                  <strong>Physical Model Consequence:</strong> {activeConsequence.consequence}
                 </p>
 
                 <p className={styles.consequenceReasoning}>
@@ -729,14 +754,14 @@ export default function ArExplorerPage() {
 
           {/* Column 2: Check-For-Understanding Reflection Quiz & Station Progression */}
           <aside className={styles.quizColumn}>
-            {/* Reflection Quiz Card */}
+            {/* Student Workbook Reflection Quiz */}
             {currentQuiz && (
               <section className={styles.quizCard} aria-labelledby="ar-quiz-heading">
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                     <Award size={18} style={{ color: '#DE7215' }} />
                     <h3 id="ar-quiz-heading" style={{ fontSize: '1.1rem', margin: 0, fontWeight: 750 }}>
-                      Check Your Constitutional Insight
+                      Student Workbook Reflection
                     </h3>
                   </div>
                   <span className={styles.xpRewardPill}>+{currentStation.dignityXpReward} Dignity XP</span>
@@ -793,14 +818,14 @@ export default function ArExplorerPage() {
               </section>
             )}
 
-            {/* Station Progression Card */}
+            {/* Classroom Lesson Progression Card */}
             <div className={styles.progressionCard}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
                 <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#334155' }}>
-                  Constitutional Journey
+                  Classroom Curriculum Journey
                 </span>
                 <span style={{ fontSize: '0.78rem', color: '#64748B', fontFamily: 'var(--font-family-mono)' }}>
-                  {completedObjects.size} of {AR_CONSTITUTIONAL_STATIONS.length} Stations Mastered
+                  {completedObjects.size} of {AR_CONSTITUTIONAL_STATIONS.length} Lessons Mastered
                 </span>
               </div>
 
@@ -813,7 +838,7 @@ export default function ArExplorerPage() {
                     <div 
                       key={st.id} 
                       className={`${styles.progressDot} ${isDone ? styles.progressDotDone : ''} ${isCurr ? styles.progressDotCurrent : ''}`}
-                      title={`Station ${i + 1}: ${st.title}`}
+                      title={`Lesson ${i + 1}: ${st.title}`}
                     />
                   );
                 })}
@@ -824,7 +849,7 @@ export default function ArExplorerPage() {
                   type="button"
                   className={styles.prevBtn}
                   onClick={handlePrevStation}
-                  aria-label="Previous constitutional station"
+                  aria-label="Previous classroom lesson"
                 >
                   <ArrowLeft size={14} />
                   <span>Previous</span>
@@ -833,9 +858,9 @@ export default function ArExplorerPage() {
                   type="button"
                   className={styles.nextBtn}
                   onClick={handleNextStation}
-                  aria-label="Next constitutional station"
+                  aria-label="Next classroom lesson"
                 >
-                  <span>Next Station</span>
+                  <span>Next Lesson</span>
                   <ArrowRight size={14} />
                 </button>
               </div>
@@ -849,7 +874,7 @@ export default function ArExplorerPage() {
             The Five Connected Living Realms
           </h3>
           <p style={{ margin: 0, fontSize: '0.84rem', color: 'var(--color-ink-muted)' }}>
-            Each 3D object anchors an illustrated landscape in RightsQuest India.
+            Each classroom learning artifact anchors an illustrated story landscape in RightsQuest India.
           </p>
 
           <div className={styles.realmsGrid}>

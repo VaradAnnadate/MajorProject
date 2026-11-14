@@ -1,25 +1,34 @@
-# RightsQuest AR Explorer — Augmented Reality Constitutional Learning
+# RightsQuest AR Explorer — Living Classroom & Augmented Reality Experience
 
 > **Governing Standards:** Creative OS (`44_AGENCYLIKE_UI`, `01_DESIGN_OS`, `04_TYPOGRAPHY_SYSTEM`, `05_MOTION_SYSTEM`)  
 > **Route:** `/ar-explorer`  
-> **Technology Direction:** React 18 + Three.js (WebGL) + WebXR Device API (`immersive-ar`), with automatic Universal 3D Fallback.  
+> **Technology Direction:** React 18 + Three.js (WebGL) + WebXR Device API (`immersive-ar`), with automatic Universal 3D Classroom Fallback.  
 > **Target Audience:** Indian children aged 8–16, educators, guardians, and academic evaluators.
 
 ---
 
-## 1. What is the RightsQuest AR Explorer?
+## 1. What is the RightsQuest Living Classroom?
 
-The **RightsQuest AR Explorer** brings the Constitution of India into the learner's physical environment. By pointing a compatible smartphone camera at a desk, floor, or classroom table, children can anchor interactive 3D constitutional artifacts into their real world:
-- The **24-spoke Golden Ashoka Chakra of Justice & Dharma**.
-- The **Balance of Equality** (Articles 14–18).
-- The **Beacon of Freedom & Child Voice** (Article 19 & UNCRC Article 12).
-- The **Shield of Bodily Safety & Shelter** (Articles 21, 24 & POCSO Act 2012).
-- The **Scroll of Free & Compulsory Education** (Article 21A & RTE Act 2009).
-- The **Crest of Constitutional Remedies** (Article 32 — Dr. B.R. Ambedkar’s Pillar).
-- A 3D companion model of **Mitra the Sun-Fox**, guiding the learner through legal concepts.
-- Miniature 3D gateways to the **Five Constitutional Realms**.
+The **RightsQuest Living Classroom** brings the Constitution of India alive inside a modern, hands-on educational environment. The student experiences constitutional learning in two complementary ways:
+1. **The Virtual 3D Classroom Studio (Universal Fallback):**
+   - The student sits at a warm, polished teak study desk complete with an open workbook, bookmark ribbon, and wooden pencil.
+   - Behind the desk on the rear wall hangs the **Teacher’s Blackboard**, dynamically written with chalk text introducing today's lesson, relevant constitutional articles, and core principles.
+   - Sunlight streams in through an open classroom window, casting soft shadows across the desk.
+   - In the center of the desk sits the interactive 3D constitutional artifact for today's lesson.
+   - Beside the artifact sits **Mitra the Sun-Fox**, acting as an attentive, encouraging classroom study companion.
+2. **Live WebXR Classroom AR:**
+   - On compatible devices, students can anchor the constitutional artifacts directly onto their real classroom desk or room floor.
+   - The virtual classroom geometry hides cleanly so the real physical room becomes the stage.
+   - Real-world surface hit-testing with a golden placement reticle.
+   - Zero video/photo frames recorded or uploaded; 100% on-device processing.
 
-Where WebXR AR is unavailable (e.g. desktop computers, laptops, non-AR mobile browsers), the platform seamlessly provides an interactive **Three.js 3D Universal Stage** with orbit rotation, inspection zoom, and identical reflection quizzes.
+### The 6 Classroom Lessons
+- **Lesson 1: The Sovereign Ashoka Chakra** (*Preamble & Article 51A*): Explore the 24 Dharma spokes and constitutional values on the study desk.
+- **Lesson 2: The Balance of Equality** (*Articles 14–18*): Miniature tabletop demonstration scale testing fair equipment distribution and equal dignity.
+- **Lesson 3: The Beacon of Expression** (*Article 19 & UNCRC 12*): Tabletop Bal Sansad student forum model broadcasting child voices through concentric soundwaves.
+- **Lesson 4: The Shield of Bodily Safety** (*Articles 21, 24 & POCSO*): Protective learning object deploying a translucent emerald sanctuary dome and Childline 1098 beacon.
+- **Lesson 5: The Scroll of Free Learning** (*Article 21A & RTE Act*): Schoolhouse gates that swing open 90° on the desk, unrolling the Article 21A parchment.
+- **Lesson 6: The Crest of Legal Remedies** (*Article 32 Dr. Ambedkar’s Pillar*): Miniature constitutional model with 5 crystal facets for the 5 writs firing light rays to the Apex Court crystal.
 
 ---
 

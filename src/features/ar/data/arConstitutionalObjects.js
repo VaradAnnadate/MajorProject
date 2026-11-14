@@ -27,6 +27,8 @@ export const AR_CONSTITUTIONAL_STATIONS = [
     geometryType: 'chakra',
     worldId: 'haven-of-dignity',
     dignityXpReward: 35,
+    classroomTopic: 'The Wheel of Dharma & Preamble Values',
+    classroomBoardSummary: 'The Constitution belongs to every child — 24 spokes of Dharma guide our democracy.',
 
     overview:
       'The 24-spoke Ashoka Chakra in India’s National Flag represents the eternal wheel of Dharma — continuous movement, moral order, and tireless civic justice. In RightsQuest, each spoke symbolizes an active principle protecting every child.',
@@ -190,6 +192,8 @@ export const AR_CONSTITUTIONAL_STATIONS = [
     geometryType: 'pillar',
     worldId: 'village-of-belonging',
     dignityXpReward: 35,
+    classroomTopic: 'Equal Dignity & Non-Discrimination',
+    classroomBoardSummary: 'Articles 14 & 15: Every child holds equal dignity. Fair opportunities for all!',
 
     overview:
       'Article 14 guarantees equality before the law and equal protection of the laws across India. Article 15 prohibits discrimination on grounds of religion, race, caste, sex, or place of birth, while empowering special affirmative provisions for children.',
@@ -340,6 +344,8 @@ export const AR_CONSTITUTIONAL_STATIONS = [
     geometryType: 'beacon',
     worldId: 'river-of-voices',
     dignityXpReward: 35,
+    classroomTopic: 'Freedom of Voice & Bal Sansad Assembly',
+    classroomBoardSummary: 'Article 19 & UNCRC 12: Every child has the right to speak, be heard, and listen respectfully.',
 
     overview:
       'Article 19(1)(a) guarantees all citizens freedom of speech and expression. For young people, this is reinforced by UNCRC Article 12: the right to express views freely in all matters affecting them, such as student councils, school clubs, and peaceful youth forums.',
@@ -490,6 +496,8 @@ export const AR_CONSTITUTIONAL_STATIONS = [
     geometryType: 'shield',
     worldId: 'forest-of-safety',
     dignityXpReward: 35,
+    classroomTopic: 'Bodily Safety & Childline 1098 Beacon',
+    classroomBoardSummary: 'Article 21 & POCSO: Safe personal boundaries are non-negotiable. Dial 1098 anytime.',
 
     overview:
       'Article 24 strictly prohibits child labour under age 14 in factories, mines, or hazardous occupations. Together with Article 21 (Right to Life & Dignity) and the POCSO Act 2012, Indian law builds an impenetrable shield protecting every child’s physical safety, personal boundaries, and freedom from forced work.',
@@ -640,6 +648,8 @@ export const AR_CONSTITUTIONAL_STATIONS = [
     geometryType: 'scroll',
     worldId: 'gardens-of-growth',
     dignityXpReward: 35,
+    classroomTopic: 'Free & Compulsory Education for All',
+    classroomBoardSummary: 'Article 21A & RTE Act: The school doors are open to every child aged 6–14 without barriers.',
 
     overview:
       'Enacted via the landmark 86th Constitutional Amendment, Article 21A directs the State to provide free and compulsory education to all children aged 6 to 14 years. The RTE Act 2009 guarantees trained teachers, safe classroom infrastructure, midday meals, and strictly prohibits screening fees, capitation fees, or denial of admission.',
@@ -790,6 +800,8 @@ export const AR_CONSTITUTIONAL_STATIONS = [
     geometryType: 'crest',
     worldId: 'haven-of-dignity',
     dignityXpReward: 40,
+    classroomTopic: 'Constitutional Remedies: Heart & Soul of Rights',
+    classroomBoardSummary: 'Article 32: When rights are denied, Supreme Court writs stand ready to protect you.',
 
     overview:
       'Dr. B.R. Ambedkar called Article 32 the "very soul and heart of the Constitution." Without Article 32, written fundamental rights would just be words on paper. It empowers anyone — including children through guardians or public-spirited advocates — to approach the Supreme Court directly via writs if their rights are violated.',

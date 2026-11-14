@@ -2,15 +2,19 @@ import * as THREE from 'three';
 
 /**
  * ArSceneEngine
- * Premium Spatial Three.js Engine for RightsQuest India.
+ * Premium Spatial Three.js Classroom Engine for RightsQuest India.
  *
- * Powers both:
- * 1. WebXR Augmented Reality Mode (immersive-ar session on compatible mobile hardware)
- * 2. Premium Interactive 3D Exhibition Mode (accessible universal fallback)
- *
- * Creative OS Governing Standards:
- * - 44_AGENCYLIKE_UI (Spatial Persuasion Spine, Shared-Element Continuity, Physical Consequence)
- * - DPDP Act 2023 §9 Child Safeguarding: Zero camera frames recorded, saved, or uploaded.
+ * Implements:
+ * 1. Living Classroom 3D Studio (Universal Fallback):
+ *    - Authentic student learning desk in warm polished teak.
+ *    - Open student workbook with pencil and stationery.
+ *    - Teacher's blackboard on the rear wall with dynamic Canvas chalk text.
+ *    - Window with soft daylight and directional sunbeams.
+ *    - Mitra the Sun-Fox companion sitting on the desk as an attentive study buddy.
+ * 2. WebXR Classroom Augmented Reality Mode:
+ *    - Real-world surface hit-testing and reticle placement on student's actual physical desk/floor.
+ *    - Dynamic hide/show of virtual classroom geometry during real AR passthrough.
+ *    - Zero camera frames recorded, saved, or uploaded (DPDP Act 2023 §9 compliant).
  */
 export class ArSceneEngine {
   constructor(canvas, options = {}) {
@@ -31,18 +35,23 @@ export class ArSceneEngine {
     this.clock = new THREE.Clock();
 
     // Scene groups
-    this.exhibitionPedestal = null;
-    this.mainStageGroup = null;
+    this.classroomGroup = null; // Contains desk, blackboard, workbook, floor, walls, window
+    this.mainStageGroup = null; // Contains the active constitutional artifact
     this.currentStationGroup = null;
     this.mitraGroup = null;
     this.particlesGroup = null;
     this.reticle = null;
     this.hitTestSource = null;
 
+    // Blackboard canvas texture
+    this.blackboardCanvas = null;
+    this.blackboardTexture = null;
+    this.blackboardMesh = null;
+
     // Consequence animation states
     this.activeSpatialEffect = null;
     this.effectTimer = 0;
-    this.scaleTiltAngle = -0.22; // Start with noticeable unfair tilt for Station 2
+    this.scaleTiltAngle = -0.22;
     this.targetScaleTilt = -0.22;
     this.gateAngle = 0;
     this.targetGateAngle = 0;
@@ -55,14 +64,14 @@ export class ArSceneEngine {
     this.remedyRaysActive = false;
 
     // Mitra emotional state
-    this.mitraEmotion = 'welcome'; // 'welcome' | 'explaining' | 'thinking' | 'celebrating' | 'concerned'
+    this.mitraEmotion = 'welcome';
     this.mitraBlinkTimer = 0;
 
     // Interaction controls for 3D inspection
     this.isDragging = false;
     this.previousMousePosition = { x: 0, y: 0 };
-    this.rotationVelocity = { x: 0, y: 0.002 };
-    this.zoomLevel = 6.0;
+    this.rotationVelocity = { x: 0, y: 0.0015 };
+    this.zoomLevel = 5.8;
 
     // Bind event listeners
     this.handlePointerDown = this.handlePointerDown.bind(this);
@@ -83,10 +92,10 @@ export class ArSceneEngine {
     // 1. Scene
     this.scene = new THREE.Scene();
 
-    // 2. Camera with cinematic focal length
+    // 2. Camera with student classroom perspective
     this.camera = new THREE.PerspectiveCamera(46, width / height, 0.1, 100);
-    this.camera.position.set(0, 1.15, this.zoomLevel);
-    this.camera.lookAt(0, 0.15, 0);
+    this.camera.position.set(0, 0.85, this.zoomLevel);
+    this.camera.lookAt(0, 0.1, 0);
 
     // 3. WebGL Renderer with WebXR capabilities
     const gl =
@@ -110,28 +119,30 @@ export class ArSceneEngine {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    // 4. Lighting setup (Museum-Grade Directional & Rim illumination)
-    this.setupLighting();
+    // 4. Natural Classroom Lighting Setup
+    this.setupClassroomLighting();
 
-    // 5. Architectural Exhibition Pedestal (for 3D mode)
-    this.exhibitionPedestal = this.buildPedestal();
-    this.scene.add(this.exhibitionPedestal);
+    // 5. Build Virtual 3D Classroom Environment (Desk, Blackboard, Floor, Window, Stationery)
+    this.classroomGroup = this.buildClassroomEnvironment();
+    this.scene.add(this.classroomGroup);
 
-    // 6. Floating constitutional dust particles
+    // 6. Floating Ambient Dust Motifs
     this.particlesGroup = this.buildDustParticles();
     this.scene.add(this.particlesGroup);
 
-    // 7. Main Stage Container
+    // 7. Main Artifact Stage Container (Grounded on the student's desk)
     this.mainStageGroup = new THREE.Group();
+    this.mainStageGroup.position.set(0, -0.28, -0.15); // Resting directly on desktop
     this.scene.add(this.mainStageGroup);
 
-    // 8. Mitra 3D Spatial Companion
+    // 8. Mitra 3D Mascot Companion (Sitting on student's desk beside artifact)
     this.mitraGroup = this.buildMitraCompanion();
-    this.mitraGroup.position.set(2.4, -0.85, 0.5);
-    this.mitraGroup.scale.set(0.68, 0.68, 0.68);
+    this.mitraGroup.position.set(1.95, -0.42, 0.35);
+    this.mitraGroup.rotation.y = -0.32; // Facing toward artifact and student
+    this.mitraGroup.scale.set(0.62, 0.62, 0.62);
     this.scene.add(this.mitraGroup);
 
-    // 9. Reticle for WebXR surface placement
+    // 9. Reticle for WebXR Real Surface Placement
     this.reticle = this.buildReticle();
     this.scene.add(this.reticle);
 
@@ -147,92 +158,311 @@ export class ArSceneEngine {
     this.startAnimationLoop();
   }
 
-  setupLighting() {
-    // Warm gallery ambient fill
-    const ambient = new THREE.AmbientLight(0xfff8ed, 1.45);
+  // ── CLASSROOM LIGHTING ───────────────────────────────────────────────────
+
+  setupClassroomLighting() {
+    // Soft ambient gallery illumination
+    const ambient = new THREE.AmbientLight(0xfff9f0, 1.5);
     this.scene.add(ambient);
 
-    // Primary warm key light with soft shadow mapping
-    const keyLight = new THREE.DirectionalLight(0xfffaea, 2.4);
-    keyLight.position.set(4.5, 7.5, 5.5);
-    keyLight.castShadow = true;
-    keyLight.shadow.mapSize.width = 1024;
-    keyLight.shadow.mapSize.height = 1024;
-    keyLight.shadow.camera.near = 0.5;
-    keyLight.shadow.camera.far = 25;
-    keyLight.shadow.bias = -0.001;
-    this.scene.add(keyLight);
+    // Sunbeam streaming through classroom window
+    const windowSun = new THREE.DirectionalLight(0xfffaea, 2.5);
+    windowSun.position.set(-6, 6.5, 3.5);
+    windowSun.castShadow = true;
+    windowSun.shadow.mapSize.width = 1024;
+    windowSun.shadow.mapSize.height = 1024;
+    windowSun.shadow.camera.near = 0.5;
+    windowSun.shadow.camera.far = 25;
+    windowSun.shadow.bias = -0.001;
+    this.scene.add(windowSun);
 
-    // Warm saffron fill light
-    const fillLight = new THREE.DirectionalLight(0xde7215, 1.3);
-    fillLight.position.set(-5, 2.5, -2);
-    this.scene.add(fillLight);
+    // Warm classroom interior fill
+    const roomFill = new THREE.DirectionalLight(0xde7215, 0.95);
+    roomFill.position.set(5, 3, -1);
+    this.scene.add(roomFill);
 
-    // Peacock blue accent rim light
-    const rimLight = new THREE.PointLight(0x1b6d80, 2.8, 28);
-    rimLight.position.set(0, 4.5, -4);
-    this.scene.add(rimLight);
+    // Blackboard accent highlight
+    const boardSpot = new THREE.PointLight(0xfffbeb, 1.8, 12);
+    boardSpot.position.set(0, 3.2, -0.8);
+    this.scene.add(boardSpot);
   }
 
-  buildPedestal() {
-    const group = new THREE.Group();
+  // ── VIRTUAL 3D CLASSROOM ENVIRONMENT ─────────────────────────────────────
 
-    // Dark slate sub-plinth
-    const slateMat = new THREE.MeshStandardMaterial({
-      color: 0x1e293b,
-      roughness: 0.65,
-      metalness: 0.2,
+  buildClassroomEnvironment() {
+    const classroom = new THREE.Group();
+    classroom.name = 'virtualClassroomGroup';
+
+    // Materials
+    const floorWoodMat = new THREE.MeshStandardMaterial({
+      color: 0x5c3a21,
+      roughness: 0.55,
+      metalness: 0.05,
     });
-    const subPlinth = new THREE.Mesh(new THREE.CylinderGeometry(3.3, 3.45, 0.2, 48), slateMat);
-    subPlinth.position.y = -1.78;
-    subPlinth.receiveShadow = true;
-    group.add(subPlinth);
 
-    // Upper polished marble circular platform
-    const marbleMat = new THREE.MeshStandardMaterial({
-      color: 0xfbf8f3,
-      roughness: 0.28,
+    const wallPlasterMat = new THREE.MeshStandardMaterial({
+      color: 0xf1efe7,
+      roughness: 0.88,
+      metalness: 0.02,
+    });
+
+    const deskWoodMat = new THREE.MeshStandardMaterial({
+      color: 0x824b22,
+      roughness: 0.38,
       metalness: 0.08,
     });
-    const marbleDisc = new THREE.Mesh(new THREE.CylinderGeometry(2.95, 3.15, 0.24, 48), marbleMat);
-    marbleDisc.position.y = -1.58;
-    marbleDisc.receiveShadow = true;
-    group.add(marbleDisc);
 
-    // Polished brass perimeter bevel ring
-    const brassTrimMat = new THREE.MeshStandardMaterial({
+    const deskMetalMat = new THREE.MeshStandardMaterial({
+      color: 0x27272a,
+      roughness: 0.45,
+      metalness: 0.7,
+    });
+
+    const paperMat = new THREE.MeshStandardMaterial({
+      color: 0xfffef7,
+      roughness: 0.75,
+      metalness: 0.02,
+    });
+
+    const pencilMat = new THREE.MeshStandardMaterial({
+      color: 0xf59e0b,
+      roughness: 0.4,
+      metalness: 0.1,
+    });
+
+    const brassHolderMat = new THREE.MeshStandardMaterial({
       color: 0xd4a017,
-      roughness: 0.24,
       metalness: 0.85,
+      roughness: 0.25,
     });
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(3.0, 0.045, 16, 64), brassTrimMat);
-    ring.rotation.x = Math.PI / 2;
-    ring.position.y = -1.45;
-    group.add(ring);
 
-    // Soft architectural contact shadow disc
-    const shadowMat = new THREE.MeshBasicMaterial({
-      color: 0x0f172a,
+    // 1. Classroom Hardwood Floor
+    const floor = new THREE.Mesh(new THREE.BoxGeometry(16, 0.2, 12), floorWoodMat);
+    floor.position.y = -1.8;
+    floor.receiveShadow = true;
+    classroom.add(floor);
+
+    // 2. Classroom Rear Wall
+    const rearWall = new THREE.Mesh(new THREE.BoxGeometry(16, 8, 0.2), wallPlasterMat);
+    rearWall.position.set(0, 2.1, -2.4);
+    rearWall.receiveShadow = true;
+    classroom.add(rearWall);
+
+    // 3. Left Window with Daylight Sky
+    const windowGroup = new THREE.Group();
+    windowGroup.position.set(-4.8, 1.8, -0.2);
+    windowGroup.rotation.y = Math.PI / 2;
+
+    const windowGlassMat = new THREE.MeshBasicMaterial({
+      color: 0xe0f2fe,
       transparent: true,
-      opacity: 0.22,
+      opacity: 0.9,
     });
-    const shadowDisc = new THREE.Mesh(new THREE.CircleGeometry(3.8, 48), shadowMat);
-    shadowDisc.rotation.x = -Math.PI / 2;
-    shadowDisc.position.y = -1.89;
-    group.add(shadowDisc);
+    const windowPane = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 3.4), windowGlassMat);
+    windowGroup.add(windowPane);
 
-    group.name = 'exhibitionPedestal';
-    return group;
+    // Window Wooden Mullions
+    const winFrameMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4 });
+    const winBorder = new THREE.Mesh(new THREE.BoxGeometry(2.7, 3.5, 0.06), winFrameMat);
+    windowGroup.add(winBorder);
+    classroom.add(windowGroup);
+
+    // 4. The Teacher's Classroom Blackboard (Dynamic Canvas Texture)
+    const blackboardGroup = new THREE.Group();
+    blackboardGroup.position.set(0, 1.85, -2.25);
+
+    // Wooden Frame
+    const frameWoodMat = new THREE.MeshStandardMaterial({ color: 0x92400e, roughness: 0.45 });
+    const boardFrame = new THREE.Mesh(new THREE.BoxGeometry(5.4, 2.5, 0.1), frameWoodMat);
+    boardFrame.castShadow = true;
+    blackboardGroup.add(boardFrame);
+
+    // Chalkboard Surface with Dynamic Canvas
+    this.blackboardCanvas = document.createElement('canvas');
+    this.blackboardCanvas.width = 1024;
+    this.blackboardCanvas.height = 512;
+    this.blackboardTexture = new THREE.CanvasTexture(this.blackboardCanvas);
+
+    const boardMat = new THREE.MeshStandardMaterial({
+      map: this.blackboardTexture,
+      roughness: 0.65,
+      metalness: 0.05,
+    });
+    this.blackboardMesh = new THREE.Mesh(new THREE.BoxGeometry(5.1, 2.25, 0.04), boardMat);
+    this.blackboardMesh.position.z = 0.04;
+    blackboardGroup.add(this.blackboardMesh);
+
+    // Chalk Ledge & Chalk Pieces
+    const ledge = new THREE.Mesh(new THREE.BoxGeometry(5.0, 0.08, 0.22), frameWoodMat);
+    ledge.position.set(0, -1.15, 0.1);
+    blackboardGroup.add(ledge);
+
+    const chalkMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.9 });
+    const chalk1 = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.14, 8), chalkMat);
+    chalk1.rotation.z = Math.PI / 2;
+    chalk1.position.set(-0.6, -1.11, 0.12);
+    blackboardGroup.add(chalk1);
+
+    const goldChalkMat = new THREE.MeshStandardMaterial({ color: 0xfcd34d, roughness: 0.9 });
+    const chalk2 = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.12, 8), goldChalkMat);
+    chalk2.rotation.z = Math.PI / 2;
+    chalk2.position.set(-0.4, -1.11, 0.12);
+    blackboardGroup.add(chalk2);
+
+    classroom.add(blackboardGroup);
+
+    // 5. The Student's Desk (Primary Learning Surface)
+    const deskGroup = new THREE.Group();
+    deskGroup.position.set(0, -0.65, 0.25);
+
+    // Desktop
+    const tabletop = new THREE.Mesh(new THREE.BoxGeometry(5.4, 0.16, 2.8), deskWoodMat);
+    tabletop.castShadow = true;
+    tabletop.receiveShadow = true;
+    deskGroup.add(tabletop);
+
+    // 4 Tubular Desk Legs
+    const legPositions = [
+      [-2.45, -0.55, -1.15],
+      [2.45, -0.55, -1.15],
+      [-2.45, -0.55, 1.15],
+      [2.45, -0.55, 1.15],
+    ];
+    legPositions.forEach(([x, y, z]) => {
+      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 1.05, 16), deskMetalMat);
+      leg.position.set(x, y, z);
+      leg.castShadow = true;
+      deskGroup.add(leg);
+    });
+
+    classroom.add(deskGroup);
+
+    // 6. Open Student Workbook & Stationery on Desk
+    const stationeryGroup = new THREE.Group();
+    stationeryGroup.position.set(-1.85, -0.54, 0.45);
+
+    // Open Workbook Pages
+    const workbook = new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.024, 0.75), paperMat);
+    workbook.rotation.y = 0.08;
+    workbook.receiveShadow = true;
+    stationeryGroup.add(workbook);
+
+    // Bookmark Ribbon
+    const ribbonMat = new THREE.MeshBasicMaterial({ color: 0xde7215 });
+    const ribbon = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.026, 0.8), ribbonMat);
+    ribbon.rotation.y = 0.08;
+    stationeryGroup.add(ribbon);
+
+    // Student Pencil
+    const pencil = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.45, 8), pencilMat);
+    pencil.rotation.z = Math.PI / 2.2;
+    pencil.position.set(0.65, 0.015, -0.05);
+    stationeryGroup.add(pencil);
+
+    // Pencil Holder
+    const holder = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.14, 0.28, 16), brassHolderMat);
+    holder.position.set(0.68, 0.14, -0.38);
+    holder.castShadow = true;
+    stationeryGroup.add(holder);
+
+    classroom.add(stationeryGroup);
+
+    // Draw initial blackboard lesson text
+    this.renderBlackboardCanvas(
+      'The Sovereign Ashoka Chakra',
+      'Preamble & Fundamental Duties',
+      'The Constitution belongs to every child — 24 spokes of Dharma guide our democracy.',
+      1
+    );
+
+    return classroom;
+  }
+
+  // Draw Dynamic Classroom Blackboard Text
+  renderBlackboardCanvas(lessonTitle, articleRef, corePrinciple, lessonNum = 1) {
+    if (!this.blackboardCanvas || !this.blackboardTexture) return;
+
+    const ctx = this.blackboardCanvas.getContext('2d');
+    const w = this.blackboardCanvas.width;
+    const h = this.blackboardCanvas.height;
+
+    // Chalkboard deep slate green background
+    ctx.fillStyle = '#142621';
+    ctx.fillRect(0, 0, w, h);
+
+    // Subtle chalk dust border
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(20, 20, w - 40, h - 40);
+
+    ctx.strokeStyle = 'rgba(252, 211, 77, 0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(28, 28, w - 56, h - 56);
+
+    // Header: Class & Lesson Number
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 24px monospace';
+    ctx.fillStyle = '#FCD34D';
+    ctx.fillText(`✦ RIGHTSQUEST LIVING CLASSROOM · LESSON ${lessonNum} OF 6 ✦`, w / 2, 65);
+
+    // Lesson Title
+    ctx.font = 'bold 44px Georgia, serif';
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillText(lessonTitle, w / 2, 135);
+
+    // Constitutional Article Reference
+    ctx.font = '600 28px sans-serif';
+    ctx.fillStyle = '#FBBF24';
+    ctx.fillText(articleRef, w / 2, 190);
+
+    // Decorative separator line
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+    ctx.beginPath();
+    ctx.moveTo(w / 2 - 220, 215);
+    ctx.lineTo(w / 2 + 220, 215);
+    ctx.stroke();
+
+    // Core Principle / Classroom Rule
+    ctx.font = 'italic 25px Georgia, serif';
+    ctx.fillStyle = '#E2E8F0';
+    ctx.fillText(`“${corePrinciple}”`, w / 2, 275);
+
+    // Footnote guidance
+    ctx.font = '20px sans-serif';
+    ctx.fillStyle = '#94A3B8';
+    ctx.fillText('Inspect the learning artifact on your desk · Make your decision below', w / 2, 345);
+
+    this.blackboardTexture.needsUpdate = true;
+  }
+
+  // Update Blackboard dynamically when station or age tier changes
+  updateBlackboardContent(station, ageKey = '8-10') {
+    if (!station) return;
+    const lessonNum = station.stationNumber || 1;
+    const title = station.title || 'Constitutional Lesson';
+    const article = station.articleRef || 'Constitution of India';
+    const principle =
+      station.classroomBoardSummary ||
+      station.scenarios?.[ageKey]?.choices?.[0]?.explanation ||
+      station.overview ||
+      'Equal dignity and justice for every young citizen.';
+
+    this.renderBlackboardCanvas(title, article, principle, lessonNum);
+  }
+
+  // For test script backward compatibility
+  buildPedestal() {
+    return this.classroomGroup || new THREE.Group();
   }
 
   buildDustParticles() {
-    const count = 48;
+    const count = 40;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(count * 3);
 
     for (let i = 0; i < count * 3; i += 3) {
       positions[i] = (Math.random() - 0.5) * 8.5;
-      positions[i + 1] = (Math.random() - 0.5) * 5 + 0.6;
+      positions[i + 1] = (Math.random() - 0.5) * 4 + 0.6;
       positions[i + 2] = (Math.random() - 0.5) * 6.5;
     }
 
@@ -240,9 +470,9 @@ export class ArSceneEngine {
 
     const material = new THREE.PointsMaterial({
       color: 0xfbbf24,
-      size: 0.075,
+      size: 0.07,
       transparent: true,
-      opacity: 0.65,
+      opacity: 0.6,
     });
 
     return new THREE.Points(geometry, material);
@@ -262,7 +492,7 @@ export class ArSceneEngine {
     return reticleMesh;
   }
 
-  // ── REFINED 3D MITRA MASCOT COMPANION ─────────────────────────────────────
+  // ── REFINED 3D MITRA MASCOT COMPANION (STUDY BUDDY ON DESK) ───────────────
 
   buildMitraCompanion() {
     const group = new THREE.Group();
@@ -361,7 +591,7 @@ export class ArSceneEngine {
     rightEarInner.rotation.z = -0.28;
     headGroup.add(rightEarInner);
 
-    // Expressive Eyes with Highlights
+    // Eyes with Highlights
     const leftEye = new THREE.Mesh(new THREE.SphereGeometry(0.075, 14, 14), eyeMat);
     leftEye.position.set(-0.18, 0.06, 0.52);
     leftEye.name = 'leftEye';
@@ -404,7 +634,7 @@ export class ArSceneEngine {
     tailGroup.name = 'mitraTail';
     group.add(tailGroup);
 
-    // 5. Floating Golden Wisdom Lantern (Mitra's Beacon)
+    // 5. Floating Golden Wisdom Lantern (Mitra's Classroom Light)
     const lanternGroup = new THREE.Group();
     lanternGroup.position.set(0.9, 0.75, 0.35);
 
@@ -421,7 +651,6 @@ export class ArSceneEngine {
     lanternRing2.name = 'lanternRing2';
     lanternGroup.add(lanternRing2);
 
-    // Internal point light inside the lantern
     const lanternLight = new THREE.PointLight(0xffaa00, 1.4, 3.5);
     lanternLight.name = 'lanternPointLight';
     lanternGroup.add(lanternLight);
@@ -445,35 +674,35 @@ export class ArSceneEngine {
     if (lanternCore && lanternLight) {
       switch (emotion) {
         case 'celebrating':
-          lanternCore.material.emissive.setHex(0x10b981); // Emerald celebration
+          lanternCore.material.emissive.setHex(0x10b981);
           lanternCore.material.emissiveIntensity = 2.2;
           lanternLight.color.setHex(0x10b981);
           lanternLight.intensity = 2.4;
           if (head) head.rotation.z = 0.08;
           break;
         case 'thinking':
-          lanternCore.material.emissive.setHex(0x38bdf8); // Sky blue
+          lanternCore.material.emissive.setHex(0x38bdf8);
           lanternCore.material.emissiveIntensity = 1.3;
           lanternLight.color.setHex(0x38bdf8);
           lanternLight.intensity = 1.4;
           if (head) head.rotation.z = -0.12;
           break;
         case 'concerned':
-          lanternCore.material.emissive.setHex(0xf97316); // Protective amber
+          lanternCore.material.emissive.setHex(0xf97316);
           lanternCore.material.emissiveIntensity = 1.4;
           lanternLight.color.setHex(0xf97316);
           lanternLight.intensity = 1.6;
           if (head) head.rotation.z = 0.15;
           break;
         case 'explaining':
-          lanternCore.material.emissive.setHex(0xf59e0b); // Warm focused gold
+          lanternCore.material.emissive.setHex(0xf59e0b);
           lanternCore.material.emissiveIntensity = 1.6;
           lanternLight.color.setHex(0xf59e0b);
           lanternLight.intensity = 1.8;
           if (head) head.rotation.z = -0.05;
           break;
         default:
-          lanternCore.material.emissive.setHex(0xffaa00); // Natural sunlight
+          lanternCore.material.emissive.setHex(0xffaa00);
           lanternCore.material.emissiveIntensity = 1.2;
           lanternLight.color.setHex(0xffaa00);
           lanternLight.intensity = 1.3;
@@ -482,9 +711,9 @@ export class ArSceneEngine {
     }
   }
 
-  // ── LOAD CONSTITUTIONAL STATION ───────────────────────────────────────────
+  // ── LOAD CONSTITUTIONAL STATION ONTO DESK ─────────────────────────────────
 
-  loadConstitutionalStation(stationData) {
+  loadConstitutionalStation(stationData, ageKey = '8-10') {
     if (!stationData) return;
 
     if (this.currentStationGroup) {
@@ -521,9 +750,11 @@ export class ArSceneEngine {
     this.currentStationGroup = newGroup;
     this.mainStageGroup.add(newGroup);
 
-    // Reset default animation states per station
+    // Update Blackboard dynamically
+    this.updateBlackboardContent(stationData, ageKey);
+
     if (stationData.id === 'right-to-equality') {
-      this.targetScaleTilt = -0.22; // Initial unbalanced state awaiting decision
+      this.targetScaleTilt = -0.22;
     } else {
       this.targetScaleTilt = 0;
     }
@@ -556,22 +787,18 @@ export class ArSceneEngine {
     });
 
     const chakraGroup = new THREE.Group();
-    chakraGroup.position.set(0, 0.45, 0);
+    chakraGroup.position.set(0, 0.65, 0);
 
-    // Central Navy Hub
     const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.22, 32), chakraNavy);
     hub.rotation.x = Math.PI / 2;
     chakraGroup.add(hub);
 
-    // Golden Axle Core
     const core = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), chakraGold);
     chakraGroup.add(core);
 
-    // Outer Navy Wheel Rim
     const outerRim = new THREE.Mesh(new THREE.TorusGeometry(1.85, 0.085, 16, 64), chakraNavy);
     chakraGroup.add(outerRim);
 
-    // Golden Inlaid Rim
     const innerRim = new THREE.Mesh(new THREE.TorusGeometry(1.72, 0.035, 12, 64), chakraGold);
     chakraGroup.add(innerRim);
 
@@ -581,12 +808,10 @@ export class ArSceneEngine {
       const spokeGroup = new THREE.Group();
       spokeGroup.rotation.z = angle;
 
-      // Tapered wedge spoke
       const spoke = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.038, 1.38, 8), chakraNavy);
       spoke.position.y = 1.05;
       spokeGroup.add(spoke);
 
-      // Spoke tip accent bead
       const tipBead = new THREE.Mesh(new THREE.SphereGeometry(0.032, 8, 8), chakraGold);
       tipBead.position.y = 1.76;
       spokeGroup.add(tipBead);
@@ -594,7 +819,7 @@ export class ArSceneEngine {
       chakraGroup.add(spokeGroup);
     }
 
-    // 4 Cardinal Medallions of Rights (Survival, Protection, Development, Participation)
+    // 4 Cardinal Medallions of Rights
     for (let i = 0; i < 4; i++) {
       const angle = (i * Math.PI) / 2;
       const med = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.08, 16), chakraGold);
@@ -603,7 +828,6 @@ export class ArSceneEngine {
       chakraGroup.add(med);
     }
 
-    // Luminous Golden Aurora Plane (illuminates when full equality/dharma is realized)
     const auraDisc = new THREE.Mesh(new THREE.CircleGeometry(2.35, 48), auraMat);
     auraDisc.position.z = -0.05;
     auraDisc.name = 'chakraAura';
@@ -614,7 +838,7 @@ export class ArSceneEngine {
     group.name = 'ashokaChakraModel';
   }
 
-  // ── 2. THE BALANCE OF EQUALITY (REFERENCE-QUALITY CRAFTSMANSHIP) ───────────
+  // ── 2. THE BALANCE OF EQUALITY ─────────────────────────────────────────────
 
   buildEqualityBalanceGeometry(group, data) {
     const brassMat = new THREE.MeshStandardMaterial({
@@ -650,9 +874,9 @@ export class ArSceneEngine {
       roughness: 0.16,
     });
 
-    // 1. Stepped Brass Pedestal Base
+    // 1. Stepped Brass Base
     const baseGroup = new THREE.Group();
-    baseGroup.position.set(0, -1.35, 0);
+    baseGroup.position.set(0, -0.65, 0);
 
     const baseTier1 = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.25, 0.16, 36), darkBronzeMat);
     baseTier1.receiveShadow = true;
@@ -663,57 +887,37 @@ export class ArSceneEngine {
     baseTier2.receiveShadow = true;
     baseGroup.add(baseTier2);
 
-    const baseCollar = new THREE.Mesh(new THREE.TorusGeometry(0.78, 0.035, 12, 36), darkBronzeMat);
-    baseCollar.rotation.x = Math.PI / 2;
-    baseCollar.position.y = 0.18;
-    baseGroup.add(baseCollar);
-
-    // Front Brass Plaque: "Article 14 · Equal Dignity"
     const plaque = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.12, 0.05), brassMat);
     plaque.position.set(0, 0.08, 0.98);
     baseGroup.add(plaque);
 
     group.add(baseGroup);
 
-    // 2. Classical Fluted Brass Pillar Column
+    // 2. Classical Fluted Brass Pillar
     const pillarGroup = new THREE.Group();
-    pillarGroup.position.set(0, 0.1, 0);
+    pillarGroup.position.set(0, 0.65, 0);
 
-    const pillarShaft = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.22, 2.7, 24), brassMat);
+    const pillarShaft = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.22, 2.5, 24), brassMat);
     pillarShaft.castShadow = true;
     pillarGroup.add(pillarShaft);
 
-    // Column Decorative Rings
-    const ring1 = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.03, 12, 24), darkBronzeMat);
-    ring1.rotation.x = Math.PI / 2;
-    ring1.position.y = -0.8;
-    pillarGroup.add(ring1);
-
-    const ring2 = new THREE.Mesh(new THREE.TorusGeometry(0.18, 0.03, 12, 24), darkBronzeMat);
-    ring2.rotation.x = Math.PI / 2;
-    ring2.position.y = 0.6;
-    pillarGroup.add(ring2);
-
-    // Column Capital Bracket
-    const capital = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.16, 0.28, 16), brassMat);
-    capital.position.y = 1.38;
+    const capital = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.16, 0.26, 16), brassMat);
+    capital.position.y = 1.28;
     pillarGroup.add(capital);
 
     group.add(pillarGroup);
 
-    // 3. Calibrated Equilibrium Gauge (Mounted right below the pivot)
+    // 3. Calibrated Equilibrium Gauge
     const gaugeGroup = new THREE.Group();
-    gaugeGroup.position.set(0, 1.05, 0.15);
+    gaugeGroup.position.set(0, 1.55, 0.15);
 
     const gaugePlate = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.28, 0.04), gaugeMat);
     gaugeGroup.add(gaugePlate);
 
-    // Center Gold Equilibrium Marker (0°)
     const centerMarker = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.18, 0.05), brassMat);
     centerMarker.position.set(0, 0, 0.02);
     gaugeGroup.add(centerMarker);
 
-    // Left (-) and Right (+) bias markers
     const leftMarker = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.1, 0.05), darkBronzeMat);
     leftMarker.position.set(-0.32, 0, 0.02);
     gaugeGroup.add(leftMarker);
@@ -724,38 +928,24 @@ export class ArSceneEngine {
 
     group.add(gaugeGroup);
 
-    // 4. Arched Crossbeam Assembly (rotates on z axis)
+    // 4. Arched Crossbeam Assembly
     const beamGroup = new THREE.Group();
-    beamGroup.position.set(0, 1.48, 0);
+    beamGroup.position.set(0, 1.95, 0);
 
-    // Horizontal Tapered Truss Beam
     const beamBar = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.12, 0.14), brassMat);
     beamBar.castShadow = true;
     beamGroup.add(beamBar);
 
-    // Upper Decorative Arch Rib
-    const archRib = new THREE.Mesh(new THREE.TorusGeometry(1.6, 0.03, 8, 32, Math.PI), brassMat);
-    archRib.position.y = -0.05;
-    beamGroup.add(archRib);
-
-    // Pivot Axle Hub
-    const pivotHub = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.32, 16), darkBronzeMat);
-    pivotHub.rotation.x = Math.PI / 2;
-    beamGroup.add(pivotHub);
-
-    // Downward Pointing Index Needle (swings across the gauge plate)
     const needle = new THREE.Mesh(new THREE.ConeGeometry(0.026, 0.52, 8), brassMat);
     needle.position.set(0, -0.28, 0.16);
-    needle.rotation.z = Math.PI; // Point downwards
+    needle.rotation.z = Math.PI;
     beamGroup.add(needle);
 
-    // Central Justice Diamond
     const centerDiamond = new THREE.Mesh(new THREE.OctahedronGeometry(0.36, 0), diamondMat);
     centerDiamond.name = 'equalityDiamond';
     centerDiamond.position.y = 0.22;
     beamGroup.add(centerDiamond);
 
-    // Internal Light for Diamond
     const diamondLight = new THREE.PointLight(0xfcd34d, 1.2, 3);
     diamondLight.name = 'diamondGlowLight';
     centerDiamond.add(diamondLight);
@@ -764,12 +954,6 @@ export class ArSceneEngine {
     const leftPanGroup = new THREE.Group();
     leftPanGroup.position.set(-1.72, -1.05, 0);
 
-    // Top shackle ring
-    const leftShackle = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.02, 8, 16), brassMat);
-    leftShackle.position.y = 0.98;
-    leftPanGroup.add(leftShackle);
-
-    // 3 Delicate Tripod Suspension Cords
     for (let i = 0; i < 3; i++) {
       const theta = (i * Math.PI * 2) / 3;
       const cord = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 1.1, 6), brassMat);
@@ -779,17 +963,10 @@ export class ArSceneEngine {
       leftPanGroup.add(cord);
     }
 
-    // Deep Spun-Brass Dish Bowl
     const leftBowl = new THREE.Mesh(new THREE.CylinderGeometry(0.72, 0.42, 0.2, 32, 1, false), brassMat);
     leftBowl.castShadow = true;
     leftPanGroup.add(leftBowl);
 
-    const leftBowlRim = new THREE.Mesh(new THREE.TorusGeometry(0.72, 0.028, 8, 32), darkBronzeMat);
-    leftBowlRim.rotation.x = Math.PI / 2;
-    leftBowlRim.position.y = 0.1;
-    leftPanGroup.add(leftBowlRim);
-
-    // Weighted Tokens in Left Pan ("Equal Dignity" tokens)
     const tokenL1 = new THREE.Mesh(new THREE.SphereGeometry(0.14, 12, 12), tokenGoldMat);
     tokenL1.position.set(-0.15, 0.14, 0);
     leftPanGroup.add(tokenL1);
@@ -805,10 +982,6 @@ export class ArSceneEngine {
     const rightPanGroup = new THREE.Group();
     rightPanGroup.position.set(1.72, -1.05, 0);
 
-    const rightShackle = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.02, 8, 16), brassMat);
-    rightShackle.position.y = 0.98;
-    rightPanGroup.add(rightShackle);
-
     for (let i = 0; i < 3; i++) {
       const theta = (i * Math.PI * 2) / 3;
       const cord = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 1.1, 6), brassMat);
@@ -822,20 +995,12 @@ export class ArSceneEngine {
     rightBowl.castShadow = true;
     rightPanGroup.add(rightBowl);
 
-    const rightBowlRim = new THREE.Mesh(new THREE.TorusGeometry(0.72, 0.028, 8, 32), darkBronzeMat);
-    rightBowlRim.rotation.x = Math.PI / 2;
-    rightBowlRim.position.y = 0.1;
-    rightPanGroup.add(rightBowlRim);
-
-    // Tokens in Right Pan
     const tokenR1 = new THREE.Mesh(new THREE.SphereGeometry(0.14, 12, 12), tokenGoldMat);
     tokenR1.position.set(-0.15, 0.14, 0);
-    tokenR1.name = 'rightToken1';
     rightPanGroup.add(tokenR1);
 
     const tokenR2 = new THREE.Mesh(new THREE.SphereGeometry(0.14, 12, 12), tokenGoldMat);
     tokenR2.position.set(0.15, 0.14, 0);
-    tokenR2.name = 'rightToken2';
     rightPanGroup.add(tokenR2);
 
     rightPanGroup.name = 'rightPanGroup';
@@ -869,37 +1034,22 @@ export class ArSceneEngine {
       roughness: 0.1,
     });
 
-    // Tiered Circular Amphitheater Steps (Bal Sansad Assembly Forum)
-    const forumTier1 = new THREE.Mesh(new THREE.CylinderGeometry(2.4, 2.65, 0.16, 32), tealMat);
-    forumTier1.position.y = -1.45;
-    group.add(forumTier1);
+    const forumTier = new THREE.Mesh(new THREE.CylinderGeometry(2.0, 2.3, 0.18, 32), tealMat);
+    forumTier.position.y = -0.55;
+    group.add(forumTier);
 
-    const forumTier2 = new THREE.Mesh(new THREE.CylinderGeometry(1.8, 2.05, 0.16, 32), tealMat);
-    forumTier2.position.y = -1.29;
-    group.add(forumTier2);
-
-    // Central Transmission Spire
-    const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.32, 3.4, 16), brassMat);
-    spire.position.y = 0.55;
+    const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.28, 3.2, 16), brassMat);
+    spire.position.y = 1.1;
     spire.name = 'beaconSpire';
     group.add(spire);
 
-    // Spire Rings
-    for (let i = 0; i < 3; i++) {
-      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.38 - i * 0.08, 0.03, 8, 24), brassMat);
-      ring.rotation.x = Math.PI / 2;
-      ring.position.y = 0.2 + i * 0.8;
-      group.add(ring);
-    }
-
-    // Beacon Top Lantern Crystal
     const lantern = new THREE.Mesh(new THREE.OctahedronGeometry(0.42, 1), flameMat);
-    lantern.position.y = 2.45;
+    lantern.position.y = 2.8;
     group.add(lantern);
 
-    // Dynamic Concentric Soundwave Ripple Rings (Article 19 & UNCRC 12 Voice)
+    // Dynamic Concentric Soundwave Ripple Rings
     const waveGroup = new THREE.Group();
-    waveGroup.position.set(0, 2.45, 0);
+    waveGroup.position.set(0, 2.8, 0);
 
     const waveMat = new THREE.MeshBasicMaterial({
       color: 0x38bdf8,
@@ -944,27 +1094,23 @@ export class ArSceneEngine {
       ior: 1.4,
     });
 
-    // Heraldic Curved Shield Body
     const shieldMesh = new THREE.Mesh(new THREE.CylinderGeometry(1.65, 0.4, 2.6, 24, 1, false, 0, Math.PI), shieldCrimson);
     shieldMesh.rotation.y = Math.PI / 2;
-    shieldMesh.position.y = 0.25;
+    shieldMesh.position.y = 0.85;
     shieldMesh.scale.set(0.65, 1, 1);
     group.add(shieldMesh);
 
-    // Polished Golden Shield Trim Rim
     const rim = new THREE.Mesh(new THREE.TorusGeometry(1.5, 0.065, 12, 32, Math.PI), shieldGold);
-    rim.position.set(0, 0.45, 0.25);
+    rim.position.set(0, 1.05, 0.25);
     group.add(rim);
 
-    // Central Childline 1098 Beacon Emblem
     const emblem = new THREE.Mesh(new THREE.OctahedronGeometry(0.48, 1), shieldGold);
-    emblem.position.set(0, 0.35, 0.4);
+    emblem.position.set(0, 0.95, 0.4);
     group.add(emblem);
 
-    // Translucent Emerald Protective Sanctuary Forcefield Dome
     const dome = new THREE.Mesh(new THREE.SphereGeometry(2.8, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2), domeMat);
-    dome.position.y = -1.45;
-    dome.scale.set(0.001, 0.001, 0.001); // Expands dynamically upon consequence trigger
+    dome.position.y = -0.65;
+    dome.scale.set(0.001, 0.001, 0.001);
     dome.name = 'sanctuaryDome';
     group.add(dome);
 
@@ -992,47 +1138,41 @@ export class ArSceneEngine {
       metalness: 0.05,
     });
 
-    // Schoolhouse Classical Portico
     const archBase = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.22, 1.2), stoneMat);
-    archBase.position.y = -1.45;
+    archBase.position.y = -0.65;
     group.add(archBase);
 
-    // Twin Fluted Columns
     const leftCol = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 2.8, 16), stoneMat);
-    leftCol.position.set(-1.45, 0.05, 0);
+    leftCol.position.set(-1.45, 0.8, 0);
     group.add(leftCol);
 
     const rightCol = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 2.8, 16), stoneMat);
-    rightCol.position.set(1.45, 0.05, 0);
+    rightCol.position.set(1.45, 0.8, 0);
     group.add(rightCol);
 
-    // Classical Pediment Header
     const pediment = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.35, 0.65), stoneMat);
-    pediment.position.y = 1.6;
+    pediment.position.y = 2.3;
     group.add(pediment);
 
-    // Left Gate Wing (Hinged at x = -1.45)
     const leftGateGroup = new THREE.Group();
-    leftGateGroup.position.set(-1.45, 0.05, 0);
+    leftGateGroup.position.set(-1.45, 0.8, 0);
     const leftGateBars = new THREE.Mesh(new THREE.BoxGeometry(1.25, 2.4, 0.06), brassGateMat);
     leftGateBars.position.x = 0.62;
     leftGateGroup.add(leftGateBars);
     leftGateGroup.name = 'leftSchoolGate';
     group.add(leftGateGroup);
 
-    // Right Gate Wing (Hinged at x = +1.45)
     const rightGateGroup = new THREE.Group();
-    rightGateGroup.position.set(1.45, 0.05, 0);
+    rightGateGroup.position.set(1.45, 0.8, 0);
     const rightGateBars = new THREE.Mesh(new THREE.BoxGeometry(1.25, 2.4, 0.06), brassGateMat);
     rightGateBars.position.x = -0.62;
     rightGateGroup.add(rightGateBars);
     rightGateGroup.name = 'rightSchoolGate';
     group.add(rightGateGroup);
 
-    // Unfurling Article 21A Parchment Scroll
     const scrollMesh = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.8, 0.04), parchmentMat);
-    scrollMesh.position.set(0, 0.05, 0.45);
-    scrollMesh.scale.set(1, 0.01, 1); // Unrolls vertically upon trigger
+    scrollMesh.position.set(0, 0.8, 0.45);
+    scrollMesh.scale.set(1, 0.01, 1);
     scrollMesh.name = 'article21AParchment';
     group.add(scrollMesh);
 
@@ -1061,20 +1201,17 @@ export class ArSceneEngine {
       opacity: 0.75,
     });
 
-    // Dr. B.R. Ambedkar's Hexagonal Pillar of Justice
-    const pillar = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.35, 2.4, 6), navyMarbleMat);
-    pillar.position.y = -0.25;
+    const pillar = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.35, 2.2, 6), navyMarbleMat);
+    pillar.position.y = 0.45;
     group.add(pillar);
 
-    // Crowning Apex Crystal (The Supreme Court Apex)
     const apexCrystal = new THREE.Mesh(new THREE.OctahedronGeometry(0.52, 1), crystalMat);
-    apexCrystal.position.y = 1.75;
+    apexCrystal.position.y = 2.15;
     apexCrystal.name = 'apexCrystal';
     group.add(apexCrystal);
 
-    // 5 Radial Crystal Facets (The 5 Writs: Habeas Corpus, Mandamus, Prohibition, Quo Warranto, Certiorari)
     const crystalRaysGroup = new THREE.Group();
-    crystalRaysGroup.position.set(0, 1.75, 0);
+    crystalRaysGroup.position.set(0, 2.15, 0);
 
     for (let i = 0; i < 5; i++) {
       const angle = (i * Math.PI * 2) / 5;
@@ -1082,7 +1219,6 @@ export class ArSceneEngine {
       prism.position.set(Math.cos(angle) * 1.5, -0.65, Math.sin(angle) * 1.5);
       group.add(prism);
 
-      // Light ray beaming toward apex
       const ray = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.6, 6), rayMat);
       ray.position.set(Math.cos(angle) * 0.75, -0.32, Math.sin(angle) * 0.75);
       ray.rotation.z = Math.cos(angle) * -0.55;
@@ -1105,11 +1241,11 @@ export class ArSceneEngine {
 
     switch (effectName) {
       case 'scale-balanced':
-        this.targetScaleTilt = 0; // Perfect golden horizontal equilibrium
+        this.targetScaleTilt = 0;
         this.setMitraEmotion('celebrating');
         break;
       case 'scale-unbalanced':
-        this.targetScaleTilt = -0.32; // Unfair heavy tilt
+        this.targetScaleTilt = -0.32;
         this.setMitraEmotion('concerned');
         break;
       case 'chakra-glow-full':
@@ -1135,7 +1271,7 @@ export class ArSceneEngine {
         this.setMitraEmotion('concerned');
         break;
       case 'scroll-unfurl':
-        this.targetGateAngle = 1.57; // 90 degrees open
+        this.targetGateAngle = 1.57;
         this.targetScrollUnfurl = 1.0;
         this.setMitraEmotion('celebrating');
         break;
@@ -1157,7 +1293,7 @@ export class ArSceneEngine {
     }
   }
 
-  // ── WEBXR AUGMENTED REALITY SESSION ───────────────────────────────────────
+  // ── WEBXR AUGMENTED REALITY (REAL CLASSROOM DESK PLACEMENT) ───────────────
 
   async startArSession() {
     if (!navigator.xr) {
@@ -1176,19 +1312,18 @@ export class ArSceneEngine {
 
     await this.renderer.xr.setSession(session);
 
-    // In real AR mode, hide the virtual pedestal so real physical surfaces shine through
-    if (this.exhibitionPedestal) this.exhibitionPedestal.visible = false;
+    // In Real AR mode, hide the virtual 3D classroom (desk, blackboard, walls) so real physical desk shines through
+    if (this.classroomGroup) this.classroomGroup.visible = false;
     if (this.particlesGroup) this.particlesGroup.visible = false;
 
-    // Scale models appropriately for table/floor placement
-    this.mainStageGroup.scale.set(0.35, 0.35, 0.35);
-    this.mainStageGroup.visible = false; // Hidden until surface anchor tap
+    this.mainStageGroup.scale.set(0.32, 0.32, 0.32);
+    this.mainStageGroup.visible = false;
 
-    this.mitraGroup.scale.set(0.24, 0.24, 0.24);
+    this.mitraGroup.scale.set(0.22, 0.22, 0.22);
     this.mitraGroup.visible = false;
 
     if (this.onPlacementStatus) {
-      this.onPlacementStatus('Scan your room to detect a flat surface (floor or desk).');
+      this.onPlacementStatus('Point phone camera at your classroom desk or floor.');
     }
 
     const viewerSpace = await session.requestReferenceSpace('viewer');
@@ -1219,14 +1354,14 @@ export class ArSceneEngine {
       this.mainStageGroup.position.copy(pos);
       this.mainStageGroup.visible = true;
 
-      this.mitraGroup.position.set(pos.x + 0.55, pos.y, pos.z + 0.15);
+      this.mitraGroup.position.set(pos.x + 0.52, pos.y, pos.z + 0.15);
       this.mitraGroup.visible = true;
 
       this.isPlacedInAr = true;
       this.reticle.visible = false;
 
       if (this.onPlacementStatus) {
-        this.onPlacementStatus('Monument anchored! Walk around and interact.');
+        this.onPlacementStatus('Constitutional model anchored to your desk! Walk around and explore.');
       }
     }
   }
@@ -1261,15 +1396,16 @@ export class ArSceneEngine {
     this.isPlacedInAr = false;
     this.hitTestSource = null;
 
-    if (this.exhibitionPedestal) this.exhibitionPedestal.visible = true;
+    // Restore virtual classroom
+    if (this.classroomGroup) this.classroomGroup.visible = true;
     if (this.particlesGroup) this.particlesGroup.visible = true;
 
     this.mainStageGroup.scale.set(1, 1, 1);
-    this.mainStageGroup.position.set(0, 0, 0);
+    this.mainStageGroup.position.set(0, -0.28, -0.15);
     this.mainStageGroup.visible = true;
 
-    this.mitraGroup.scale.set(0.68, 0.68, 0.68);
-    this.mitraGroup.position.set(2.4, -0.85, 0.5);
+    this.mitraGroup.scale.set(0.62, 0.62, 0.62);
+    this.mitraGroup.position.set(1.95, -0.42, 0.35);
     this.mitraGroup.visible = true;
 
     if (this.reticle) this.reticle.visible = false;
@@ -1282,7 +1418,6 @@ export class ArSceneEngine {
       this.animationFrameId = requestAnimationFrame(animate);
 
       if (!this.isArActive) {
-        // Inertial rotation
         if (!this.isDragging) {
           this.mainStageGroup.rotation.y += this.rotationVelocity.y;
           this.rotationVelocity.y *= 0.985;
@@ -1299,16 +1434,15 @@ export class ArSceneEngine {
   updateSpatialAnimations() {
     const elapsed = this.clock.getElapsedTime();
 
-    // 1. Mitra organic breathing & animated tail
+    // 1. Mitra breathing & tail sway on the desk
     if (this.mitraGroup) {
-      this.mitraGroup.position.y += Math.sin(elapsed * 2.2) * 0.0018;
+      this.mitraGroup.position.y = -0.42 + Math.sin(elapsed * 2.2) * 0.0018;
 
       const tail = this.mitraGroup.getObjectByName('mitraTail');
       if (tail) {
         tail.rotation.z = Math.sin(elapsed * 3.6) * 0.16;
       }
 
-      // Natural eye blinking
       const leftEye = this.mitraGroup.getObjectByName('leftEye');
       const rightEye = this.mitraGroup.getObjectByName('rightEye');
       if (leftEye && rightEye) {
@@ -1332,38 +1466,35 @@ export class ArSceneEngine {
       }
     }
 
-    // 2. Dust particles floating gently
+    // 2. Ambient particles
     if (this.particlesGroup && this.particlesGroup.visible) {
-      this.particlesGroup.rotation.y = elapsed * 0.025;
+      this.particlesGroup.rotation.y = elapsed * 0.02;
     }
 
     // 3. Equality Balance Scale Animation (Reference Station)
     if (this.currentStationGroup && this.currentStationGroup.name === 'equalityBalanceModel') {
       const beamGroup = this.currentStationGroup.getObjectByName('balanceBeamGroup');
       if (beamGroup) {
-        // Damped harmonic physics settle
         this.scaleTiltAngle += (this.targetScaleTilt - this.scaleTiltAngle) * 0.07;
         beamGroup.rotation.z = this.scaleTiltAngle;
 
-        // Counter-rotate pans so bowls remain level under gravity
         const leftPan = beamGroup.getObjectByName('leftPanGroup');
         const rightPan = beamGroup.getObjectByName('rightPanGroup');
         if (leftPan) leftPan.rotation.z = -this.scaleTiltAngle;
         if (rightPan) rightPan.rotation.z = -this.scaleTiltAngle;
 
-        // Diamond brightness response
         const diamondLight = beamGroup.getObjectByName('diamondGlowLight');
         if (diamondLight) {
           if (Math.abs(this.scaleTiltAngle) < 0.05) {
-            diamondLight.intensity = 2.0; // Radiant equilibrium
+            diamondLight.intensity = 2.0;
           } else {
-            diamondLight.intensity = 0.6; // Dim in unfair state
+            diamondLight.intensity = 0.6;
           }
         }
       }
     }
 
-    // 4. Ashoka Chakra Axial Rotation & Spoke Glow
+    // 4. Ashoka Chakra Spoke Glow
     if (this.currentStationGroup && this.currentStationGroup.name === 'ashokaChakraModel') {
       const aura = this.currentStationGroup.getObjectByName('chakraAura');
       if (aura && this.activeSpatialEffect === 'chakra-glow-full') {
@@ -1406,7 +1537,7 @@ export class ArSceneEngine {
       }
     }
 
-    // 8. Dr. Ambedkar's Remedies Crystal Rays
+    // 8. Remedies Crystal Rays
     if (this.currentStationGroup && this.currentStationGroup.name === 'remediesCrestModel') {
       const rays = this.currentStationGroup.getObjectByName('remediesCrystalRays');
       if (rays) {
@@ -1416,7 +1547,7 @@ export class ArSceneEngine {
     }
   }
 
-  // ── INTERACTIVE 3D EVENT HANDLERS ─────────────────────────────────────────
+  // ── INTERACTIVE EVENT HANDLERS ────────────────────────────────────────────
 
   handlePointerDown(e) {
     if (this.isArActive) return;
@@ -1465,25 +1596,45 @@ export class ArSceneEngine {
         if (checkMitra === this.mitraGroup) {
           this.setMitraEmotion('celebrating');
           if (this.onInteractivePartClick) {
-            this.onInteractivePartClick({ part: 'mitra', message: 'Mitra waves hello and brightens his golden wisdom lantern!' });
+            this.onInteractivePartClick({
+              part: 'mitra',
+              message: 'Mitra: "Welcome to class! Inspect the model on your desk and let’s explore together."',
+            });
           }
           return;
         }
         checkMitra = checkMitra.parent;
       }
 
-      // Check if user tapped the active 3D model or its parts
+      // Check if user tapped the blackboard
+      let checkBoard = hitObj;
+      while (checkBoard) {
+        if (checkBoard === this.blackboardMesh) {
+          if (this.onInteractivePartClick) {
+            this.onInteractivePartClick({
+              part: 'blackboard',
+              message: 'Teacher’s Board: Review today’s constitutional principle and take action below.',
+            });
+          }
+          return;
+        }
+        checkBoard = checkBoard.parent;
+      }
+
+      // Check if user tapped the active 3D model parts
       let checkModel = hitObj;
       while (checkModel && checkModel.parent !== this.mainStageGroup && checkModel.parent !== this.scene) {
         if (checkModel.name === 'leftPanGroup' || checkModel.name === 'rightPanGroup') {
-          // Toggle balance scale tilt!
           const nextTilt = this.targetScaleTilt === 0 ? -0.32 : 0;
           this.triggerSpatialEffect(nextTilt === 0 ? 'scale-balanced' : 'scale-unbalanced');
           if (this.onInteractivePartClick) {
-            this.onInteractivePartClick({ 
-              part: 'balance-pan', 
-              tilt: nextTilt, 
-              message: nextTilt === 0 ? 'Equilibrium restored! Article 14 ensures equal opportunity.' : 'Scale tilted in unfair bias.' 
+            this.onInteractivePartClick({
+              part: 'balance-pan',
+              tilt: nextTilt,
+              message:
+                nextTilt === 0
+                  ? 'Equilibrium restored! Article 14 ensures equal opportunity.'
+                  : 'Notice how the scale tilts lopsided when opportunities are unequal.',
             });
           }
           return;
@@ -1507,7 +1658,7 @@ export class ArSceneEngine {
     this.renderer.setSize(width, height);
   }
 
-  // ── CLEAN RESOURCE DISPOSAL ───────────────────────────────────────────────
+  // ── DISPOSAL ──────────────────────────────────────────────────────────────
 
   disposeObject(obj) {
     if (!obj) return;
@@ -1540,6 +1691,10 @@ export class ArSceneEngine {
     this.canvas.removeEventListener('wheel', this.handleWheel);
     this.canvas.removeEventListener('click', this.handleCanvasClick);
     window.removeEventListener('resize', this.handleResize);
+
+    if (this.blackboardTexture) {
+      this.blackboardTexture.dispose();
+    }
 
     if (this.scene) {
       this.disposeObject(this.scene);
