@@ -174,5 +174,23 @@
 * **IndexedDB quest cache:** The Adventures page can save all bundled story scripts on-device; `/play/:scenarioId` reads the saved script while offline and maintains the existing local progress flow. No learner identity or chat data is written to this cache.
 * **Install and connection UX:** The shell shows offline status and offers the browser install prompt where supported; adventure controls expose save status through an accessible live region.
 * **Accessibility checks:** Loading and offline states are announced, controls use native keyboard semantics, visible focus and reduced-motion styles are retained, and the dedicated Part 08 suite verifies these source-level contracts (16 checks).
-* **Performance budget:** A build-time gzip analysis follows the initial app shell and landing-route imports, enforcing a 150 KiB JS/CSS budget. The current production build measures **129.7 KiB gzipped**. The Three.js engine is deferred and split from the initial route.
+* **Performance budget:** A build-time gzip analysis follows the initial app shell and landing-route imports, enforcing a 150 KiB JS/CSS budget. The current production build measures **130.8 KiB gzipped**. The Three.js engine is deferred and split from the initial route.
 * **Release validation still needed:** The `<0.8s` FCP target, Lighthouse results on a representative 4G device, screen-reader behavior in target browsers, and the Creative OS 25-point human review have not been measured here; static checks do not certify WCAG conformance.
+
+---
+
+### Immersive AR Explorer Extension — Classroom Wall-Mounted Spatial Learning (COMPLETED)
+* **Objective:** Transform constitutional rights education into an immersive Augmented Reality and spatial 3D learning experience (`/ar-explorer`) where children discover constitutional concepts mounted directly on their classroom walls.
+* **Key Achievements:**
+  * **Dual Experience Modes (Clear & Honest Distinction):**
+    - *Mode A: Live Camera WebXR AR (Wall Placement):* Uses standard WebXR `immersive-ar` with real room camera passthrough. Detects vertical wall surfaces via hit-test and mounts compact exhibits flush against real classroom walls. Zero camera frames recorded or uploaded (DPDP Act 2023 §9 compliant).
+    - *Mode B: Virtual Classroom 3D Studio Fallback:* Complete 3D simulation of a modern Indian classroom with rear plaster wall, slim wall mounting backplate with corner brackets and contact drop-shadow, dynamic chalk blackboard, student study desk, and window daylight.
+  * **Compact Museum-Grade Display Scale Calibration (~35–45 cm):**
+    - 6 constitutional exhibits scaled proportionally to classroom walls: Ashoka Chakra (~43.6 cm), Balance of Equality (~42.5 cm), Beacon of Expression (~35.4 cm), Shield of Safety (~37.7 cm), Scroll of Free Learning (~35.4 cm), and Crest of Remedies (~37.7 cm).
+  * **Dynamic Canvas Blackboard HUD & Brass Plaque:**
+    - Dynamic 2D canvas text rendered onto the 3D blackboard and the exhibit brass identification plaque, synchronizing lesson titles, article references, and core constitutional principles.
+  * **On-Screen Inspection Controls:**
+    - Accessible toolbar for rotating left/right, scaling/zooming, resetting orientation/view, and repositioning on real walls in AR mode.
+  * **Mitra Companion Integration:**
+    - Mitra sits on an architectural wall display perch beside the exhibit, providing emotional reactions (`celebrating`, `thinking`, `concerned`, `explaining`) and guidance.
+  * **Automated QA Verification:** 44/44 dedicated automated assertions passing cleanly in `scripts/verify_ar_explorer.mjs` (bringing master platform verification score to **657/657 passing assertions across 10 suites**).

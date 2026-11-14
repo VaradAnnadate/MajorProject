@@ -3,21 +3,21 @@
 > **Project Mandate:** Comprehensive documentation audit, remaining roadmap identification, full implementation, verification, and final production release.  
 > **Status:** Technically Complete, Awaiting External Statutory / Educational Validation  
 > **Date of Final Release:** November 14, 2026  
-> **Total Production Commits:** 60 commits (51 historical + 9 closure commits)  
-> **Automated Verification Score:** 613 / 613 passing assertions across 9 automated test suites (100% pass rate)
+> **Total Production Commits:** 65 commits (51 historical + 9 closure commits + 5 AR extension commits)  
+> **Automated Verification Score:** 657 / 657 passing assertions across 10 automated test suites (100% pass rate)
 
 ---
 
 ## 1. Executive Summary & Documented Milestone Scope
 
-Following an exhaustive audit of all repository documentation (`README.md`, `docs/ROADMAP_PARTS_01_TO_08.md`, `docs/ARCHITECTURE_AND_CODE.md`, `docs/DATABASE_AND_MITRA_AI.md`, `docs/VISUAL_DESIGN_SYSTEM.md`), the following architectural facts were established:
+Following an exhaustive audit of all repository documentation (`README.md`, `docs/ROADMAP_PARTS_01_TO_08.md`, `docs/ARCHITECTURE_AND_CODE.md`, `docs/DATABASE_AND_MITRA_AI.md`, `docs/VISUAL_DESIGN_SYSTEM.md`, `docs/AR_EXPLORER.md`), the following architectural facts were established:
 1. **Documented Parts:** Exactly eight milestone parts (**Parts 01 through 08**) are defined across the project documentation.
 2. **Parts Beyond 08:** **Zero.** No Part 09, Part 10, or ungrounded future milestones exist in the documentation.
-3. **Execution Mandate:** All documented requirements across Parts 01–08 were systematically verified, hardened, and locked in a sequence of **exactly nine atomic Git commits**.
+3. **Execution Mandate:** All documented requirements across Parts 01–08 were systematically verified, hardened, and locked in a sequence of **exactly nine atomic Git commits**, followed by the dedicated **Immersive AR Explorer (`/ar-explorer`) extension** bringing constitutional learning into classroom wall-mounted augmented reality.
 
 ---
 
-## 2. Sequence of Nine Closure Commits
+## 2. Sequence of Nine Closure Commits & AR Extension
 
 | Commit # | Commit Hash | Semantic Message | Scope & Deliverables |
 | :---: | :---: | :--- | :--- |
@@ -29,13 +29,18 @@ Following an exhaustive audit of all repository documentation (`README.md`, `doc
 | **6** | `2cbb024` | `fix(safety): strengthen child protection and privacy safeguards` | Expanded heuristic disclosure patterns in `useSensitiveDisclosureGuard.js`; added statutory review notices in safety pages. |
 | **7** | `d0962eb` | `fix(pwa): finalize offline reliability and accessibility` | Added `listOfflineQuests`, `removeOfflineQuest`, and `clearOfflineQuests` to `offlineQuestStore.js`; added storage cleanup to `AdventuresPage.jsx`. |
 | **8** | `03827d2` | `test(quality): complete cross-platform verification and regression coverage` | Implemented `scripts/verify_final_release.mjs` (18 checks); added `"test:release"` script; expanded test suite to 613 assertions. |
-| **9** | *[Pending]* | `docs(release): finalize project handover and release readiness` | Delivered `FINAL_PROJECT_COMPLETION_REPORT.md`, updated root `README.md`, `docs/README.md`, and changelog. |
+| **9** | `175958d` | `docs(release): finalize project handover and release readiness` | Delivered `FINAL_PROJECT_COMPLETION_REPORT.md`, updated root `README.md`, `docs/README.md`, and changelog. |
+| **AR-1** | `9271adf` | `feat(ar): add immersive constitutional learning explorer` | Implemented 6 constitutional stations, WebXR `immersive-ar`, 3-tier age adaptation, and reflection quiz. |
+| **AR-2** | `2effec4` | `feat(ar): build immersive constitutional learning experience` | Synchronized Mitra emotions and spatial consequence triggers for dilemma choices. |
+| **AR-3** | `c636ba2` | `feat(ar): refine immersive constitutional learning experience` | Calibrated classical Balance of Equality geometry, fixed header clipping, and responsive spacing. |
+| **AR-4** | `b917401` | `feat(ar): transform constitutional AR into immersive classroom learning` | Built virtual 3D classroom with teak study desk, window daylight, dynamic chalk blackboard, and synchronized HUD. |
+| **AR-5** | `a27d570` | `feat(ar): introduce classroom wall-mounted constitutional exhibits` | Built slim wall mounting frame, brass identification plaque, compact 35–45 cm scale, vertical wall AR hit-testing, and inspection toolbar. |
 
 ---
 
 ## 3. Comprehensive Verification Results
 
-### 3.1 Automated QA Suite (613 / 613 Passing Assertions)
+### 3.1 Automated QA Suite (657 / 657 Passing Assertions)
 
 ```bash
 npm test
@@ -52,7 +57,8 @@ npm test
 | `verify_part07.mjs` | POCSO directory, disclosure heuristics, zero XP for distress, quick exit decoy | **149 / 149** | **PASS** |
 | `verify_part08.mjs` | PWA manifest, service worker precaching, IndexedDB quest store, bundle size | **16 / 16** | **PASS** |
 | `verify_final_release.mjs`| 404 page, section anchors, offline storage management, print styles, heuristics | **18 / 18** | **PASS** |
-| **TOTAL** | **Full Platform Cross-Milestone Quality Verification** | **613 / 613** | **100% PASS** |
+| `verify_ar_explorer.mjs` | WebXR AR, wall mounting frame, brass plaque, inspection controls, scale calibration | **44 / 44** | **PASS** |
+| **TOTAL** | **Full Platform Cross-Milestone Quality Verification** | **657 / 657** | **100% PASS** |
 
 ### 3.2 Production Build & Bundle Measurements
 
@@ -60,10 +66,10 @@ npm test
 npm run build
 ```
 
-- **Build Duration:** 2.56 seconds.
-- **Service Worker Precaching:** Generated service worker precaching 53 offline shell assets.
-- **Initial App Shell & Landing Route:** **130.1 KiB gzipped** (well beneath the mandatory 150 KiB performance budget).
-- **Code Splitting:** Manual Rollup chunks isolate `three-chunk` (130.8 KiB gzip), `vendor-chunk` (67.7 KiB gzip), `framer-motion-chunk` (37.8 KiB gzip), `lenis-chunk` (5.7 KiB gzip), and `icons-chunk` (3.8 KiB gzip).
+- **Build Duration:** ~2.76 seconds.
+- **Service Worker Precaching:** Generated service worker precaching 55 offline shell assets.
+- **Initial App Shell & Landing Route:** **130.8 KiB gzipped** (well beneath the mandatory 150 KiB performance budget).
+- **Code Splitting:** Manual Rollup chunks isolate `three-chunk` (133.4 KiB gzip), `vendor-chunk` (67.7 KiB gzip), `framer-motion-chunk` (37.8 KiB gzip), `lenis-chunk` (5.7 KiB gzip), and `icons-chunk` (4.4 KiB gzip). ArExplorerPage chunk is dynamically lazy-loaded at 31.0 KiB gzip.
 
 ---
 

@@ -77,15 +77,26 @@ The documentation inventory and completion audit establish conclusively that:
   * Confirm 100% assertions passing with zero warnings or broken contracts.
 
 ### Workstream 8: Final Project Handover & Release Documentation (Commit 9)
-* **Status:** Pre-release documentation and operational readiness.
+* **Status:** Complete.
 * **Scope:**
-  * Produce `docs/FINAL_PROJECT_COMPLETION_REPORT.md` documenting mandate fulfillment, architecture, 9 commits, and known operational limits.
-  * Update root `README.md` and `docs/README.md`.
-  * Perform pre-push verification of working tree and remotes.
+  * Produced `docs/FINAL_PROJECT_COMPLETION_REPORT.md` documenting mandate fulfillment, architecture, 9 commits, and known operational limits.
+  * Updated root `README.md` and `docs/README.md`.
+  * Performed pre-push verification of working tree and remotes.
+
+### Workstream 9: Classroom Wall-Mounted Augmented Reality Extension (AR-1 to AR-5)
+* **Status:** Complete.
+* **Scope:**
+  * Implemented `/ar-explorer` with WebXR `immersive-ar` vertical wall plane detection (Mode A) and Universal 3D Classroom Wall Simulation (Mode B).
+  * Built slim wall mounting backplate with brass corner brackets, wall contact shadow, and dynamic brass identification plaque.
+  * Scaled all 6 constitutional learning exhibits to compact display dimensions (~35–45 cm).
+  * Integrated 3-tier age adaptation (8–10, 11–13, 14–16), physical spatial consequences, reflection quizzes, and idempotent Dignity XP rewards.
+  * Built on-screen inspection toolbar (rotate, zoom/scale, reset, reposition).
+  * Enforced DPDP Act 2023 §9 zero-PII camera compliance (zero raw frames recorded or uploaded).
+  * Implemented automated verification script `scripts/verify_ar_explorer.mjs` (44/44 checks, raising total platform test score to 657/657).
 
 ---
 
-## 3. Controlled Nine-Commit Execution Map
+## 3. Controlled Execution Map
 
 | Commit # | Semantic Type | Scope | Target Files |
 | :---: | :--- | :--- | :--- |
@@ -98,3 +109,8 @@ The documentation inventory and completion audit establish conclusively that:
 | **7** | `fix(pwa)` | Finalize offline quest storage management & accessibility | `src/pwa/offlineQuestStore.js`, `src/pages/AdventuresPage.jsx` |
 | **8** | `test(quality)` | Add comprehensive cross-platform release verification suite | `scripts/verify_final_release.mjs`, `package.json` |
 | **9** | `docs(release)` | Finalize project handover, completion report & release readiness | `docs/FINAL_PROJECT_COMPLETION_REPORT.md`, `README.md`, `docs/README.md` |
+| **AR-1** | `feat(ar)` | Add 6 constitutional stations, WebXR session, and age tiers | `src/features/ar/data/arConstitutionalObjects.js`, `src/features/ar/pages/ArExplorerPage.jsx` |
+| **AR-2** | `feat(ar)` | Synchronize Mitra emotions and dilemma physical consequences | `src/features/ar/engine/ArSceneEngine.js`, `src/features/ar/pages/ArExplorerPage.jsx` |
+| **AR-3** | `feat(ar)` | Refine Balance of Equality geometry, fix header clipping offset | `src/features/ar/engine/ArSceneEngine.js`, `src/features/ar/pages/ArExplorerPage.module.css` |
+| **AR-4** | `feat(ar)` | Build 3D classroom with desk, window, dynamic chalk blackboard | `src/features/ar/engine/ArSceneEngine.js`, `src/features/ar/pages/ArExplorerPage.jsx` |
+| **AR-5** | `feat(ar)` | Introduce wall-mounted exhibits, brass plaque, compact scale, toolbar | `src/features/ar/engine/ArSceneEngine.js`, `src/features/ar/pages/ArExplorerPage.jsx`, `docs/AR_EXPLORER.md` |

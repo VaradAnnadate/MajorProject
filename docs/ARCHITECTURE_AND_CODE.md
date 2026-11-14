@@ -582,5 +582,52 @@ Mounted at `/safety` and `/safety/get-help`, Part 07 anchors RightsQuest India i
 
 ### C. Accessibility and performance verification
 * `scripts/verify_part08.mjs` checks 16 source-level manifest, cache, IndexedDB, keyboard, and reduced-motion contracts.
-* `scripts/check-initial-bundle.mjs` measures the gzip size of the initial shell plus landing route and fails production builds above 150 KiB; the current build is **129.7 KiB**.
+* `scripts/check-initial-bundle.mjs` measures the gzip size of the initial shell plus landing route and fails production builds above 150 KiB; the current build is **130.8 KiB gzipped**.
 * FCP on a 4G device, browser Lighthouse results, full screen-reader compatibility, and the Creative OS human sign-off still require manual release validation.
+
+---
+
+## 13. Immersive AR Explorer & Classroom Wall-Mounted Exhibits (`src/features/ar/`)
+
+The **AR Explorer** (`/ar-explorer`) extends RightsQuest India into physical and spatial augmented reality learning, transforming constitutional education through compact, museum-grade educational exhibits mounted on classroom walls.
+
+### A. Dual Experience Modes (Honest Architectural Distinction)
+* **Mode A: Live Camera WebXR AR (Wall Placement):**
+  - Uses standard WebXR `immersive-ar` with camera passthrough displaying the student's real physical room.
+  - Detects vertical real-world surfaces (walls) via hit-test with pose normal alignment.
+  - Mounts a compact 35–45 cm constitutional exhibit flush against the real classroom wall.
+  - Zero raw camera video or photos are saved, recorded, or transmitted (DPDP Act 2023 §9 compliance).
+* **Mode B: Virtual Classroom 3D Simulation (Wall Exhibit Fallback):**
+  - Renders a complete 3D simulation of a modern Indian classroom with plaster rear wall, dynamic chalk blackboard, student study desk, and window daylight.
+  - The constitutional artifact is mounted at eye level inside an architectural wall mounting frame with corner brackets, subtle wall contact drop-shadow, and an engraved brass identification plaque.
+  - Mitra the Sun-Fox companion sits on an architectural wall display perch beside the exhibit.
+
+### B. Scaled Constitutional Wall Exhibits Catalog (`arConstitutionalObjects.js`)
+* **1. The Sovereign Ashoka Chakra:** ~43.6 cm diameter circular exhibit with 24 Dharma spokes and cardinal medallions (Preamble & Article 51A).
+* **2. The Balance of Equality:** ~42.5 cm wide classical balance scale with calibrated equilibrium gauge and weighted tokens (Articles 14–18).
+* **3. The Beacon of Expression:** ~35.4 cm tall Bal Sansad forum tower broadcasting concentric soundwaves (Article 19 & UNCRC 12).
+* **4. The Shield of Bodily Safety:** ~37.7 cm tall protective shield deploying a translucent emerald sanctuary dome and 1098 beacon (Articles 21, 24 & POCSO).
+* **5. The Scroll of Free Learning:** ~35.4 cm tall schoolhouse portal with swinging gates and unrolling Article 21A parchment (Article 21A & RTE Act).
+* **6. The Crest of Legal Remedies:** ~37.7 cm tall pillar with 5 crystal writ facets firing light rays to the Apex Court crystal (Article 32).
+
+### C. Three.js Spatial Engine Architecture (`ArSceneEngine.js`)
+* **Wall Mounting Backplate (`buildWallMountingFrame`):** Slim dark slate-bronze panel (`0.88m x 0.88m x 0.032m`) with beveled trim, brass corner brackets with hex bolts, and contact drop-shadow plane.
+* **Dynamic Canvas Textures:**
+  - `renderBlackboardCanvas`: Dynamic chalk text on the teacher's blackboard with lesson numbers, article references, and core principles.
+  - `renderPlaqueCanvas`: Dynamic brushed brass identification plaque beneath the artifact.
+* **On-Screen Inspection Controls:**
+  - `rotateExhibit(deltaAngle)`: Smooth rotational inspection around local Y axis.
+  - `zoomExhibit(deltaScale)`: Proportional scale/zoom adjustment clamped safely between 0.45 and 2.2.
+  - `resetExhibitTransform()`: Resets orientation and scale to default for the current mode.
+  - `repositionExhibit()`: Allows re-scanning and placing the exhibit on another wall surface in AR mode.
+* **Mitra Companion Integration:** Animated eye-blinking cycles, breathing, tail sway, and dynamic wisdom lantern light shifting across emotional states (`celebrating`, `thinking`, `concerned`, `explaining`).
+
+### D. Quality Assurance & Automated Verification
+* `scripts/verify_ar_explorer.mjs` enforces 44 source-level and behavioral assertions:
+  - WebXR `immersive-ar` capability detection and session management.
+  - Wall mounting frame and dynamic brass plaque canvas rendering.
+  - On-screen inspection controls and AR repositioning.
+  - Scale calibration across all 6 stations (~35–45 cm).
+  - 3-tier age adaptation (8–10, 11–13, 14–16) with dilemma branching and physical consequence triggers.
+  - DPDP Act 2023 §9 zero-PII camera compliance.
+* Master platform automated QA score: **10 test suites with 657 / 657 passing assertions (100% pass rate)**.

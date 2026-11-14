@@ -36,7 +36,12 @@ Children in India between 8 and 16 years old, with content and interaction patte
 - **Cinematic 3D Sovereign Portal Tunnel Complete:** A signature 3D world-transition bridge connecting Scene 04 to Scene 05 on the landing page (`LandingScrollGateway.jsx`, `SovereignPortalTunnel.js`). Pinned scroll travel moves the camera straight into the 24-spoke Golden Ashoka Chakra of Child Rights, passes through a glowing dimensional warp tunnel, enters an expanding white-light burst, and seamlessly reveals Scene 05 underneath with zero empty space.
 - **Gamified Level Milestones Complete:** High-vibe celebration modal (`GamifiedMilestoneCelebration.jsx`) for level advancement and quest completions with animated XP counters, shield crests, and harmonic sound synthesis. 25/25 checks pass in `scripts/verify_transition.mjs`.
 - **Part 07 Complete:** Child Safety, Help & Sensitive Disclosure Safeguards. Direct 1098 Integration Gateway (`/safety`, `/safety/get-help`, `/help`), Child Safety Safe-Exit Button (`QuickExitButton.jsx`) with instant study notes decoy screen, 3-tier age-calibrated Safety Library (`/safety`), sensitive disclosure safeguards with zero XP gamification of trauma, and fact-checked statutory directory (Childline 1098, 112, 1930, POCSO e-Box). 149/149 automated test checks pass in `scripts/verify_part07.mjs`.
-- **Part 08 Complete & Final Release Locked:** Installable PWA manifest and 192/512px icons, generated service-worker precache for app routes, IndexedDB quest saves with full storage management (`list`, `remove`, `clear`), offline and install controls, accessible 404 Route Not Found handling, high-contrast `@media print` educator styles, expanded heuristic safeguarding, and a 150 KiB gzip budget for the initial shell and landing route (currently 130.1 KiB gzipped). Full platform verification enforced by 9 automated test suites checking **613 / 613 assertions (100% pass rate)**. Ready for supervised school pilot validation. Run `npm test` or `npm run test:release`.
+- **Part 08 Complete & Final Release Locked:** Installable PWA manifest and 192/512px icons, generated service-worker precache for app routes, IndexedDB quest saves with full storage management (`list`, `remove`, `clear`), offline and install controls, accessible 404 Route Not Found handling, high-contrast `@media print` educator styles, expanded heuristic safeguarding, and a 150 KiB gzip budget for the initial shell and landing route (currently 130.8 KiB gzipped).
+- **Immersive AR Explorer Complete (`/ar-explorer`):** WebXR-powered classroom wall-mounted Augmented Reality learning experience. Students explore compact museum-grade constitutional exhibits (~35–45 cm display scale) mounted on classroom walls:
+  - **Mode A (Live Camera WebXR AR):** Real room passthrough via WebXR `immersive-ar`, vertical wall plane hit-test detection, flush exhibit wall placement, and on-screen inspection controls (rotate, zoom/scale, reset, reposition). Zero camera frames recorded, saved, or uploaded (DPDP Act 2023 §9 child safeguarding compliant).
+  - **Mode B (Classroom 3D Simulation Fallback):** Authentic modern Indian classroom environment with slim wall mounting frame, brass identification plaque, secondary student study desk, dynamic chalk blackboard, and Mitra the Sun-Fox companion on a dedicated wall perch.
+  - **Constitutional Learning Architecture:** 6 constitutional stations (Ashoka Chakra, Balance of Equality, Beacon of Voice, Shield of Safety, Scroll of Free Learning, Crest of Remedies), 3-tier age adaptation (8–10, 11–13, 14–16), dilemma branching, physical spatial consequence animations, and idempotent Dignity XP progression. Verified by 44 automated checks in `scripts/verify_ar_explorer.mjs`.
+- **Master Platform Verification:** Enforced by 10 automated test suites checking **657 / 657 assertions (100% pass rate)**. Ready for supervised school pilot validation. Run `npm test`.
 
 ### Navigation layout
 
@@ -59,7 +64,7 @@ npm run dev
 # Start the app and the Part 05 WebSocket relay together
 npm run dev:classroom
 
-# Run all master automated QA, legal fidelity & child safety checks (Parts 01–08: 595 checks across 8 suites)
+# Run all master automated QA, legal fidelity & child safety checks (657 checks across 10 suites)
 npm test
 
 # Run individual verification suites
@@ -71,6 +76,8 @@ npm run test:part06       # 104 checks (Part 06 Intelligence System)
 npm run test:transition   # 25 checks (3D Sovereign Portal Tunnel & Milestones)
 npm run test:part07       # 149 checks (Part 07 Child Safety & Safeguards System)
 npm run test:part08       # 16 checks (Part 08 PWA & Accessibility)
+npm run test:release      # 18 checks (Final Release Hardening)
+node scripts/verify_ar_explorer.mjs # 44 checks (Immersive AR & Wall Exhibits)
 
 # Build for production
 npm run build

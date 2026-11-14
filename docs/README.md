@@ -38,10 +38,15 @@ flowchart TD
     FinalCTA --> SafetyHub["Part 07: Child Safety Library & Gateway (/safety)<br/>(3-Tier Age Adaptation • Verified Helplines • Sensitive Safeguards)"]
     SafetyHub --> GetHelp["Get Help Experience (/safety/get-help)"]
     
+    FinalCTA --> ArExplorer["★ Immersive AR Explorer (/ar-explorer)<br/>(WebXR Wall AR Mode A • 3D Classroom Fallback Mode B • 6 Wall Exhibits)"]
+    ArExplorer --> ArControls["On-Screen Inspection Controls<br/>(Rotate • Scale/Zoom • Reset • Reposition)"]
+    ArExplorer --> ArPedagogy["3-Tier Age Dilemmas & Spatial Consequences<br/>(Article 14, 19, 21A, 24, 32 • Blackboard HUD • Dignity XP)"]
+    
     subgraph Safeguards ["DPDP 2023 Child Privacy & Safety Layer"]
         Helpline["Childline 1098 Quickbar"]
         QuickExit["Quick Exit Safety Latch (Neutral Study Decoy)"]
         ZeroPII["No stored learner identifiers or individual votes"]
+        ArPrivacy["DPDP 2023 §9 Zero Camera Video/Photo Capture & Upload"]
         DisclosureGuard["Non-Gamified Sensitive Disclosure Scanner"]
         MascotSafeguard["Mitra Concerned State (Safe Touch / Abuse)"]
     end
@@ -60,27 +65,31 @@ flowchart TD
 * **Part 06 (Complete):** Educator Studio (`/educator`) with cohort-level aggregates, NCERT/CBSE curriculum alignments, Socratic toolkits, and anonymized deliberation logs. Guardian Chronicle (`/guardian`) with "At the Dinner Table" family primers and anti-addiction guarantees compliant with DPDP Act 2023 §9. 104-point QA suite.
 * **3D Sovereign Portal Tunnel & Gamified Milestones (Complete):** Pinned Three.js dimensional warp bridge through the 24-spoke Golden Ashoka Chakra of Child Rights into Scene 05, plus high-vibe gamified milestone celebration modals. 25-point QA suite.
 * **Part 07 (Complete):** Child safety and rights education library (`/safety`), 3-tier age adaptation (8–10, 11–13, 14–16), verified statutory directory (MWCD Childline 1098, 112, 1930, POCSO e-Box), Get Help experience (`/safety/get-help`), discreet Quick Exit safety latch with neutral study decoy screen, and sensitive disclosure safeguard scanner (zero XP gamification for trauma disclosures). 149-point QA suite.
-* **Part 08 & Final Release (Complete):** Installable PWA with scalable, platform-sized icons; build-generated service worker precaching 53 app shell assets; IndexedDB saves and manages quest scripts locally (`list`, `remove`, `clear`); install/offline status controls; accessible 404 route handling; high-contrast `@media print` educator styles; and a 150 KiB gzipped initial-route budget (current build: 130.1 KiB). 9 automated test suites with **613 / 613 assertions passing (100% pass rate)**. Ready for supervised school pilot validation.
+* **Part 08 & Final Release (Complete):** Installable PWA with scalable, platform-sized icons; build-generated service worker precaching 55 app shell assets; IndexedDB saves and manages quest scripts locally (`list`, `remove`, `clear`); install/offline status controls; accessible 404 route handling; high-contrast `@media print` educator styles; and a 150 KiB gzipped initial-route budget (current build: 130.8 KiB).
+* **Immersive AR Explorer (Complete):** WebXR-powered classroom wall-mounted Augmented Reality learning experience (`/ar-explorer`) with Mode A (Live Camera AR Wall Placement) and Mode B (Virtual Classroom 3D Studio Fallback), 6 compact constitutional wall exhibits (~35–45 cm display scale), dynamic chalk blackboard HUD and brass identification plaque, 3-tier age adaptation, and on-screen inspection controls (rotate, zoom, reset, reposition). Verified by 44 automated checks in `scripts/verify_ar_explorer.mjs`. Full platform verification enforced by 10 automated test suites checking **657 / 657 assertions (100% pass rate)**.
 
-### 2. [Final Project Completion Report](./FINAL_PROJECT_COMPLETION_REPORT.md)
-* Comprehensive pre-release report documenting project mandate, all 8 parts, 9 closure commits, test metrics, and statutory child safeguarding boundaries.
+### 2. [Immersive AR Learning Architecture](./AR_EXPLORER.md)
+* Comprehensive engineering guide covering Three.js WebXR `immersive-ar` hit-testing against vertical classroom walls, the slim wall-mounted exhibit frame architecture with contact shadows, compact scale calibration (~35–45 cm), Mitra's wall display perch, dynamic blackboard/plaque canvas textures, and DPDP Act 2023 §9 zero-PII camera compliance.
 
-### 3. [Project Documentation Inventory](./PROJECT_DOCUMENTATION_INVENTORY.md)
+### 3. [Final Project Completion Report](./FINAL_PROJECT_COMPLETION_REPORT.md)
+* Comprehensive report documenting project mandate, all 8 parts plus AR explorer extension, closure commits, test metrics, and statutory child safeguarding boundaries.
+
+### 4. [Project Documentation Inventory](./PROJECT_DOCUMENTATION_INVENTORY.md)
 * Complete catalogue and audit of all repository documentation, requirements, and dependencies.
 
-### 4. [Final Remaining Roadmap](./FINAL_REMAINING_ROADMAP.md)
+### 5. [Final Remaining Roadmap](./FINAL_REMAINING_ROADMAP.md)
 * Authoritative roadmap matrix classifying discovered workstreams and execution status.
 
-### 5. [Supabase Database & Mitra AI Setup](./DATABASE_AND_MITRA_AI.md)
+### 6. [Supabase Database & Mitra AI Setup](./DATABASE_AND_MITRA_AI.md)
 * Run the classroom summary schema in Supabase, configure server-only `.env` credentials, and start the frontend with the Node backend.
 * Documents the anonymous summary threshold, Groq-backed Mitra API, external AI data handling, and current authentication boundary.
 
-### 3. [Architecture & Codebase Deep Dive](./ARCHITECTURE_AND_CODE.md)
+### 7. [Architecture & Codebase Deep Dive](./ARCHITECTURE_AND_CODE.md)
 * Comprehensive technical walkthrough of every directory, component, data model, state hook, and safeguard.
-* Complete breakdown of `src/features/world/`, `src/features/mascot/`, `src/features/storytelling/`, `src/features/gameplay/`, `src/features/progression/`, `src/features/classroom/`, `src/features/intelligence/`, `src/features/educator/`, `src/features/guardian/`, `src/features/gateway/`, `src/features/safety/`, and `src/pwa/`.
-* Documents all 8 automated QA suites (595 total assertions), the PWA cache, Supabase aggregate-summary integration, and Groq-powered Mitra backend.
+* Complete breakdown of `src/features/world/`, `src/features/mascot/`, `src/features/storytelling/`, `src/features/gameplay/`, `src/features/progression/`, `src/features/classroom/`, `src/features/intelligence/`, `src/features/educator/`, `src/features/guardian/`, `src/features/gateway/`, `src/features/safety/`, `src/pwa/`, and `src/features/ar/`.
+* Documents all 10 automated QA suites (657 total assertions), the PWA cache, Supabase aggregate-summary integration, and Groq-powered Mitra backend.
 
-### 4. [Visual Design System & Creative Motion Architecture](./VISUAL_DESIGN_SYSTEM.md)
+### 8. [Visual Design System & Creative Motion Architecture](./VISUAL_DESIGN_SYSTEM.md)
 * Comprehensive agency-grade visual design specification following Creative OS principles (`44_AGENCYLIKE_UI`).
 * Design tokens, typography scales, dynamic laser-beam card perimeters, photon sweeps, and tactile dossier skeuomorphism.
 
@@ -100,7 +109,7 @@ npm run dev
 # Run the app and Part 05 classroom WebSocket relay together
 npm run dev:classroom
 
-# 3. Run all 595 automated QA, legal fidelity & child safety checks across 8 suites
+# 3. Run all 657 automated QA, legal fidelity & child safety checks across 10 suites
 npm test
 
 # Run individual verification suites
@@ -113,7 +122,8 @@ npm run test:transition   # 25 checks (3D Sovereign Portal Tunnel & Milestones)
 npm run test:part07       # 149 checks (Part 07 Child Safety & Safeguards System)
 npm run test:part08       # 16 checks (Part 08 PWA & Accessibility)
 npm run test:release      # 18 checks (Final Release Verification Suite)
-# Master test suite: 613 assertions across 9 dedicated test suites
+node scripts/verify_ar_explorer.mjs # 44 checks (Immersive AR Explorer Suite)
+# Master test suite: 657 assertions across 10 dedicated test suites
 npm test
 
 # 4. Build optimized production bundle with dynamic chunk splitting

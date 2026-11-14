@@ -107,10 +107,25 @@ In addition, key configuration specifications (`package.json`, `vite.config.js`,
 
 ### DOC-07: Untracked Commit History & Changelog (`docs/COMMIT_HISTORY_AND_CHANGELOG.md`)
 * **Exact Location:** `docs/COMMIT_HISTORY_AND_CHANGELOG.md`
-* **Purpose:** Exhaustive local audit of all historical commits (Commits 1 through 51) and test evolution metrics.
-* **Requirements Established:** Kept untracked via `.gitignore` per explicit user instructions; serves as a local audit trail.
-* **Parts Referenced:** Parts 01 through 08.
-* **Implementation Status:** Fully audited through Commit 51.
+* **Purpose:** Exhaustive local audit of all historical commits (Commits 1 through 65) and test evolution metrics.
+* **Requirements Established:** Kept as detailed development audit trail across Parts 01–08 and the AR extension.
+* **Parts Referenced:** Parts 01 through 08 + AR Explorer.
+* **Implementation Status:** Fully audited through Commit 65.
+
+---
+
+### DOC-08: Classroom Wall-Mounted Augmented Reality Experience (`docs/AR_EXPLORER.md`)
+* **Exact Location:** `docs/AR_EXPLORER.md`
+* **Purpose:** Complete spatial architecture guide for WebXR AR (Mode A) and Universal 3D Classroom Simulation (Mode B).
+* **Requirements Established:**
+  * Mode A: WebXR `immersive-ar` session with vertical wall plane detection and pose normal alignment; camera passthrough showing real physical classroom.
+  * Mode B: Universal 3D Classroom Fallback with slim wall mounting frame, brass identification plaque, secondary student desk, dynamic chalk blackboard, and Mitra companion on wall perch.
+  * Compact scale calibration across all 6 constitutional stations (~35–45 cm display scale).
+  * On-screen inspection toolbar (rotate, zoom/scale, reset, reposition).
+  * DPDP Act 2023 §9 zero-PII camera compliance (zero video/photos saved, recorded, or uploaded).
+* **Parts Referenced:** AR Explorer (`src/features/ar/`).
+* **Dependencies:** `three`, `src/features/ar/engine/ArSceneEngine.js`, `src/features/ar/pages/ArExplorerPage.jsx`, `scripts/verify_ar_explorer.mjs`.
+* **Implementation Status:** Complete, tested (44/44 automated checks pass in `scripts/verify_ar_explorer.mjs`), and released.
 
 ---
 
