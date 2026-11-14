@@ -25,6 +25,7 @@ export class ArSceneEngine {
     this.onInteractivePartClick = options.onInteractivePartClick || null;
     this.onArSessionEnd = options.onArSessionEnd || null;
     this.onPlacementStatus = options.onPlacementStatus || null;
+    this.onTransformChange = options.onTransformChange || null;
 
     this.scene = null;
     this.camera = null;
@@ -54,6 +55,10 @@ export class ArSceneEngine {
     this.plaqueCanvas = null;
     this.plaqueTexture = null;
 
+    // Charter canvas texture
+    this.charterCanvas = null;
+    this.charterTexture = null;
+
     // Consequence animation states
     this.activeSpatialEffect = null;
     this.effectTimer = 0;
@@ -77,7 +82,7 @@ export class ArSceneEngine {
     this.isDragging = false;
     this.previousMousePosition = { x: 0, y: 0 };
     this.rotationVelocity = { x: 0, y: 0.0015 };
-    this.zoomLevel = 3.4;
+    this.zoomLevel = 2.5;
 
     // Bind event listeners
     this.handlePointerDown = this.handlePointerDown.bind(this);
@@ -98,10 +103,10 @@ export class ArSceneEngine {
     // 1. Scene
     this.scene = new THREE.Scene();
 
-    // 2. Camera with student classroom eye-level wall perspective
+    // 2. Camera with student classroom eye-level perspective focused on wall exhibit
     this.camera = new THREE.PerspectiveCamera(46, width / height, 0.1, 100);
-    this.camera.position.set(0, 0.95, this.zoomLevel);
-    this.camera.lookAt(0, 0.95, -2.18);
+    this.camera.position.set(0, 1.05, this.zoomLevel);
+    this.camera.lookAt(0, 1.05, -2.18);
 
     // 3. WebGL Renderer with WebXR capabilities
     const gl =
@@ -125,10 +130,10 @@ export class ArSceneEngine {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    // 4. Natural Classroom Lighting Setup
+    // 4. Natural Classroom Lighting Setup with Exhibition Spotlight
     this.setupClassroomLighting();
 
-    // 5. Build Virtual 3D Classroom Environment (Rear Wall, Blackboard, Secondary Desk, Window, Floor)
+    // 5. Build Balanced 3D Classroom Environment (Rear Wall, Balanced Chalkboard, Charter, Desk, Window)
     this.classroomGroup = this.buildClassroomEnvironment();
     this.scene.add(this.classroomGroup);
 
@@ -136,16 +141,17 @@ export class ArSceneEngine {
     this.particlesGroup = this.buildDustParticles();
     this.scene.add(this.particlesGroup);
 
-    // 7. Main Artifact Stage Container (Mounted flush on the classroom rear wall at eye level)
+    // 7. Main Artifact Stage Container (Prominently centered on classroom rear wall)
     this.mainStageGroup = new THREE.Group();
-    this.mainStageGroup.position.set(0, 0.95, -2.18);
+    this.mainStageGroup.position.set(0, 1.05, -2.18);
+    this.mainStageGroup.scale.set(1.4, 1.4, 1.4); // Modestly enlarged hero scale for 3D classroom studio
     this.scene.add(this.mainStageGroup);
 
-    // 8. Mitra 3D Companion (Positioned on wall perch beside the constitutional exhibit)
+    // 8. Mitra 3D Companion (Grounded securely on crafted museum corbel wall shelf)
     this.mitraGroup = this.buildMitraCompanion();
-    this.mitraGroup.position.set(0.92, 0.65, -2.0);
-    this.mitraGroup.rotation.y = -0.35; // Looking toward artifact and student
-    this.mitraGroup.scale.set(0.38, 0.38, 0.38);
+    this.mitraGroup.position.set(1.08, 0.72, -2.05);
+    this.mitraGroup.rotation.y = -0.38; // Looking attentively toward artifact and student
+    this.mitraGroup.scale.set(0.42, 0.42, 0.42);
     this.scene.add(this.mitraGroup);
 
     // 9. Reticle for WebXR Real Surface Placement
@@ -168,29 +174,28 @@ export class ArSceneEngine {
 
   setupClassroomLighting() {
     // Soft ambient gallery illumination
-    const ambient = new THREE.AmbientLight(0xfff9f0, 1.5);
+    const ambient = new THREE.AmbientLight(0xfff9f0, 1.4);
     this.scene.add(ambient);
 
     // Sunbeam streaming through classroom window
-    const windowSun = new THREE.DirectionalLight(0xfffaea, 2.5);
+    const windowSun = new THREE.DirectionalLight(0xfffaea, 2.2);
     windowSun.position.set(-6, 6.5, 3.5);
     windowSun.castShadow = true;
     windowSun.shadow.mapSize.width = 1024;
     windowSun.shadow.mapSize.height = 1024;
-    windowSun.shadow.camera.near = 0.5;
-    windowSun.shadow.camera.far = 25;
-    windowSun.shadow.bias = -0.001;
     this.scene.add(windowSun);
 
     // Warm classroom interior fill
-    const roomFill = new THREE.DirectionalLight(0xde7215, 0.95);
+    const roomFill = new THREE.DirectionalLight(0xde7215, 0.7);
     roomFill.position.set(5, 3, -1);
     this.scene.add(roomFill);
 
-    // Blackboard accent highlight
-    const boardSpot = new THREE.PointLight(0xfffbeb, 1.8, 12);
-    boardSpot.position.set(0, 3.2, -0.8);
-    this.scene.add(boardSpot);
+    // Dedicated Exhibition Spotlight focusing directly on the central constitutional exhibit
+    const exhibitSpotlight = new THREE.SpotLight(0xfff8ee, 3.4, 9, Math.PI / 4.2, 0.4, 1.1);
+    exhibitSpotlight.position.set(0, 3.6, 0.8);
+    exhibitSpotlight.target = this.mainStageGroup || this.scene;
+    exhibitSpotlight.castShadow = true;
+    this.scene.add(exhibitSpotlight);
   }
 
   // ── VIRTUAL 3D CLASSROOM ENVIRONMENT ─────────────────────────────────────
@@ -242,17 +247,46 @@ export class ArSceneEngine {
       roughness: 0.25,
     });
 
+    const wainscotMat = new THREE.MeshStandardMaterial({
+      color: 0x1f342b, // Heritage dark classroom green wainscoting
+      roughness: 0.72,
+      metalness: 0.04,
+    });
+
     // 1. Classroom Hardwood Floor
     const floor = new THREE.Mesh(new THREE.BoxGeometry(16, 0.2, 12), floorWoodMat);
     floor.position.y = -1.8;
     floor.receiveShadow = true;
     classroom.add(floor);
 
-    // 2. Classroom Rear Wall
+    // 2. Classroom Rear Wall with Two-Tone Architectural Wainscoting
     const rearWall = new THREE.Mesh(new THREE.BoxGeometry(16, 8, 0.2), wallPlasterMat);
     rearWall.position.set(0, 2.1, -2.4);
     rearWall.receiveShadow = true;
     classroom.add(rearWall);
+
+    // Lower Wall Wainscoting Panel
+    const lowerWainscot = new THREE.Mesh(new THREE.BoxGeometry(16, 1.88, 0.02), wainscotMat);
+    lowerWainscot.position.set(0, -0.86, -2.29);
+    lowerWainscot.receiveShadow = true;
+    classroom.add(lowerWainscot);
+
+    // Horizontal Teak Dado / Chair Rail
+    const dadoRail = new THREE.Mesh(new THREE.BoxGeometry(16, 0.08, 0.05), deskWoodMat);
+    dadoRail.position.set(0, 0.08, -2.28);
+    dadoRail.castShadow = true;
+    classroom.add(dadoRail);
+
+    // Architectural Fluted Teak Pilasters Framing the Central Exhibition Alcove
+    const pilasterLeft = new THREE.Mesh(new THREE.BoxGeometry(0.14, 3.4, 0.05), deskWoodMat);
+    pilasterLeft.position.set(-1.45, 1.45, -2.26);
+    pilasterLeft.castShadow = true;
+    classroom.add(pilasterLeft);
+
+    const pilasterRight = new THREE.Mesh(new THREE.BoxGeometry(0.14, 3.4, 0.05), deskWoodMat);
+    pilasterRight.position.set(1.45, 1.45, -2.26);
+    pilasterRight.castShadow = true;
+    classroom.add(pilasterRight);
 
     // 3. Left Window with Daylight Sky
     const windowGroup = new THREE.Group();
@@ -267,23 +301,20 @@ export class ArSceneEngine {
     const windowPane = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 3.4), windowGlassMat);
     windowGroup.add(windowPane);
 
-    // Window Wooden Mullions
     const winFrameMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4 });
     const winBorder = new THREE.Mesh(new THREE.BoxGeometry(2.7, 3.5, 0.06), winFrameMat);
     windowGroup.add(winBorder);
     classroom.add(windowGroup);
 
-    // 4. The Teacher's Classroom Blackboard (Positioned to the left of the wall exhibit)
+    // 4. Symmetrical Left Noticeboard: The Teacher's Classroom Blackboard
     const blackboardGroup = new THREE.Group();
-    blackboardGroup.position.set(-2.55, 1.45, -2.25);
+    blackboardGroup.position.set(-2.75, 1.25, -2.28);
 
-    // Wooden Frame
     const frameWoodMat = new THREE.MeshStandardMaterial({ color: 0x92400e, roughness: 0.45 });
-    const boardFrame = new THREE.Mesh(new THREE.BoxGeometry(3.6, 2.1, 0.08), frameWoodMat);
+    const boardFrame = new THREE.Mesh(new THREE.BoxGeometry(2.35, 1.75, 0.08), frameWoodMat);
     boardFrame.castShadow = true;
     blackboardGroup.add(boardFrame);
 
-    // Chalkboard Surface with Dynamic Canvas
     this.blackboardCanvas = document.createElement('canvas');
     this.blackboardCanvas.width = 1024;
     this.blackboardCanvas.height = 512;
@@ -294,45 +325,68 @@ export class ArSceneEngine {
       roughness: 0.65,
       metalness: 0.05,
     });
-    this.blackboardMesh = new THREE.Mesh(new THREE.BoxGeometry(3.35, 1.88, 0.04), boardMat);
+    this.blackboardMesh = new THREE.Mesh(new THREE.BoxGeometry(2.18, 1.58, 0.04), boardMat);
     this.blackboardMesh.position.z = 0.035;
     blackboardGroup.add(this.blackboardMesh);
 
-    // Chalk Ledge & Chalk Pieces
-    const ledge = new THREE.Mesh(new THREE.BoxGeometry(3.25, 0.07, 0.18), frameWoodMat);
-    ledge.position.set(0, -0.98, 0.09);
+    const ledge = new THREE.Mesh(new THREE.BoxGeometry(2.15, 0.07, 0.16), frameWoodMat);
+    ledge.position.set(0, -0.82, 0.08);
     blackboardGroup.add(ledge);
 
     const chalkMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.9 });
     const chalk1 = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.12, 8), chalkMat);
     chalk1.rotation.z = Math.PI / 2;
-    chalk1.position.set(-0.45, -0.94, 0.11);
+    chalk1.position.set(-0.35, -0.78, 0.1);
     blackboardGroup.add(chalk1);
 
     const goldChalkMat = new THREE.MeshStandardMaterial({ color: 0xfcd34d, roughness: 0.9 });
     const chalk2 = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.1, 8), goldChalkMat);
     chalk2.rotation.z = Math.PI / 2;
-    chalk2.position.set(-0.28, -0.94, 0.11);
+    chalk2.position.set(-0.18, -0.78, 0.1);
     blackboardGroup.add(chalk2);
 
     classroom.add(blackboardGroup);
 
-    // 5. Secondary Student Study Desk (Positioned naturally below and to the side)
-    const deskGroup = new THREE.Group();
-    deskGroup.position.set(1.45, -1.05, 0.2);
+    // 5. Symmetrical Right Panel: Constitution Preamble Wall Charter (Balances the Blackboard!)
+    const charterGroup = new THREE.Group();
+    charterGroup.position.set(2.75, 1.25, -2.28);
 
-    // Desktop
-    const tabletop = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.14, 1.9), deskWoodMat);
+    const charterFrame = new THREE.Mesh(new THREE.BoxGeometry(2.35, 1.75, 0.08), deskWoodMat);
+    charterFrame.castShadow = true;
+    charterGroup.add(charterFrame);
+
+    this.charterCanvas = document.createElement('canvas');
+    this.charterCanvas.width = 1024;
+    this.charterCanvas.height = 512;
+    this.charterTexture = new THREE.CanvasTexture(this.charterCanvas);
+    this.renderCharterCanvas();
+
+    const charterMat = new THREE.MeshStandardMaterial({
+      map: this.charterTexture,
+      roughness: 0.45,
+      metalness: 0.05,
+    });
+    this.charterMesh = new THREE.Mesh(new THREE.BoxGeometry(2.18, 1.58, 0.035), charterMat);
+    this.charterMesh.position.z = 0.03;
+    charterGroup.add(this.charterMesh);
+
+    classroom.add(charterGroup);
+
+    // 6. Secondary Student Study Desk (Grounded naturally in lower right foreground)
+    const deskGroup = new THREE.Group();
+    deskGroup.position.set(1.9, -1.15, 0.5);
+    deskGroup.scale.set(0.85, 0.85, 0.85);
+
+    const tabletop = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.14, 1.8), deskWoodMat);
     tabletop.castShadow = true;
     tabletop.receiveShadow = true;
     deskGroup.add(tabletop);
 
-    // 4 Tubular Desk Legs
     const legPositions = [
-      [-1.55, -0.45, -0.8],
-      [1.55, -0.45, -0.8],
-      [-1.55, -0.45, 0.8],
-      [1.55, -0.45, 0.8],
+      [-1.45, -0.45, -0.75],
+      [1.45, -0.45, -0.75],
+      [-1.45, -0.45, 0.75],
+      [1.45, -0.45, 0.75],
     ];
     legPositions.forEach(([x, y, z]) => {
       const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.88, 16), deskMetalMat);
@@ -341,7 +395,6 @@ export class ArSceneEngine {
       deskGroup.add(leg);
     });
 
-    // Open Student Workbook & Stationery on Desk
     const stationeryGroup = new THREE.Group();
     stationeryGroup.position.set(-0.35, 0.09, 0.1);
 
@@ -368,16 +421,44 @@ export class ArSceneEngine {
     deskGroup.add(stationeryGroup);
     classroom.add(deskGroup);
 
-    // 6. Mitra Wall Display Perch (Attached to classroom rear wall beside the exhibit)
-    const mitraPerch = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.05, 0.42), deskWoodMat);
-    mitraPerch.position.set(0.92, 0.54, -2.18);
-    mitraPerch.receiveShadow = true;
-    classroom.add(mitraPerch);
+    // 7. Grounded Museum Corbel Wall Shelf for Mitra (Firmly attached to wall beside exhibit)
+    const corbelGroup = new THREE.Group();
+    corbelGroup.position.set(1.08, 0.65, -2.18);
 
-    const mitraPerchBracket = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.25, 4), deskMetalMat);
-    mitraPerchBracket.rotation.x = Math.PI;
-    mitraPerchBracket.position.set(0.92, 0.4, -2.22);
-    classroom.add(mitraPerchBracket);
+    // Polished Teak Shelf Slab
+    const shelfSlab = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.05, 0.42), deskWoodMat);
+    shelfSlab.castShadow = true;
+    shelfSlab.receiveShadow = true;
+    corbelGroup.add(shelfSlab);
+
+    // Outer Brass Safety Railing
+    const railMat = new THREE.MeshStandardMaterial({ color: 0xd4a017, metalness: 0.88, roughness: 0.22 });
+    const railFront = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.02, 0.02), railMat);
+    railFront.position.set(0, 0.035, 0.2);
+    corbelGroup.add(railFront);
+    const railSide = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.02, 0.4), railMat);
+    railSide.position.set(0.28, 0.035, 0);
+    corbelGroup.add(railSide);
+
+    // Substantial Classical Carved Wooden Wall Corbel Bracket
+    const corbelBracket = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.36, 0.32), deskWoodMat);
+    corbelBracket.position.set(0, -0.19, -0.05);
+    corbelBracket.castShadow = true;
+    corbelGroup.add(corbelBracket);
+
+    // Two Brass Wall Mounting Hex Bolts
+    const boltMat = new THREE.MeshStandardMaterial({ color: 0x78350f, metalness: 0.92, roughness: 0.3 });
+    const bolt1 = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.04, 6), boltMat);
+    bolt1.rotation.x = Math.PI / 2;
+    bolt1.position.set(0, -0.08, -0.18);
+    corbelGroup.add(bolt1);
+
+    const bolt2 = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.04, 6), boltMat);
+    bolt2.rotation.x = Math.PI / 2;
+    bolt2.position.set(0, -0.28, -0.18);
+    corbelGroup.add(bolt2);
+
+    classroom.add(corbelGroup);
 
     // Draw initial blackboard lesson text
     this.renderBlackboardCanvas(
@@ -388,6 +469,60 @@ export class ArSceneEngine {
     );
 
     return classroom;
+  }
+
+  // Draw Dynamic Constitution Preamble Charter Canvas
+  renderCharterCanvas() {
+    if (!this.charterCanvas || !this.charterTexture) return;
+
+    const ctx = this.charterCanvas.getContext('2d');
+    const w = this.charterCanvas.width;
+    const h = this.charterCanvas.height;
+
+    // Warm aged parchment background
+    ctx.fillStyle = '#faf6ed';
+    ctx.fillRect(0, 0, w, h);
+
+    // Ornate gold and ink border
+    ctx.strokeStyle = '#854d0e';
+    ctx.lineWidth = 6;
+    ctx.strokeRect(16, 16, w - 32, h - 32);
+
+    ctx.strokeStyle = '#d4a017';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(26, 26, w - 52, h - 52);
+
+    // Header: Ashoka Lion Capital Seal Representation
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#1e293b';
+    ctx.font = 'bold 26px monospace';
+    ctx.fillText('✦ CONSTITUTION OF INDIA · PREAMBLE ✦', w / 2, 70);
+
+    // Preamble Text Calligraphy
+    ctx.font = 'bold 36px Georgia, serif';
+    ctx.fillStyle = '#92400e';
+    ctx.fillText('WE, THE PEOPLE OF INDIA,', w / 2, 130);
+
+    ctx.font = 'italic 24px Georgia, serif';
+    ctx.fillStyle = '#1e293b';
+    ctx.fillText('having solemnly resolved to constitute India into a', w / 2, 180);
+
+    ctx.font = 'bold 28px Georgia, serif';
+    ctx.fillStyle = '#b45309';
+    ctx.fillText('SOVEREIGN SOCIALIST SECULAR DEMOCRATIC REPUBLIC', w / 2, 230);
+
+    ctx.font = '22px Georgia, serif';
+    ctx.fillStyle = '#334155';
+    ctx.fillText('JUSTICE, social, economic and political;', w / 2, 285);
+    ctx.fillText('LIBERTY of thought, expression, belief, faith and worship;', w / 2, 330);
+    ctx.fillText('EQUALITY of status and of opportunity;', w / 2, 375);
+    ctx.fillText('FRATERNITY assuring the dignity of the individual.', w / 2, 420);
+
+    ctx.font = 'bold 18px monospace';
+    ctx.fillStyle = '#854d0e';
+    ctx.fillText('IN OUR CONSTITUENT ASSEMBLY · 26th DAY OF NOVEMBER, 1949', w / 2, 475);
+
+    this.charterTexture.needsUpdate = true;
   }
 
   // Draw Dynamic Classroom Blackboard Text
@@ -1586,17 +1721,24 @@ export class ArSceneEngine {
     if (this.classroomGroup) this.classroomGroup.visible = true;
     if (this.particlesGroup) this.particlesGroup.visible = true;
 
-    this.mainStageGroup.position.set(0, 0.95, -2.18);
+    this.mainStageGroup.position.set(0, 1.05, -2.18);
     this.mainStageGroup.rotation.set(0, 0, 0);
-    this.mainStageGroup.scale.set(1, 1, 1);
+    this.mainStageGroup.scale.set(1.4, 1.4, 1.4);
     this.mainStageGroup.visible = true;
 
-    this.mitraGroup.position.set(0.92, 0.65, -2.0);
-    this.mitraGroup.rotation.set(0, -0.35, 0);
-    this.mitraGroup.scale.set(0.38, 0.38, 0.38);
+    this.mitraGroup.position.set(1.08, 0.72, -2.05);
+    this.mitraGroup.rotation.set(0, -0.38, 0);
+    this.mitraGroup.scale.set(0.42, 0.42, 0.42);
     this.mitraGroup.visible = true;
 
     if (this.reticle) this.reticle.visible = false;
+
+    if (this.onTransformChange) {
+      this.onTransformChange({
+        scale: this.mainStageGroup.scale.x,
+        rotationY: this.mainStageGroup.rotation.y,
+      });
+    }
   }
 
   // ── ON-SCREEN AR & 3D INSPECTION CONTROLS ─────────────────────────────────
@@ -1604,6 +1746,12 @@ export class ArSceneEngine {
   rotateExhibit(deltaAngle = 0.2) {
     if (this.mainStageGroup) {
       this.mainStageGroup.rotation.y += deltaAngle;
+      if (this.onTransformChange) {
+        this.onTransformChange({
+          scale: this.mainStageGroup.scale.x,
+          rotationY: this.mainStageGroup.rotation.y,
+        });
+      }
     }
   }
 
@@ -1613,10 +1761,16 @@ export class ArSceneEngine {
       const nextScale = Math.max(0.45, Math.min(2.2, currentScale + deltaScale));
       this.mainStageGroup.scale.set(nextScale, nextScale, nextScale);
     } else {
-      this.zoomLevel = Math.max(2.0, Math.min(5.2, this.zoomLevel - deltaScale * 2.2));
-      if (this.camera) {
-        this.camera.position.z = this.zoomLevel;
-      }
+      // Direct artifact inspection: visibly zoom the exhibit itself, NOT the classroom room/camera
+      const currentScale = this.mainStageGroup.scale.x;
+      const nextScale = Math.max(0.85, Math.min(2.6, currentScale + deltaScale));
+      this.mainStageGroup.scale.set(nextScale, nextScale, nextScale);
+    }
+    if (this.onTransformChange) {
+      this.onTransformChange({
+        scale: this.mainStageGroup.scale.x,
+        rotationY: this.mainStageGroup.rotation.y,
+      });
     }
   }
 
@@ -1626,13 +1780,18 @@ export class ArSceneEngine {
       this.mainStageGroup.rotation.set(0, 0, 0);
     } else {
       this.mainStageGroup.rotation.set(0, 0, 0);
-      this.mainStageGroup.scale.set(1, 1, 1);
+      this.mainStageGroup.scale.set(1.4, 1.4, 1.4);
       this.rotationVelocity = { x: 0, y: 0.0015 };
-      this.zoomLevel = 3.4;
       if (this.camera) {
-        this.camera.position.set(0, 0.95, this.zoomLevel);
-        this.camera.lookAt(0, 0.95, -2.18);
+        this.camera.position.set(0, 1.05, 2.5);
+        this.camera.lookAt(0, 1.05, -2.18);
       }
+    }
+    if (this.onTransformChange) {
+      this.onTransformChange({
+        scale: this.mainStageGroup.scale.x,
+        rotationY: this.mainStageGroup.rotation.y,
+      });
     }
   }
 
@@ -1675,9 +1834,10 @@ export class ArSceneEngine {
   updateSpatialAnimations() {
     const elapsed = this.clock.getElapsedTime();
 
-    // 1. Mitra breathing & tail sway on the desk
+    // 1. Mitra breathing & tail sway on the corbel shelf
     if (this.mitraGroup) {
-      this.mitraGroup.position.y = -0.42 + Math.sin(elapsed * 2.2) * 0.0018;
+      const baseY = this.isArActive ? 0 : 0.72;
+      this.mitraGroup.position.y = baseY + Math.sin(elapsed * 2.2) * 0.003;
 
       const tail = this.mitraGroup.getObjectByName('mitraTail');
       if (tail) {
@@ -1805,6 +1965,13 @@ export class ArSceneEngine {
     this.rotationVelocity.y = deltaX * 0.008;
 
     this.previousMousePosition = { x: e.clientX, y: e.clientY };
+
+    if (this.onTransformChange) {
+      this.onTransformChange({
+        scale: this.mainStageGroup.scale.x,
+        rotationY: this.mainStageGroup.rotation.y,
+      });
+    }
   }
 
   handlePointerUp() {
@@ -1813,8 +1980,8 @@ export class ArSceneEngine {
 
   handleWheel(e) {
     if (this.isArActive) return;
-    this.zoomLevel = Math.max(3.8, Math.min(8.5, this.zoomLevel + e.deltaY * 0.0035));
-    this.camera.position.z = this.zoomLevel;
+    e.preventDefault();
+    this.zoomExhibit(e.deltaY < 0 ? 0.08 : -0.08);
   }
 
   handleCanvasClick(e) {
@@ -1839,7 +2006,7 @@ export class ArSceneEngine {
           if (this.onInteractivePartClick) {
             this.onInteractivePartClick({
               part: 'mitra',
-              message: 'Mitra: "Welcome to class! Inspect the model on your desk and let’s explore together."',
+              message: 'Mitra: "Welcome to class! Inspect the wall exhibit and let’s explore our constitutional rights together."',
             });
           }
           return;
@@ -1860,6 +2027,21 @@ export class ArSceneEngine {
           return;
         }
         checkBoard = checkBoard.parent;
+      }
+
+      // Check if user tapped the Preamble charter panel
+      let checkCharter = hitObj;
+      while (checkCharter) {
+        if (checkCharter === this.charterMesh) {
+          if (this.onInteractivePartClick) {
+            this.onInteractivePartClick({
+              part: 'charter',
+              message: 'Constitution Charter: "WE, THE PEOPLE OF INDIA — Justice, Liberty, Equality, Fraternity."',
+            });
+          }
+          return;
+        }
+        checkCharter = checkCharter.parent;
       }
 
       // Check if user tapped the active 3D model parts
@@ -1935,6 +2117,10 @@ export class ArSceneEngine {
 
     if (this.blackboardTexture) {
       this.blackboardTexture.dispose();
+    }
+
+    if (this.charterTexture) {
+      this.charterTexture.dispose();
     }
 
     if (this.plaqueTexture) {

@@ -19,13 +19,16 @@ The **RightsQuest Living Classroom** brings the Constitution of India alive thro
 - Zero raw video or photo frames recorded, stored, or transmitted over the network (DPDP Act 2023 §9 compliant).
 
 ### Mode B: Virtual Classroom 3D Simulation (Wall Exhibit Fallback)
-- Renders an authentic modern Indian classroom with a warm rear plaster wall.
-- The constitutional learning artifact is mounted at eye level inside an architectural wall mounting frame with corner brackets, subtle contact shadow against the wall, and an engraved brass identification plaque.
-- Secondary classroom context:
-  - **Teacher’s Blackboard:** Positioned on the wall to the left of the exhibit, dynamically chalked with lesson topics, article references, and core constitutional principles.
-  - **Student Study Desk:** Positioned naturally below and to the side as environmental context (not an oversized pedestal beneath the artifact), complete with open workbook, bookmark ribbon, pencil, and brass holder.
-  - **Window:** Placed on the left wall with soft daylight streaming across the classroom.
-  - **Mitra Companion:** Sits on an elegant wall display perch beside the exhibit, serving as an encouraging classroom docent companion.
+- Renders an authentic, balanced modern Indian classroom studio with balanced horizontal symmetry:
+  - **Central Exhibit Bay:** Centered prominently on the rear wall at eye level (`y = 1.05m`), framed by fluted architectural teak pilasters and illuminated by an overhead exhibition gallery spotlight (`THREE.SpotLight`).
+  - **Modest Visual Scale Calibration:** Calibrated to a hero display scale of `1.4x` (~61 cm apparent diameter), making the exhibit the clear focal point of the classroom without overflowing the wall space. In real WebXR AR Mode A, the scale resets strictly to `1.0x` (compact physical 35–45 cm dimensions).
+  - **Symmetrical Flanking Panels:**
+    - **Teacher’s Blackboard (Left):** Positioned on the wall to the left of the exhibit (`2.35m x 1.75m`), dynamically chalked with lesson numbers, article references, and core constitutional principles.
+    - **Constitution of India Preamble Charter (Right):** Positioned symmetrically on the wall to the right (`2.35m x 1.75m`), rendered on warm parchment with gold leaf borders and Constituent Assembly calligraphy, perfectly balancing the blackboard.
+  - **Wall Architecture:** Two-tone architectural wall with upper ivory plaster, lower heritage dark slate green wainscoting, and a continuous polished teak dado/chair rail.
+  - **Grounded Museum Corbel Shelf for Mitra:** Sits on a crafted wall-mounted corbel bracket shelf beside the exhibit (`x = 1.08, y = 0.65, z = -2.18`) with polished teak slab, brass gallery railing, and wall-mounting hex bolts.
+  - **Secondary Student Study Desk:** Grounded naturally in the lower right foreground with workbook and bookmark ribbon, completing the classroom atmosphere without occluding the exhibit.
+  - **Window:** Placed on the left wall with soft sunbeams streaming across the room.
 
 ### The 6 Classroom Wall Exhibits (~35–45 cm Compact Scale)
 - **Lesson 1: The Sovereign Ashoka Chakra** (*Preamble & Article 51A*): Compact 43.6 cm circular exhibit with 24 Dharma spokes and cardinal medallions.
@@ -76,13 +79,27 @@ flowchart TD
 
 ## 4. Mode A (WebXR AR) vs. Mode B (3D Simulation Fallback) Comparison
 
+### Does rotating and zooming make it AR?
+**No.** Those controls make it an interactive 3D simulation.
+RightsQuest India maintains total honesty and academic rigour regarding the distinction between an interactive 3D environment and genuine Augmented Reality:
+
+| Capability | What it means | RightsQuest Implementation |
+| :--- | :--- | :--- |
+| **3D classroom with rotation & zoom** | Interactive 3D simulation | **Mode B: Classroom 3D Studio** with balanced chalkboard, Preamble charter, and desk. Zooming and rotating visibly alter the artifact itself, leaving the classroom stationary. |
+| **Camera passthrough** | User sees their actual physical surroundings | **Mode A: WebXR AR session** streaming device camera passthrough with zero recorded frames. |
+| **Wall detection / hit testing** | Device recognises a real physical wall | **Mode A: `XRHitTestSource` raycasting** identifying vertical real-world wall surfaces. |
+| **Physical placement and anchoring** | Exhibit appears attached flush to that real wall | **Mode A: Compact 35–45 cm plaque** anchored flush with normal alignment to physical wall pose. |
+| **Stable tracking while moving** | Genuine immersive 6DoF AR behaviour | **Mode A: WebXR reference space tracking** keeping the exhibit pinned as the student walks around. |
+
+### Technical Feature Matrix
+
 | Feature | Mode A: Live Camera WebXR AR | Mode B: Classroom 3D Simulation Fallback |
 | :--- | :--- | :--- |
 | **Experience Goal** | Mount compact exhibits on the student's real physical room wall. | Believable 3D simulation of a modern Indian classroom with wall exhibit. |
-| **Environment** | Real physical room via camera passthrough. | 3D virtual classroom: plaster rear wall, blackboard, window, study desk. |
-| **Exhibit Mounting** | Anchored flush against real vertical wall via WebXR hit-test. | Mounted on classroom rear wall with slim frame, brackets & brass plaque. |
-| **Object Scale** | Compact 35–45 cm real-world scale (1:1 display scale). | Compact 35–45 cm proportional exhibit on classroom wall. |
-| **Inspection Controls** | On-screen buttons: rotate, zoom/scale, reset, reposition on wall. | Pointer drag, mouse wheel, on-screen rotate/zoom/reset buttons. |
+| **Environment** | Real physical room via camera passthrough. | 3D virtual classroom: plaster rear wall, balanced blackboard & charter, window, desk. |
+| **Exhibit Mounting** | Anchored flush against real vertical wall via WebXR hit-test. | Mounted on classroom rear wall with fluted pilasters, slim frame, brackets & brass plaque. |
+| **Object Scale** | Compact 35–45 cm real-world scale (1:1 display scale). | Hero scale (`1.4x`, ~61 cm apparent) centered for optimal visual focus. |
+| **Inspection Controls** | On-screen buttons: rotate, zoom/scale, reset, reposition on wall. | Pointer drag, mouse wheel, on-screen rotate/zoom/reset with live readout badge. |
 | **Camera Access** | User-authorized WebXR camera pass-through (zero frames saved). | No camera required or requested. |
 | **Supported Devices** | Android Chrome / WebXR-compatible mobile browsers. | 100% of modern browsers (Desktop, Laptop, Tablets, iOS, Android). |
 | **Pedagogical Engine** | Full 3-tier age dilemmas, physical consequence animations & quiz. | Full 3-tier age dilemmas, physical consequence animations & quiz. |

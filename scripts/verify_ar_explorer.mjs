@@ -80,9 +80,11 @@ verify(engineSource.includes('renderer.xr.enabled = true'), 'Engine enables Thre
 verify(engineSource.includes("'immersive-ar'") && engineSource.includes('startArSession'), 'Engine implements WebXR immersive-ar session request');
 verify(engineSource.includes('buildClassroomEnvironment'), 'Engine builds 3D virtual classroom with student desk, blackboard, and window');
 verify(engineSource.includes('renderBlackboardCanvas'), 'Engine renders dynamic teacher blackboard canvas texture');
+verify(engineSource.includes('renderCharterCanvas'), 'Engine renders symmetrical Constitution Preamble Charter canvas texture');
 verify(engineSource.includes('buildWallMountingFrame'), 'Engine builds slim wall mounting frame with contact shadow and corner brackets');
 verify(engineSource.includes('renderPlaqueCanvas'), 'Engine renders dynamic brass identification plaque canvas');
 verify(engineSource.includes('rotateExhibit') && engineSource.includes('zoomExhibit') && engineSource.includes('resetExhibitTransform'), 'Engine provides explicit on-screen inspection controls (rotate, zoom/scale, reset)');
+verify(engineSource.includes('onTransformChange'), 'Engine supports live transform change callback for UI readout');
 verify(engineSource.includes('repositionExhibit'), 'Engine implements AR wall repositioning and removal capability');
 verify(engineSource.includes('buildAshokaChakraGeometry') && engineSource.includes('24'), 'Engine procedurally generates 24-spoke Ashoka Chakra geometry');
 verify(engineSource.includes('buildEqualityBalanceGeometry'), 'Engine builds Equality Balance scale with tilt animation');
@@ -107,6 +109,8 @@ verify(pageSource.includes('triggerSpatialEffect'), 'Component triggers spatial 
 verify(pageSource.includes('setMitraEmotion'), 'Component synchronizes Mitra emotions with learner decisions');
 verify(pageSource.includes('Mode A: Live Camera WebXR AR') && pageSource.includes('Mode B: Classroom 3D Simulation'), 'Component honestly and clearly distinguishes Mode A (Live Camera AR) from Mode B (Virtual 3D Simulation)');
 verify(pageSource.includes('inspectionToolbar') && pageSource.includes('handleRotateExhibit'), 'Component provides on-screen inspection toolbar for rotate, zoom, and reset');
+verify(pageSource.includes('inspectionFeedbackBadge'), 'Component displays live scale and rotation feedback readout badge');
+verify(pageSource.includes('capabilityTable') && pageSource.includes('XRHitTestSource'), 'Component renders transparent AR vs 3D Simulation Capability Distinction Table');
 
 // 8. Architectural Documentation
 verify(existsSync(resolve(process.cwd(), 'docs/AR_EXPLORER.md')), 'docs/AR_EXPLORER.md exists with comprehensive architecture guide');

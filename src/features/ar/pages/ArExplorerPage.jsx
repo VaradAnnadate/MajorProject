@@ -72,6 +72,7 @@ export default function ArExplorerPage() {
   const [isQuizSubmitted, setIsQuizSubmitted] = useState(false);
   const [quizFeedback, setQuizFeedback] = useState(null);
   const [completedObjects, setCompletedObjects] = useState(new Set());
+  const [artifactTransform, setArtifactTransform] = useState({ scale: 1.4, rotationY: 0 });
 
   // Current station data
   const currentStationIndex = useMemo(() => {
@@ -140,6 +141,9 @@ export default function ArExplorerPage() {
         },
         onPlacementStatus: (msg) => {
           setArStatusMessage(msg);
+        },
+        onTransformChange: (t) => {
+          if (t) setArtifactTransform(t);
         },
       });
 
@@ -610,6 +614,17 @@ export default function ArExplorerPage() {
                     <span>Reposition</span>
                   </button>
                 )}
+
+                {/* Live Exhibit Transform Visual Readout */}
+                <div className={styles.inspectionFeedbackBadge} aria-live="polite">
+                  <span className={styles.feedbackItem}>
+                    <strong>Scale:</strong> {Math.round((artifactTransform.scale / 1.4) * 100)}% ({isArActive ? 'WebXR 1:1 Physical' : `${(artifactTransform.scale * 43).toFixed(0)}cm apparent`})
+                  </span>
+                  <span className={styles.feedbackDivider}>•</span>
+                  <span className={styles.feedbackItem}>
+                    <strong>Rotation:</strong> {Math.round((((artifactTransform.rotationY % (Math.PI * 2)) + (Math.PI * 2)) % (Math.PI * 2)) * (180 / Math.PI))}°
+                  </span>
+                </div>
               </div>
 
               {/* Direct Desktop Model Interaction Buttons */}
@@ -992,6 +1007,64 @@ export default function ArExplorerPage() {
             </div>
           </aside>
         </div>
+
+        {/* AR vs 3D Simulation Capability Distinction Table */}
+        <section className={styles.capabilitySection} aria-labelledby="capability-heading">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+            <Layers size={20} style={{ color: 'var(--color-primary-600, #de7215)' }} />
+            <h3 id="capability-heading" style={{ margin: 0, fontSize: '1.15rem', fontFamily: 'var(--font-family-display)' }}>
+              AR vs 3D Simulation: Technical Architecture & Capability Distinction
+            </h3>
+          </div>
+          <p style={{ margin: '0 0 1rem', fontSize: '0.85rem', color: '#475569', lineHeight: 1.5 }}>
+            RightsQuest India maintains technical transparency regarding augmented reality capabilities. Rotating and zooming an exhibit inside a WebGL canvas provides an interactive 3D simulation. True Augmented Reality requires camera passthrough, real-world vertical surface detection (hit-testing), calibrated metric scaling (35–45 cm), and 6DoF spatial tracking.
+          </p>
+
+          <div style={{ overflowX: 'auto' }}>
+            <table className={styles.capabilityTable}>
+              <thead>
+                <tr>
+                  <th scope="col">Capability</th>
+                  <th scope="col">Technical Definition</th>
+                  <th scope="col">RightsQuest Implementation</th>
+                  <th scope="col">Verification Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>3D Classroom Simulation</strong></td>
+                  <td>Interactive 3D environment with wall, blackboard, preamble charter, desk, and exhibit transforms.</td>
+                  <td><span className={styles.capabilityBadge3D}>Mode B: 3D Studio</span></td>
+                  <td>Active on all WebGL browsers</td>
+                </tr>
+                <tr>
+                  <td><strong>Camera Passthrough</strong></td>
+                  <td>User observes physical room surroundings via device video feed (zero recorded or uploaded frames).</td>
+                  <td><span className={styles.capabilityBadgeAr}>Mode A: WebXR AR</span></td>
+                  <td>Active on WebXR devices</td>
+                </tr>
+                <tr>
+                  <td><strong>Wall Plane Hit-Testing</strong></td>
+                  <td>Device recognises real vertical walls using <code>XRHitTestSource</code> raycasting.</td>
+                  <td><span className={styles.capabilityBadgeAr}>Mode A: WebXR AR</span></td>
+                  <td>Active on ARCore / WebXR</td>
+                </tr>
+                <tr>
+                  <td><strong>Physical Metric Anchoring</strong></td>
+                  <td>Exhibit anchored flush to physical wall at strictly calibrated 35–45 cm dimensions.</td>
+                  <td><span className={styles.capabilityBadgeAr}>Mode A: WebXR AR</span></td>
+                  <td>Active upon tap placement</td>
+                </tr>
+                <tr>
+                  <td><strong>6DoF Spatial Tracking</strong></td>
+                  <td>Real-time device position/orientation tracking keeps wall plaque firmly anchored while walking.</td>
+                  <td><span className={styles.capabilityBadgeAr}>Mode A: WebXR AR</span></td>
+                  <td>Active via XRFrame reference space</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
 
         {/* Miniature 5 Realms Connection Section */}
         <section className={styles.miniRealmsSection} aria-labelledby="mini-realms-heading">

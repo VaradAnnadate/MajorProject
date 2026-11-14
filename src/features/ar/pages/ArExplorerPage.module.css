@@ -454,6 +454,29 @@
   background: #c5620e;
 }
 
+.inspectionFeedbackBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.38rem 0.75rem;
+  background: rgba(15, 23, 42, 0.92);
+  color: #f8fafc;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  border-radius: var(--radius-pill, 9999px);
+  font-family: var(--font-family-mono, monospace);
+  font-size: 0.72rem;
+  backdrop-filter: blur(8px);
+}
+
+.feedbackItem strong {
+  color: #fbbf24;
+  font-weight: 700;
+}
+
+.feedbackDivider {
+  color: rgba(255, 255, 255, 0.3);
+}
+
 .stageTip {
   font-family: var(--font-family-mono, monospace);
   font-size: 0.72rem;
@@ -944,4 +967,57 @@
 .realmMiniCard:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* Viva & Academic Rigour: Technical Architecture & Capability Table */
+.capabilitySection {
+  margin-top: var(--space-8, 2rem);
+  padding: 1.5rem;
+  background: #ffffff;
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: var(--radius-card, 12px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.capabilityTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 0.85rem;
+}
+
+.capabilityTable th,
+.capabilityTable td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+}
+
+.capabilityTable th {
+  background: #f8fafc;
+  color: #1e293b;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.capabilityBadgeAr {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  background: #ecfdf5;
+  color: #065f46;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+.capabilityBadge3D {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  background: #eff6ff;
+  color: #1e40af;
+  font-weight: 700;
+  font-size: 0.75rem;
 }
