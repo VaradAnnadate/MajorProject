@@ -67,6 +67,23 @@ export function SafetyLibraryPage() {
             <ArrowRight size={16} />
           </Link>
         </div>
+
+        {/* Statutory Safeguarding Review Notice */}
+        <div 
+          role="note"
+          style={{
+            marginTop: 'var(--space-8)',
+            padding: 'var(--space-4)',
+            backgroundColor: 'var(--color-canvas-card)',
+            border: '1px solid var(--color-border-subtle)',
+            borderRadius: 'var(--radius-sm)',
+            fontSize: '0.82rem',
+            color: 'var(--color-ink-muted)',
+            lineHeight: 1.6
+          }}
+        >
+          <strong style={{ color: 'var(--color-ink-primary)' }}>Statutory Notice & Safeguarding Scope:</strong> All guidance in this library is aligned with Indian child protection statutes (POCSO Act 2012, RTE Act 2009, Childline 1098 protocol under Ministry of Women & Child Development). This content is educational and preventative. Real-world incident disclosures should be handled by designated school counsellors, Child Welfare Committees (CWCs), or statutory emergency services (1098 / 112). Formal institutional adoption requires qualified child-protection review.
+        </div>
       </div>
     </div>
   );

@@ -153,6 +153,23 @@ export function GetHelpExperiencePage() {
         <section className={styles.sectionBlock} aria-labelledby="helplines-heading">
           <VerifiedHelplineDirectory />
         </section>
+
+        {/* Statutory Safeguarding Review Notice */}
+        <div 
+          role="note"
+          style={{
+            marginTop: 'var(--space-8)',
+            padding: 'var(--space-4)',
+            backgroundColor: 'var(--color-canvas-card)',
+            border: '1px solid var(--color-border-subtle)',
+            borderRadius: 'var(--radius-sm)',
+            fontSize: '0.82rem',
+            color: 'var(--color-ink-muted)',
+            lineHeight: 1.6
+          }}
+        >
+          <strong style={{ color: 'var(--color-ink-primary)' }}>Statutory Notice & Safeguarding Scope:</strong> The helplines and protocols listed here are official emergency and welfare channels established by the Government of India (MWCD Childline 1098, MHA ERSS 112, Cyber Crime 1930, Tele-MANAS 14416). RightsQuest is an educational simulation and does not operate as an emergency dispatch desk. All statutory materials are prepared in accordance with the POCSO Act 2012, RTE Act 2009, and DPDP Act 2023 §9.
+        </div>
       </main>
     </div>
   );
