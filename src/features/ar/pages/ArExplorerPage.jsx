@@ -465,7 +465,7 @@ export default function ArExplorerPage() {
           </h1>
 
           <p className="text-lead" style={{ maxWidth: '720px', margin: '0 0 var(--space-4)' }}>
-            Welcome to our hands-on constitutional classroom. Explore compact 35–45 cm constitutional exhibits mounted on your classroom wall with Mitra in Mode A: Live Camera WebXR AR. Place the exhibit onto your physical room wall via camera passthrough, explore the classroom landmarks, and resolve living dilemmas.
+            Welcome to our hands-on constitutional classroom. Explore compact 35–45 cm constitutional exhibits in our reliable 3D classroom fallback. On compatible ARCore Android devices, tap "Mount on Real Wall (AR)" to start Mode A: Live Camera WebXR AR and place the Ashoka Chakra on a real physical wall.
           </p>
 
           {/* Age Adaptation & Factual Privacy Row */}
@@ -549,27 +549,39 @@ export default function ArExplorerPage() {
           </div>
         </nav>
 
-        {/* Experience Mode Banner: Mode A Augmented Reality Wall Exhibit Experience */}
+        {/* Experience Mode Banner: Honest Distinction between WebXR AR and Classroom 3D Simulation */}
         <div 
-          className={`${styles.modeBanner} ${styles.modeBannerAr}`}
+          className={`${styles.modeBanner} ${isArActive ? styles.modeBannerAr : styles.modeBannerSim}`}
           role="region"
           aria-label="Experience Mode Indicator"
         >
           <div className={styles.modeBannerHeader}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Camera size={18} className={styles.modeIconAr} aria-hidden="true" />
+              {isArActive ? (
+                <Camera size={18} className={styles.modeIconAr} aria-hidden="true" />
+              ) : (
+                <Layers size={18} className={styles.modeIconSim} aria-hidden="true" />
+              )}
               <h2 className={styles.modeBannerTitle}>
-                Mode A: Live Camera WebXR AR (Wall Placement)
+                {isArActive
+                  ? (artifactTransform.isPlacedInAr
+                      ? 'Mode A: Live Camera WebXR AR (Wall Placement Active)'
+                      : 'Mode A: Live Camera WebXR AR (Wall Placement - Scanning)')
+                  : 'Mode B: Classroom 3D Simulation (Reliable Fallback)'}
               </h2>
             </div>
             <span className={styles.modeBannerBadge}>
-              {isArActive ? 'Camera Passthrough Active · Real Classroom Wall' : 'Augmented Reality (AR) · Interactive Wall Exhibit'}
+              {isArActive 
+                ? (artifactTransform.isPlacedInAr ? 'Live Camera AR · Real Wall Mounted' : 'Scanning Wall Surface via Camera') 
+                : '3D Virtual Classroom · Reliable Fallback'}
             </span>
           </div>
           <p className={styles.modeBannerText}>
             {isArActive
-              ? 'Your physical room camera is active via WebXR. Scan and tap any vertical wall surface to mount this compact 35–45 cm constitutional exhibit flush against your wall. Zero camera video or photos are saved or uploaded (DPDP Act 2023 §9).'
-              : 'Augmented Reality constitutional learning experience. Explore living constitutional exhibits calibrated to physical 35–45 cm dimensions. Tap "Mount on Real Wall (AR)" to project directly onto your physical room wall via WebXR camera passthrough.'}
+              ? (artifactTransform.isPlacedInAr
+                  ? 'Your physical room camera is active via WebXR. The constitutional exhibit is anchored flush to your real wall at calibrated 35–45 cm scale with 6DoF tracking. Zero camera frames are saved (DPDP Act 2023 §9).'
+                  : 'Camera passthrough active. Aim your phone at a vertical room wall until the reticle aligns, then tap to place the Ashoka Chakra onto the wall.')
+              : 'Reliable 3D classroom simulation fallback. Explore the interactive learning space, inspect landmarks, or tap "Mount on Real Wall (AR)" on a compatible ARCore Android device to place the Ashoka Chakra on a real physical wall.'}
           </p>
         </div>
 

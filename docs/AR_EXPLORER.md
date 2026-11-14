@@ -122,23 +122,31 @@ RightsQuest India maintains total honesty and academic rigour regarding the dist
 
 ---
 
-## 6. How to Demonstrate in a Viva or Evaluation
+## 6. How to Demonstrate in a Viva or College Evaluation
 
-1. **Desktop Demonstration (Mode B — Classroom 3D Simulation):**
-   - Navigate to `http://localhost:5173/ar-explorer`.
+> [!IMPORTANT]
+> **Academic Integrity & College Demo Directive:**
+> Keep the 3D virtual classroom experience as the primary, reliable fallback for laptop and projector presentations. Do **not** claim live AR is working until you have demonstrated the complete pipeline on an ARCore mobile device through the camera: opening camera passthrough, detecting a real vertical wall plane via hit-testing, and anchoring the Ashoka Chakra flush against that physical surface.
+
+1. **Desktop / Projector Demonstration (Mode B — Reliable 3D Classroom Fallback):**
+   - Navigate to `/ar-explorer`.
    - Show the examiner the **Classroom Wall Exhibit Stage**:
-     - Point out the clear mode indicator: **Mode B: Classroom 3D Simulation (Wall Exhibit Fallback)**.
-     - Note the compact 35–45 cm scale: the artifact is mounted on the rear wall inside an elegant brass display frame with identification plaque.
-     - Point out the secondary classroom context: Teacher’s blackboard on the left, student desk with workbook and pencil below/to the side, and Mitra on the wall perch.
-   - Use the on-screen inspection toolbar: **Rotate Left/Right**, **Zoom In/Out**, and **Reset View**.
-   - Test dilemmas and observe physical spatial consequences (e.g. Balance of Equality tilting or balancing).
+     - Point out the honest mode indicator: **Mode B: Classroom 3D Simulation (Reliable Fallback)**.
+     - Note the compact 35–45 cm physical scale calibration: the artifact is mounted on the rear wall inside an elegant brass display frame with identification plaque.
+     - Explore the secondary classroom context: Teacher’s blackboard on the left, Preamble charter on the right, student desk with workbook, and Mitra on the wall perch.
+   - Use natural navigation: drag to orbit the room, scroll/pinch to move closer to landmarks.
+   - Tap interactive landmarks (Blackboard, Charter, Mitra, Desk, Exhibit) to focus camera and reveal educational cards.
+   - Resolve dilemmas and observe physical spatial consequences (e.g. Balance of Equality tilting or balancing).
    - Answer the quiz question and show the live **Dignity XP** surge.
-2. **Mobile AR Demonstration (Mode A — Live Camera WebXR AR):**
-   - Open Chrome on a WebXR-compatible Android phone connected to the application.
-   - Tap **Mount on Real Wall (AR)** $\to$ allow camera permission $\to$ point phone at a classroom wall.
+
+2. **Mobile AR Demonstration (Mode A — Genuine WebXR Augmented Reality):**
+   - Open Chrome on a WebXR-compatible Android phone (e.g. Vivo T4x 5G on ARCore supported list) over HTTPS (Vercel) or `localhost` port forwarding.
+   - Tap **Mount on Real Wall (AR)** $\to$ grant camera permission $\to$ point phone at a vertical wall.
    - The virtual classroom geometry hides; the real room is seen through camera passthrough.
-   - Tap the wall: the compact 35–45 cm constitutional exhibit and brass identification plaque mount flush against the real wall!
-   - Use on-screen controls to inspect or walk closer to read the plaque.
+   - The reticle detects the vertical wall normal ($|normal_y| \le 0.45$).
+   - Tap the wall: the compact 35–45 cm constitutional exhibit and brass identification plaque mount flush against the real physical wall!
+   - Walk around the room: 6DoF spatial tracking keeps the exhibit anchored firmly to the real wall.
+   - Switch exhibits: the new constitutional artifact mounts in place.
 
 ---
 

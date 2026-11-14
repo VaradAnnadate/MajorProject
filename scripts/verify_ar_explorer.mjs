@@ -179,7 +179,8 @@ verify(pageSource.includes('Mode A: Live Camera WebXR AR') && pageSource.include
 // Adaptive Age Tier Control Verification
 verify(pageSource.includes('handleSelectAgeTier') && pageSource.includes('selectedAgeTier'), 'Adaptive Age Tier buttons use robust local state and context synchronization');
 verify(pageSource.includes('band-${tierKey}'), 'Age tier buttons pass calibrated band IDs (band-8-10, band-11-13, band-14-16) to DemoLearnerContext');
-verify(pageSource.includes('Mode A: Live Camera WebXR AR (Wall Placement)'), 'Primary learning stage features Mode A Augmented Reality as requested');
+verify(pageSource.includes('Mode A: Live Camera WebXR AR (Wall Placement'), 'Primary learning stage features Mode A Augmented Reality when placed on real wall');
+verify(pageSource.includes('Mode B: Classroom 3D Simulation (Reliable Fallback)'), 'Component preserves 3D classroom experience as reliable fallback until real wall placement');
 verify(!pageSource.includes('inspectionToolbar'), 'On-screen transform button toolbar is completely removed from the UI');
 verify(pageSource.includes('classroomGestureHint'), 'Contextual gesture navigation hint banner is rendered');
 verify(pageSource.includes('Drag to explore · Scroll or pinch to move closer · Tap classroom objects to discover'), 'Contextual gesture guidance text informs learner how to explore the whole classroom');
