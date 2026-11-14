@@ -8,7 +8,7 @@
     "dev:classroom": "node scripts/dev-classroom.mjs",
     "build": "vite build && node scripts/generate-service-worker.mjs && node scripts/check-initial-bundle.mjs",
     "preview": "vite preview",
-    "test": "node scripts/verify_foundation.mjs && node scripts/verify_part03.mjs && node scripts/verify_part04.mjs && node scripts/verify_part05.mjs && node scripts/verify_part06.mjs && node scripts/verify_transition.mjs && node scripts/verify_part07.mjs && node scripts/verify_part08.mjs",
+    "test": "node scripts/verify_foundation.mjs && node scripts/verify_part03.mjs && node scripts/verify_part04.mjs && node scripts/verify_part05.mjs && node scripts/verify_part06.mjs && node scripts/verify_transition.mjs && node scripts/verify_part07.mjs && node scripts/verify_part08.mjs && node scripts/verify_final_release.mjs",
     "test:foundation": "node scripts/verify_foundation.mjs",
     "test:part03": "node scripts/verify_part03.mjs",
     "test:part04": "node scripts/verify_part04.mjs",
@@ -16,7 +16,8 @@
     "test:part06": "node scripts/verify_part06.mjs",
     "test:transition": "node scripts/verify_transition.mjs",
     "test:part07": "node scripts/verify_part07.mjs",
-    "test:part08": "node scripts/verify_part08.mjs"
+    "test:part08": "node scripts/verify_part08.mjs",
+    "test:release": "node scripts/verify_final_release.mjs"
   },
   "dependencies": {
     "@creative-os/core": "^3.1.1",
