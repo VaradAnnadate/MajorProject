@@ -105,6 +105,55 @@ export default function ScenarioPage() {
     );
   }
 
+  // Completed phase — clear debrief and next steps
+  if (phase === 'done') {
+    return (
+      <div 
+        className={styles.root} 
+        role="main" 
+        data-world={scenario.worldId || 'haven-of-dignity'}
+      >
+        <div className={styles.inner} style={{ textAlign: 'center', padding: 'clamp(2rem, 5vw, 4rem) 1rem' }}>
+          <div style={{ fontSize: '3.5rem', marginBottom: 'var(--space-3)' }} aria-hidden="true">
+            🌟
+          </div>
+          <span className={styles.difficultyPill} style={{ marginBottom: 'var(--space-2)' }}>
+            Mission Concluded
+          </span>
+          <h1 className={styles.title} style={{ marginTop: 'var(--space-2)', marginBottom: 'var(--space-3)' }}>
+            {scenario.title} Complete!
+          </h1>
+          <p className={styles.tagline} style={{ maxWidth: '580px', margin: '0 auto var(--space-6)' }}>
+            Your insights have been added to your local Dignity XP and explorer records. Thank you for standing up for fairness and constitutional wisdom.
+          </p>
+
+          <div className={styles.synopsisCard} style={{ maxWidth: '540px', margin: '0 auto var(--space-6)', textAlign: 'left' }}>
+            <div className={styles.synopsisLabel}>Constitutional Wisdom Recorded</div>
+            <p className={styles.synopsisText} style={{ marginBottom: 'var(--space-2)' }}>
+              <strong>Protected Right:</strong> {scenario.articleRef}
+            </p>
+            <p className={styles.synopsisText}>
+              <strong>Badge Unlocked:</strong> {scenario.badgeName}
+            </p>
+          </div>
+
+          <div className={styles.ctaRow} style={{ justifyContent: 'center' }}>
+            <Link to="/adventures" className={styles.startBtn} aria-label="Return to adventures catalog">
+              Back to Adventures
+              <span className={styles.startBtnArrow} aria-hidden="true">→</span>
+            </Link>
+            <Link to="/world" className={styles.cancelLink}>
+              Explore World Map
+            </Link>
+            <Link to="/achievements" className={styles.cancelLink}>
+              View Dignity XP & Badges
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Briefing screen
   return (
     <div 
