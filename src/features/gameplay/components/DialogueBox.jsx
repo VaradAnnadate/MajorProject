@@ -94,37 +94,17 @@ export default function DialogueBox({ dialogue, onComplete, ageBandId, narration
     });
   }, [resolvedText, onComplete]);
 
+  // Run typewriter and optional auto-narration when dialogue changes
   useEffect(() => {
-    if (!dialogue) return;
-    const prefersReducedMotion =
-      typeof window !== 'undefined' &&
-      window.matchMedia &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!dialogue || !resolvedText) return;
 
-    if (prefersReducedMotion) {
-      if (containerRef.current) {
-        containerRef.current.style.opacity = '1';
-        containerRef.current.style.transform = 'none';
-      }
-      runTypewriter();
-      // Auto-speak on reduced motion too
-      if (narration && resolvedText) narration.speak(resolvedText);
-      return;
+    runTypewriter();
+
+    // Auto-narrate if narration is available and not muted
+    if (narration && !narration.isMuted) {
+      narration.speak(resolvedText);
     }
 
-    // Fade in container
-    gsap.fromTo(
-      containerRef.current,
-      { opacity: 0, y: 10 },
-      {
-        opacity: 1, y: 0, duration: 0.3, ease: 'power2.out',
-        onComplete: () => {
-          runTypewriter();
-          // Auto-speak after animation
-          if (narration && resolvedText) narration.speak(resolvedText);
-        }
-      }
-    );
     return () => {
       if (tweenRef.current) tweenRef.current.kill();
     };

@@ -3,7 +3,7 @@
  * Full-screen dark layout: progress bar top, dialogue + character panel centre,
  * bottom control strip. Coordinates all sub-components via useScenarioEngine.
  */
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useScenarioEngine } from '../engine/useScenarioEngine';
 import { useDemoLearner } from '../../../context/DemoLearnerContext';
@@ -45,6 +45,13 @@ export default function ScenarioRunner({ scenarioId, onComplete }) {
     restart,
   } = engine;
 
+  // Stop narration on unmount or when scenario changes
+  useEffect(() => {
+    return () => {
+      narration.stop();
+    };
+  }, [narration]);
+
   // Handle evidence dialogues
   const handleAdvance = useCallback(() => {
     narration.stop();
@@ -55,6 +62,21 @@ export default function ScenarioRunner({ scenarioId, onComplete }) {
     }
     advanceDialogue();
   }, [currentDialogue, evidenceOpen, advanceDialogue, narration]);
+
+  const handleSkip = useCallback(() => {
+    narration.stop();
+    skipToChoicePhase();
+  }, [narration, skipToChoicePhase]);
+
+  const handleChoiceSelect = useCallback((choiceId) => {
+    narration.stop();
+    selectChoice(choiceId);
+  }, [narration, selectChoice]);
+
+  const handleRestart = useCallback(() => {
+    narration.stop();
+    restart();
+  }, [narration, restart]);
 
   const handleEvidenceClose = useCallback(() => {
     if (pendingEvidence && inspectEvidenceReward) {
@@ -184,7 +206,7 @@ export default function ScenarioRunner({ scenarioId, onComplete }) {
             <ChoicePanel
               choices={currentChapter.choices}
               selectedChoice={selectedChoice}
-              onSelect={selectChoice}
+              onSelect={handleChoiceSelect}
             />
           )}
 
@@ -217,7 +239,7 @@ export default function ScenarioRunner({ scenarioId, onComplete }) {
               </button>
               <button
                 className={styles.skipBtn}
-                onClick={skipToChoicePhase}
+                onClick={handleSkip}
                 aria-label="Skip to questions or choices"
               >
                 Skip ››
@@ -230,7 +252,7 @@ export default function ScenarioRunner({ scenarioId, onComplete }) {
             <div className={styles.choiceSkipRow}>
               <button
                 className={styles.skipBtn}
-                onClick={skipToChoicePhase}
+                onClick={handleSkip}
                 aria-label="Skip this question"
               >
                 Skip question ››
