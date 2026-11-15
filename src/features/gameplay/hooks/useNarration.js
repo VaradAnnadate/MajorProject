@@ -1,45 +1,60 @@
 /**
  * useNarration — Text-to-Speech narration hook for quest dialogues.
  *
- * Uses Hugging Face Inference API (facebook/mms-tts-eng) to synthesise
- * speech for narrator, character, and mitra dialogue lines.
- *
- * Usage:
- *   const { speak, stop, isLoading, isPlaying, isMuted, toggleMute } = useNarration();
- *   speak("It is Monday morning...");
+ * Uses native Web SpeechSynthesis with automatic voice hydration, un-pause handling,
+ * and user-gesture activation to ensure audio plays audibly in all modern browsers.
  */
 
-import { useCallback, useRef, useState } from 'react';
-import { InferenceClient } from '@huggingface/inference';
-
-// Vite exposes VITE_* env vars to the client bundle
-const HF_TOKEN = import.meta.env.VITE_HF_TOKEN;
-const TTS_MODEL = 'facebook/mms-tts-eng';
-
-let clientInstance = null;
-function getClient() {
-  if (!clientInstance && HF_TOKEN) {
-    clientInstance = new InferenceClient(HF_TOKEN);
-  }
-  return clientInstance;
-}
+import { useCallback, useRef, useState, useEffect } from 'react';
 
 export function useNarration() {
+  const utteranceRef = useRef(null);
   const audioRef = useRef(null);
-  const abortRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
 
-  /** Stop any audio currently playing */
+  // Initialize and keep voices ready
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+
+    const loadVoices = () => {
+      try {
+        window.speechSynthesis.getVoices();
+      } catch {
+        // no-op
+      }
+    };
+
+    loadVoices();
+    window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
+    return () => {
+      window.speechSynthesis.removeEventListener('voiceschanged', loadVoices);
+    };
+  }, []);
+
+  /** Stop any active audio immediately */
   const stop = useCallback(() => {
-    if (abortRef.current) {
-      abortRef.current.abort();
-      abortRef.current = null;
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.cancel();
+      } catch {
+        // no-op
+      }
+      if (utteranceRef.current) {
+        utteranceRef.current.onstart = null;
+        utteranceRef.current.onend = null;
+        utteranceRef.current.onerror = null;
+        utteranceRef.current = null;
+      }
     }
     if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.src = '';
+      try {
+        audioRef.current.pause();
+        audioRef.current.src = '';
+      } catch {
+        // no-op
+      }
       audioRef.current = null;
     }
     setIsPlaying(false);
@@ -47,84 +62,97 @@ export function useNarration() {
   }, []);
 
   /**
-   * Speak `text` via HF TTS.
-   * Silently no-ops when muted or no token is configured.
+   * Speak `text`
    */
-  const speak = useCallback(async (text) => {
-    if (!text || isMuted) return;
+  const speak = useCallback((text) => {
+    const cleanText = (text || '').trim();
+    if (!cleanText || isMuted) return;
 
-    const client = getClient();
-    if (!client) {
-      // No HF token — fall back to browser's built-in speech synthesis
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utt = new SpeechSynthesisUtterance(text);
-        utt.rate = 0.92;
-        utt.pitch = 1;
-        setIsPlaying(true);
-        utt.onend = () => setIsPlaying(false);
-        utt.onerror = () => setIsPlaying(false);
-        window.speechSynthesis.speak(utt);
-      }
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      console.warn('[useNarration] SpeechSynthesis is not supported in this browser.');
       return;
     }
 
-    // Stop any previous audio
+    // Stop previous utterance immediately
     stop();
 
-    const controller = new AbortController();
-    abortRef.current = controller;
-    setIsLoading(true);
-
     try {
-      const blob = await client.textToSpeech({
-        model: TTS_MODEL,
-        inputs: text,
-        provider: 'hf-inference',
-      });
+      // Clear any hung queue in the browser
+      window.speechSynthesis.cancel();
 
-      if (controller.signal.aborted) return;
+      // Safari/Chrome resume hack if speech engine was paused
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
 
-      const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-      audioRef.current = audio;
+      const utt = new SpeechSynthesisUtterance(cleanText);
+      utteranceRef.current = utt;
+      utt.rate = 0.95;
+      utt.pitch = 1.0;
+      utt.volume = 1.0;
 
-      audio.onended = () => {
-        URL.revokeObjectURL(url);
-        setIsPlaying(false);
+      // Select natural voice
+      const voices = window.speechSynthesis.getVoices() || [];
+      if (voices.length > 0) {
+        const selected =
+          voices.find((v) => v.lang.startsWith('en-IN') && !v.name.includes('Compact')) ||
+          voices.find((v) => v.lang.startsWith('en-US')) ||
+          voices.find((v) => v.lang.startsWith('en-GB')) ||
+          voices.find((v) => v.lang.startsWith('en'));
+        if (selected) {
+          utt.voice = selected;
+        }
+      }
+
+      utt.onstart = () => {
+        setIsLoading(false);
+        setIsPlaying(true);
       };
-      audio.onerror = () => {
-        URL.revokeObjectURL(url);
+
+      utt.onend = () => {
         setIsPlaying(false);
         setIsLoading(false);
+        utteranceRef.current = null;
+      };
+
+      utt.onerror = (e) => {
+        if (e.error !== 'interrupted' && e.error !== 'canceled') {
+          console.warn('[useNarration] Speech synthesis error:', e.error || e);
+        }
+        setIsPlaying(false);
+        setIsLoading(false);
+        utteranceRef.current = null;
       };
 
       setIsLoading(false);
       setIsPlaying(true);
-      await audio.play();
-    } catch (err) {
-      if (err.name !== 'AbortError') {
-        console.warn('[useNarration] TTS error, falling back to browser synthesis:', err.message);
-        // Graceful fallback
-        if ('speechSynthesis' in window) {
-          const utt = new SpeechSynthesisUtterance(text);
-          utt.rate = 0.92;
-          setIsPlaying(true);
-          utt.onend = () => setIsPlaying(false);
-          window.speechSynthesis.speak(utt);
-        }
+
+      window.speechSynthesis.speak(utt);
+
+      // Chrome speech timeout safeguard: keep engine alive
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
       }
+    } catch (err) {
+      console.error('[useNarration] Speak error:', err);
+      setIsPlaying(false);
       setIsLoading(false);
     }
   }, [isMuted, stop]);
 
   const toggleMute = useCallback(() => {
     setIsMuted((prev) => {
-      if (!prev) stop(); // stop current if muting
-      return !prev;
+      const next = !prev;
+      if (next) stop();
+      return next;
     });
+  }, [stop]);
+
+  useEffect(() => {
+    return () => {
+      stop();
+    };
   }, [stop]);
 
   return { speak, stop, isLoading, isPlaying, isMuted, toggleMute };
 }
-
