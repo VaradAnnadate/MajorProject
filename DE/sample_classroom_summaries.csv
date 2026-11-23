@@ -1,0 +1,6 @@
+quest_id,participant_count,vote_count,winning_option_id,winning_vote_count,majority_percentage,session_date
+playground-partition,24,22,share,14,64,2026-11-20
+classroom-meme,18,16,stop-share,10,63,2026-11-19
+midday-meal,30,27,adult-help,18,67,2026-11-18
+playground-partition,12,11,listen,7,64,2026-11-17
+classroom-meme,20,19,check-in,12,63,2026-11-16
